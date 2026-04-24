@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-feature: "ss01", "cv11", "zero";
+  }
+  html, body, #root {
+    height: 100%;
+    background: #f8fafc;
+    color: #0f172a;
+    font-family: 'Geist', 'Satoshi', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-feature-settings: var(--font-feature);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { margin: 0; }
+  * { box-sizing: border-box; }
+}
+
+@layer utilities {
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(15,23,42,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15,23,42,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .num { font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.1); border-radius: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(15,23,42,0.2); }
+}
