@@ -27,12 +27,9 @@ jobs:
       - name: Build (gh-pages base)
         env:
           DEPLOY_TARGET: gh-pages
-        run: |
-          npm run build
-          # SPA fallback: 404.html 走同一份 index.html，刷新不丢路由
-          cp dist/index.html dist/404.html
-          # 防止 Jekyll 处理下划线开头目录
-          touch dist/.nojekyll
+        run: npm run build
+      - name: Inject SPA redirect + 404
+        run: node scripts/postbuild-gh-pages.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
