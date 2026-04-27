@@ -108,12 +108,9 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'governance', question: '首席科学家 / 联创 vesting cliff 是否已通过？任一离开的回购条款？', why: '股权稳定性风险', expect: '能在 60 秒内说清条款', watch: '需要回去查 → 治理颗粒度低' },
     ],
     publicComps: [
-      { name: 'UiPath', ticker: 'NYSE: PATH', marketCap: '$8.2B', evRevenue: '6.4x', evEbitda: 'N/A (亏损)', growth: '15% YoY', grossMargin: '83%', similarity: '同样面向企业自动化，但偏静态规则 RPA', distance: 'NebulaAI 增速 ×4，估值倍数若给 8x 则约 $1.4B，距 $120M 投前还有 ~12x 空间' },
-      { name: 'Palantir', ticker: 'NYSE: PLTR', marketCap: '$60B', evRevenue: '22x', evEbitda: '95x', growth: '30% YoY', grossMargin: '80%', similarity: '企业 AI 平台 + 长合同 + 高客单', distance: 'ARR 仅 Palantir 1/500，但 MoM 增速 2.5×，可作天花板锚定' },
-      { name: 'Snowflake', ticker: 'NYSE: SNOW', marketCap: '$58B', evRevenue: '14x', evEbitda: 'N/A', growth: '28% YoY', grossMargin: '67%', similarity: '云原生数据 / AI 基础设施，使用量计费', distance: 'NRR 130%+ 是基础设施 SaaS 的天花板信号，NebulaAI 143% 高于 Snowflake，需验证可持续性' },
-      { name: 'MongoDB', ticker: 'NASDAQ: MDB', marketCap: '$22B', evRevenue: '11x', evEbitda: 'N/A', growth: '23% YoY', grossMargin: '74%', similarity: '开源 + 企业付费 + 开发者驱动', distance: 'agent-kernel 开源策略可参考 MongoDB PLG 漏斗模型' },
+      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；其 31.7% 净利率反映稀缺性溢价，NebulaAI 若验证 Agent 编排为底层标准，估值锚可参考', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
     ],
-    compsTakeaway: '按可比公司 Top quartile EV/Revenue 倍数（11–14x）锚定，NebulaAI ARR $4.8M 对应公允估值 $53M – $67M。当前投前 $120M 偏高约 80%，但成长性溢价（MoM 38% vs comps 中位 23%）可解释 50–70% 的溢价 — IC 应重点辩论是否值得为"潜在天花板 = Palantir / Snowflake"支付当下溢价。',
+    compsTakeaway: '中国 A 股直接对标稀缺：寒武纪（688256）作为 AI 底层算力的国产代表，TTM 营收 ¥65 亿、净利率 31.7%，反映"硬科技 + 国产替代"叙事下的高估值溢价。NebulaAI 应用层 SaaS 路径毛利天花板更高（行业可达 75-85%），但需要在 36 个月内证明 ARR 突破 $30M 才可对位锚定。',
   },
 
   // ────────────────────────── NeoBank Digital ──────────────────────────
@@ -160,11 +157,9 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'fund-use', question: '$40M 中多少投牌照、多少投团队、多少投技术？',  why: '验证资金分配颗粒度', expect: '百分比 + 牌照预算与监管时间线挂钩' },
     ],
     publicComps: [
-      { name: 'Adyen', ticker: 'AMS: ADYEN', marketCap: '$48B', evRevenue: '14x', evEbitda: '37x', growth: '22% YoY', grossMargin: '60%', similarity: '嵌入式支付 + 银行合作模式', distance: 'NeoBank ARR 仅 Adyen 1/200，但 MoM 增速更快' },
-      { name: 'Nu Holdings', ticker: 'NYSE: NU', marketCap: '$70B', evRevenue: '18x', evEbitda: 'N/A', growth: '40% YoY', grossMargin: '52%', similarity: '新兴市场数字银行，已盈利路径', distance: 'Nu 巴西达成盈亏平衡用了 8 年，NeoBank 计划 5 年达成' },
-      { name: 'StoneCo', ticker: 'NASDAQ: STNE', marketCap: '$4.2B', evRevenue: '4x', evEbitda: '12x', growth: '15% YoY', grossMargin: '40%', similarity: '巴西 SME 支付 + 嵌入金融', distance: '估值倍数偏低反映 SME 服务的下行风险，需关注' },
+      { name: '拉卡拉', ticker: 'SZ: 300773', price: '¥26.55', reportDate: '2026-03-31', revenue: '¥16.14 亿', netIncome: '¥5.95 亿', netMargin: '36.9%', totalAssets: '¥120.91 亿', similarity: 'A 股第三方支付 + 商户嵌入式金融', distance: '拉卡拉 36.9% 净利率反映成熟支付 SaaS 的盈利能力天花板；NeoBank 东南亚扩张期净利率会暂时为负，但牌照成本摊销后 5 年内可对标', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
     ],
-    compsTakeaway: 'Adyen 14x EV/Revenue 是嵌入式金融头部锚点，Nu Holdings 18x 是新兴市场溢价。NeoBank 当前 16x 落在合理区间上沿，关键变量是印尼牌照能否在 12 月内落地（影响估值 ±20%）。',
+    compsTakeaway: 'A 股最相近对标拉卡拉（300773）净利率 36.9% 是支付 SaaS 的成熟盈利模型。NeoBank 当前 16x ARR 估值高于成熟期可比，反映对东南亚增长溢价的定价；IC 应辩论：愿意为"印尼牌照 + 增长" 双重 unverified 假设支付多少溢价。',
   },
 
   // ────────────────────────── MetaMed Health ──────────────────────────
@@ -210,11 +205,9 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'fund-use', question: '$5M 拆解：NMPA 注册费 / 数据扩充 / 团队 各多少？跑道是 18 月还是 24 月？', why: '资金颗粒度' , expect: '百分比 + 跑道与 NMPA 时间线吻合' },
     ],
     publicComps: [
-      { name: 'iCAD', ticker: 'NASDAQ: ICAD', marketCap: '$220M', evRevenue: '4.2x', evEbitda: 'N/A', growth: '8% YoY', grossMargin: '70%', similarity: '医学影像 AI（乳腺）', distance: '美股估值倍数低反映医疗 AI 商业化难度' },
-      { name: '联影医疗', ticker: 'SH: 688271', marketCap: '约 ¥947 亿（≈$13.0B）', evRevenue: '~8.3x', evEbitda: '~12x', growth: '前 9 个月营收 ¥88.6 亿 · 净利率 12.6%', grossMargin: '净利率 12.6%（披露口径）', similarity: '医学影像设备 + AI 国产龙头', distance: 'EV/Revenue 8.3x 是医疗硬件 + AI 混合模式锚点；MetaMed 纯 AI 路径估值倍数会更高但 ARR 距离 50× 以上', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
-      { name: '推想科技（已撤回 IPO）', ticker: '—', marketCap: '~$300M (上轮)', evRevenue: '8x', evEbitda: 'N/A', growth: '30% YoY', grossMargin: '60%', similarity: '中国放射 AI 直接对手', distance: '推想撤回 IPO 是赛道警示信号' },
+      { name: '联影医疗', ticker: 'SH: 688271', price: '¥114.98', reportDate: '2025-09-30 (Q3 累计)', revenue: '¥88.59 亿', netIncome: '¥11.20 亿', netMargin: '12.6%', totalAssets: '¥297.57 亿', similarity: '医学影像设备 + AI 国产龙头', distance: '联影 12.6% 净利率反映"硬件 + AI"混合模式的盈利水平；MetaMed 纯 AI 路径理论上毛利更高（60-70%）但商业化路径未跑通，估值需以团队 + 数据资产为锚', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
     ],
-    compsTakeaway: '医疗 AI 商业化历史性偏难，公开市场倍数仅 4-6x EV/Revenue。MetaMed 目前以 $22M 投前 / $0.3M ARR 计 73x，远超行业 — 需用"团队 + IP + 数据"三位一体作为估值锚，并附 ratchet 条款保护下行。',
+    compsTakeaway: '医疗影像 AI 直接对标稀缺：联影（688271）是国内唯一上市可比，TTM 净利率 12.6%。MetaMed 当前 $22M 投前 / $0.3M Pilot ARR 计 73x，远超联影的 8x 公允锚点；建议要求估值降到 $12M 以下，或附 NMPA 获批 ratchet 条款保护下行。',
   },
 
   // ────────────────────────── GreenLogistics ──────────────────────────
@@ -250,10 +243,11 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'risk', question: '路鹰冷链 2024 关停的教训是什么？你们怎么避免同样的命运？', why: '同赛道有失败先例，必须问', expect: '具体差异化 + 财务纪律' },
     ],
     publicComps: [
-      { name: '顺丰控股', ticker: 'SZ: 002352', marketCap: '约 ¥1,808 亿（≈$25.0B）', evRevenue: '~0.6x', evEbitda: '~10x', growth: '2025 全年营收 ¥3,082 亿 · 净利 ¥111 亿', grossMargin: '净利率 3.6%（披露口径）', similarity: '物流主业 + 冷链 + 数字化', distance: '物流主业 EV/Revenue 仅 0.6x — 一旦混入硬件，估值倍数迅速回落；GreenLogistics 当前 33x ARR 严重高估', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
-      { name: '日日顺（已退市）', ticker: '—', marketCap: '—', evRevenue: '—', evEbitda: '—', growth: '—', grossMargin: '—', similarity: '冷链物流 SaaS + 硬件', distance: '退市本身是赛道结构性警示' },
+      { name: '顺丰控股', ticker: 'SZ: 002352', price: '¥36.89', reportDate: '2025-12-31', revenue: '¥3,082.27 亿', netIncome: '¥111.17 亿', netMargin: '3.6%', totalAssets: '¥2,164.69 亿', similarity: '综合物流龙头 + 冷链 + 供应链数字化', distance: '顺丰 3.6% 净利率反映物流主业的薄毛利现实；任何"物流 + SaaS"混合模式估值倍数都会被主业拉低', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '东航物流', ticker: 'SH: 601156', price: '¥16.48', reportDate: '2025-12-31', revenue: '¥242.64 亿', netIncome: '¥26.88 亿', netMargin: '11.1%', totalAssets: '¥317.56 亿', similarity: '航空货运 + 冷链供应链', distance: '专业冷链物流净利率 11.1% 是上限；GreenLogistics 当前毛利 42% 远低于此', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '京东物流', ticker: 'HK: 02618', price: 'HK$15.05', reportDate: '股价实时', revenue: '需港股财报接口', netIncome: '—', netMargin: '—', totalAssets: '—', similarity: '电商驱动型物流 SaaS', distance: '港股股价已抓取，财报接口 akshare 暂不支持港股，建议换 cninfo H 股年报', verified: true, source: 'akshare 实时（财报需 cninfo）', lastFetched: '2026-04-24' },
     ],
-    compsTakeaway: '物流硬件 + SaaS 混合模式公开市场估值倍数极低（1-3x EV/Revenue）。GreenLogistics 当前 $60M 投前 / $1.8M（含硬件）= 33x，严重高估。建议要求估值降到 $20M 以下或 Pass。',
+    compsTakeaway: 'A 股物流龙头净利率上限 11%（东航物流），主业 SaaS 化不会突破这个天花板。GreenLogistics 当前 $60M 投前 / $1.8M ARR = 33x 严重背离行业；建议估值压到 $15M 以下或直接 Pass。',
   },
 
   // ────────────────────────── CryptoVault ──────────────────────────
@@ -286,11 +280,8 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'governance', question: '前一家公司 2024 年被 SFC 命令停止 — BP 为何未披露？目前的牌照路径是什么？', why: '诚信测试 + 监管路径', expect: '诚实承认 + 完整披露 / 警惕：避而不谈 → 直接 Pass' },
       { category: 'financial', question: '$4.2T TAM 数据来源是什么？是否承认与机构数据的差距？', why: '数据真实性测试', expect: '承认偏差或给出可信来源 / 警惕：坚持夸大数据' },
     ],
-    publicComps: [
-      { name: 'Coinbase', ticker: 'NASDAQ: COIN', marketCap: '$80B', evRevenue: '12x', evEbitda: '32x', growth: '20% YoY', grossMargin: '85%', similarity: 'Crypto 托管 + 交易', distance: '已合规、已盈利。CryptoVault 未达任何里程碑' },
-      { name: 'Galaxy Digital', ticker: 'TSX: GLXY', marketCap: '$8B', evRevenue: '8x', evEbitda: '20x', growth: '15% YoY', grossMargin: '60%', similarity: '机构 crypto 服务', distance: '已上市，CryptoVault 估值缺乏支撑' },
-    ],
-    compsTakeaway: '直接 Pass。多重硬红线：市场数据造假 + 诚信问题 + 估值脱离基本面 + 合规路径空白。机构记忆库存档，标注"创始人风险"防止二次接触。',
+    publicComps: [],
+    compsTakeaway: 'A 股 / 港股暂无合规 crypto 托管对标（Coinbase / Galaxy 等美股标的需要单独接入 SEC EDGAR 数据源，本机暂未配置）。无须可比公司分析 — 多重硬红线已触发：市场数据造假、诚信问题、估值脱离基本面、合规路径空白。直接 Pass，机构记忆库存档创始人风险标签。',
   },
 
   // ────────────────────────── RoboCook ──────────────────────────
@@ -325,10 +316,10 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'business', question: '商业模式：卖硬件、按使用付费、还是订阅？为什么是这个选择？海底捞案例怎么定价？', why: '商业模式未定型是关键', expect: '至少一个模式有客户验证数字' },
     ],
     publicComps: [
-      { name: 'Miso Robotics（PE-backed）', ticker: '—', marketCap: '$500M (上轮)', evRevenue: '15x', evEbitda: 'N/A', growth: '50% YoY', grossMargin: '35%', similarity: '美式快餐后厨机器人', distance: 'Miso 用了 6 年才达 $30M ARR' },
-      { name: '云迹科技（已 IPO）', ticker: 'HK: 2670', marketCap: '$1B', evRevenue: '7x', evEbitda: 'N/A', growth: '40% YoY', grossMargin: '32%', similarity: '服务机器人本土公司', distance: '硬件公司毛利天花板约 35-40%' },
+      { name: '石头科技', ticker: 'SH: 688169', price: '¥118.30', reportDate: '2026-03-31', revenue: '¥42.27 亿', netIncome: '¥3.23 亿', netMargin: '7.6%', totalAssets: '¥195.93 亿', similarity: '消费级智能硬件 / 机器人', distance: '石头净利率 7.6% 反映消费机器人的薄利现实；RoboCook 后厨场景客单价更高但 BOM 成本也更高', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '科沃斯', ticker: 'SH: 603486', price: '¥67.80', reportDate: '2026-03-31', revenue: '¥49.02 亿', netIncome: '¥4.05 亿', netMargin: '8.3%', totalAssets: '¥180.43 亿', similarity: '家用服务机器人龙头', distance: '科沃斯 8.3% 净利率是消费机器人天花板；RoboCook 走 B 端连锁餐饮路径理论上毛利更稳但前期硬件迭代消耗大', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
     ],
-    compsTakeaway: '硬件机器人估值倍数 5-15x EV/Revenue，但毛利天花板约 35-40%。RoboCook 当前 $10M 投前对 pre-revenue 公司在合理范围下沿；建议参与但要求 milestone-based tranche（达成原型量产 + 首单后释放）。',
+    compsTakeaway: 'A 股消费机器人龙头净利率 7-8%（石头 / 科沃斯），是硬件公司盈利天花板的真实信号。RoboCook 当前 $10M 投前对 pre-revenue 早期项目偏高；建议要求 milestone-based tranche（原型量产 + 首单签约）+ 估值降到 $6-8M。',
   },
 }
 

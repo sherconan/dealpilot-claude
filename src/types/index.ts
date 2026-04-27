@@ -53,6 +53,7 @@ export interface DataCheck {
   status: 'aligned' | 'partial' | 'gap' | 'unverified'
   source: string
   note?: string
+  verified?: boolean   // true = 信源真实接通；false = 演示占位
 }
 
 export interface InterviewQuestion {
@@ -66,17 +67,26 @@ export interface InterviewQuestion {
 export interface PublicComp {
   name: string
   ticker: string
-  marketCap: string
-  evRevenue: string
-  evEbitda: string
-  growth: string
-  grossMargin: string
+  // 真实 API 抓取字段
+  price?: string              // 股价（含币种）
+  reportDate?: string         // 财报期
+  revenue?: string            // 营收（含口径）
+  netIncome?: string          // 净利润
+  netMargin?: string          // 净利率（衍生）
+  totalAssets?: string        // 总资产
   similarity: string
   distance: string
-  verified?: boolean        // 真实从 API 抓取，未编造
-  source?: string           // 数据源标识（akshare / qcc / cninfo / placeholder）
-  lastFetched?: string      // 抓取时间戳
+  verified?: boolean
+  source?: string
+  lastFetched?: string
+  // 旧字段（保留兼容，逐步弃用）
+  marketCap?: string
+  evRevenue?: string
+  evEbitda?: string
+  growth?: string
+  grossMargin?: string
 }
+
 
 export interface DealExtra {
   benchmarkLabel: string
