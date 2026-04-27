@@ -6,6 +6,7 @@ const navItems = [
   { to: '/pipeline', label: '漏斗看板', hint: '全部阶段' },
   { to: '/thesis', label: '投资论点', hint: 'Thesis 对齐' },
   { to: '/memory', label: '机构记忆', hint: '历史项目' },
+  { to: '/sources', label: '真信源', hint: '7 类已接入' },
 ]
 
 export default function Layout() {
