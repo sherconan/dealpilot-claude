@@ -41,6 +41,51 @@ export interface TimelineEvent {
   actor?: string
 }
 
+export interface DimensionDetail {
+  rationale: string
+  evidence: string[]
+  signals?: string[]
+}
+
+export interface DataCheck {
+  claim: string
+  external: string
+  status: 'aligned' | 'partial' | 'gap' | 'unverified'
+  source: string
+  note?: string
+}
+
+export interface InterviewQuestion {
+  category: 'financial' | 'business' | 'team' | 'competition' | 'fund-use' | 'risk' | 'governance'
+  question: string
+  why: string
+  expect: string
+  watch?: string
+}
+
+export interface PublicComp {
+  name: string
+  ticker: string
+  marketCap: string
+  evRevenue: string
+  evEbitda: string
+  growth: string
+  grossMargin: string
+  similarity: string
+  distance: string
+}
+
+export interface DealExtra {
+  benchmarkLabel: string
+  benchmarkMedian: Sequoia10
+  benchmarkTopQuartile: Sequoia10
+  dimensionDetails: Partial<Record<keyof Sequoia10, DimensionDetail>>
+  dataChecks: DataCheck[]
+  interviewQuestions: InterviewQuestion[]
+  publicComps: PublicComp[]
+  compsTakeaway: string
+}
+
 export interface Deal {
   id: string
   name: string

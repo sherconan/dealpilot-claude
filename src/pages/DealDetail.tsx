@@ -1,13 +1,19 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, PolarRadiusAxis } from 'recharts'
 import { getDealById } from '../data/deals'
+import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
+import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
 export default function DealDetail() {
   const { id } = useParams()
   const deal = getDealById(id || '')
+  const extra = getDealExtra(id || '')
+  const [openDim, setOpenDim] = useState<string | null>(null)
+  const [interviewFilter, setInterviewFilter] = useState<string>('all')
+
   if (!deal) {
     return (
       <div className="p-10 max-w-xl mx-auto text-center">
@@ -17,15 +23,30 @@ export default function DealDetail() {
     )
   }
 
-  const radarData = sequoiaLabels.map((s) => ({
-    axis: s.label,
-    value: deal.sequoia[s.key],
-    fullMark: 10,
-  }))
-
   const recMeta = recommendationMeta[deal.recommendation]
   const hardFlags = deal.redFlags.filter((f) => f.severity === 'hard')
   const softFlags = deal.redFlags.filter((f) => f.severity === 'soft')
+
+  const interviewCategories: { key: InterviewQuestion['category'] | 'all'; label: string }[] = [
+    { key: 'all', label: '全部' },
+    { key: 'financial', label: '财务' },
+    { key: 'business', label: '业务' },
+    { key: 'team', label: '团队' },
+    { key: 'competition', label: '竞争' },
+    { key: 'risk', label: '风险' },
+    { key: 'fund-use', label: '资金用途' },
+    { key: 'governance', label: '治理' },
+  ]
+
+  const filteredQuestions = extra?.interviewQuestions.filter(
+    (q) => interviewFilter === 'all' || q.category === interviewFilter,
+  ) || []
+
+  const checkColor = (s: DataCheck['status']) =>
+    s === 'aligned' ? { color: '#059669', bg: 'bg-emerald-50', border: 'border-emerald-200', label: '一致' }
+    : s === 'partial' ? { color: '#d97706', bg: 'bg-amber-50', border: 'border-amber-200', label: '部分对齐' }
+    : s === 'gap' ? { color: '#dc2626', bg: 'bg-rose-50', border: 'border-rose-200', label: '存在偏差' }
+    : { color: '#64748b', bg: 'bg-ink-100', border: 'border-ink-300', label: '待核实' }
 
   return (
     <div className="px-8 py-6 max-w-[1400px] mx-auto">
@@ -62,19 +83,14 @@ export default function DealDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">
-            安排会议
-          </button>
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">
-            进入尽调
-          </button>
-          <Link to={`/deal/${deal.id}/memo`} className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">
-            生成 IC Memo
-          </Link>
+          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">安排会议</button>
+          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
+          <Link to={`/deal/${deal.id}/memo`} className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">生成 IC Memo</Link>
         </div>
       </header>
 
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      {/* ─── Verdict + Red Flag + Traction（顶部 3 列）─── */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
         <div className="lg:col-span-4 bg-white border border-ink-200 rounded-xl p-5">
           <div className="flex items-center gap-4">
             <ScoreRing score={deal.score} color={deal.accentColor} size={128} label="Scorecard" />
@@ -87,25 +103,35 @@ export default function DealDetail() {
               <div className="text-[11px] text-ink-400 mt-2">冠军合伙人：{deal.champion}</div>
             </div>
           </div>
-          <div className="h-[220px] mt-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData} outerRadius="75%">
-                <PolarGrid stroke="#e2e8f0" />
-                <PolarAngleAxis dataKey="axis" tick={{ fontSize: 10, fill: '#475569' }} />
-                <PolarRadiusAxis angle={90} domain={[0, 10]} tick={false} axisLine={false} />
-                <Radar dataKey="value" stroke={deal.accentColor} fill={deal.accentColor} fillOpacity={0.22} />
-              </RadarChart>
-            </ResponsiveContainer>
+          <div className="mt-4 pt-4 border-t border-ink-100">
+            <div className="text-[11px] text-ink-500 mb-2">推荐行动</div>
+            <ul className="space-y-1 text-[12.5px] text-ink-800">
+              {deal.recommendation === 'priority' && <>
+                <li>· 立即排入最近一次 IC（4/26 周日）</li>
+                <li>· 锁定本轮份额 ≥ 60%</li>
+                <li>· 启动 reference check（2 名前同事 + 3 名客户）</li>
+              </>}
+              {deal.recommendation === 'monitor' && <>
+                <li>· 季度回访，跟踪关键里程碑</li>
+                <li>· 监控 LinkedIn / GitHub / 招聘信号</li>
+                <li>· 等待 2 个关键不确定性消除后再启动尽调</li>
+              </>}
+              {deal.recommendation === 'conditional' && <>
+                <li>· 当面指出软红线，要求改进后再评</li>
+                <li>· 不进入尽调通道，仅保留观察</li>
+              </>}
+              {deal.recommendation === 'pass' && <>
+                <li>· 礼貌拒绝，存档机构记忆</li>
+                <li>· 创始人加标签防止二次接触</li>
+              </>}
+            </ul>
           </div>
-          <div className="text-[10px] text-ink-400 text-center -mt-1">Sequoia 10 要素雷达</div>
         </div>
 
         <div className="lg:col-span-4 bg-white border border-ink-200 rounded-xl p-5">
           <h2 className="text-[14px] font-semibold tracking-tight mb-3">Red Flag 扫描</h2>
           {hardFlags.length === 0 && softFlags.length === 0 && (
-            <div className="text-[12px] text-ink-500 bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2">
-              未发现硬红线或软扣分项
-            </div>
+            <div className="text-[12px] text-ink-500 bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2">未发现硬红线或软扣分项</div>
           )}
           {hardFlags.length > 0 && (
             <div className="mb-3">
@@ -162,74 +188,272 @@ export default function DealDetail() {
             <Row k="毛利率" v={deal.grossMargin || '—'} />
           </div>
         </div>
+      </section>
 
-        <div className="lg:col-span-7 bg-white border border-ink-200 rounded-xl p-5">
-          <h2 className="text-[14px] font-semibold tracking-tight mb-4">Sequoia 10 要素评分</h2>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-            {sequoiaLabels.map((s) => {
-              const v = deal.sequoia[s.key]
-              const barColor = v >= 8 ? '#0f766e' : v >= 6 ? '#0ea5e9' : v >= 4 ? '#d97706' : '#dc2626'
-              return (
-                <div key={s.key}>
-                  <div className="flex items-center justify-between">
+      {/* ─── Sequoia 10 要素 vs 行业基准 ─── */}
+      <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
+        <div className="flex items-end justify-between mb-1 flex-wrap gap-2">
+          <div>
+            <h2 className="text-[15px] font-semibold tracking-tight">Sequoia 10 要素 · 与行业基准对比</h2>
+            <p className="text-[12px] text-ink-500 mt-0.5">{extra?.benchmarkLabel || '基准数据未配置'}</p>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] text-ink-500">
+            <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm" style={{ background: deal.accentColor }} />本项目</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-0.5 bg-ink-400" />行业中位</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-2.5 h-0.5 bg-emerald-600" />头部 25%</span>
+            <span className="text-ink-400">点击展开详情</span>
+          </div>
+        </div>
+
+        <div className="mt-4 divide-y divide-ink-100">
+          {sequoiaLabels.map((s) => {
+            const v = deal.sequoia[s.key]
+            const median = extra?.benchmarkMedian[s.key as keyof Sequoia10] ?? 6
+            const top = extra?.benchmarkTopQuartile[s.key as keyof Sequoia10] ?? 8
+            const detail = extra?.dimensionDetails[s.key]
+            const isOpen = openDim === s.key
+            const delta = v - median
+            const deltaColor = delta > 0 ? '#059669' : delta < 0 ? '#dc2626' : '#64748b'
+
+            return (
+              <div key={s.key} className="py-3">
+                <button onClick={() => setOpenDim(isOpen ? null : s.key)} className="w-full text-left hover:bg-ink-50 -mx-2 px-2 py-1 rounded transition">
+                  <div className="grid grid-cols-[180px_1fr_140px_60px] gap-4 items-center">
                     <div>
                       <div className="text-[13px] font-medium text-ink-900">{s.label}</div>
-                      <div className="text-[11px] text-ink-500 leading-relaxed mt-0.5">{s.desc}</div>
+                      <div className="text-[11px] text-ink-500 mt-0.5">{s.desc}</div>
                     </div>
-                    <div className="num font-semibold text-[16px] shrink-0 ml-2" style={{ color: barColor }}>{v}<span className="text-[11px] text-ink-400">/10</span></div>
+                    <div className="relative h-7">
+                      <div className="absolute inset-y-0 left-0 right-0 bg-ink-100 rounded" />
+                      <div className="absolute inset-y-0 left-0 rounded" style={{ width: `${v * 10}%`, background: deal.accentColor, opacity: 0.85 }} />
+                      <div className="absolute top-0 bottom-0 w-[2px] bg-ink-400" style={{ left: `${median * 10}%` }} title={`中位 ${median}`} />
+                      <div className="absolute top-0 bottom-0 w-[2px] bg-emerald-600" style={{ left: `${top * 10}%` }} title={`头部 25% ${top}`} />
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-white num font-medium">{v}/10</div>
+                    </div>
+                    <div className="text-[11px] num">
+                      <span className="text-ink-500">中位 {median}</span>
+                      <span className="mx-1 text-ink-300">·</span>
+                      <span className="text-ink-500">Top {top}</span>
+                    </div>
+                    <div className="num text-[13px] font-semibold text-right" style={{ color: deltaColor }}>
+                      {delta > 0 ? `+${delta}` : delta}
+                    </div>
                   </div>
-                  <div className="h-1.5 bg-ink-100 rounded-full mt-1.5 overflow-hidden">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${v * 10}%`, background: barColor, transition: 'width 800ms cubic-bezier(0.16, 1, 0.3, 1)' }} />
+                </button>
+
+                {isOpen && (
+                  <div className="mt-3 ml-[196px] pl-4 border-l-2 border-brand-500/30 text-[12.5px]">
+                    {detail ? <>
+                      <div className="text-ink-800 leading-relaxed">{detail.rationale}</div>
+                      <div className="mt-2.5">
+                        <div className="text-[10px] tracking-wider uppercase text-ink-500 mb-1">评分依据</div>
+                        <ul className="space-y-1">
+                          {detail.evidence.map((e, i) => (
+                            <li key={i} className="text-ink-700 flex items-start gap-1.5"><span className="w-1 h-1 rounded-full bg-brand-700 mt-[7px] shrink-0" /><span>{e}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                      {detail.signals && detail.signals.length > 0 && (
+                        <div className="mt-2.5">
+                          <div className="text-[10px] tracking-wider uppercase text-ink-500 mb-1">最新信号</div>
+                          <ul className="space-y-1">
+                            {detail.signals.map((s, i) => (
+                              <li key={i} className="text-ink-700 flex items-start gap-1.5"><span className="w-1 h-1 rounded-full bg-emerald-600 mt-[7px] shrink-0" /><span>{s}</span></li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </> : (
+                      <div className="text-[12px] text-ink-400">该维度详情待补充</div>
+                    )}
                   </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* ─── BP 数据真实性核验 ─── */}
+      {extra && extra.dataChecks.length > 0 && (
+        <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
+          <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h2 className="text-[15px] font-semibold tracking-tight">BP 数据真实性核验</h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">BP 声称 vs 外部独立数据源 · 仅展示已交叉验证条目</p>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] text-ink-500">
+              <Tag color="#059669" label={`一致 ${extra.dataChecks.filter(c => c.status === 'aligned').length}`} />
+              <Tag color="#d97706" label={`部分 ${extra.dataChecks.filter(c => c.status === 'partial').length}`} />
+              <Tag color="#dc2626" label={`偏差 ${extra.dataChecks.filter(c => c.status === 'gap').length}`} />
+              <Tag color="#64748b" label={`待核 ${extra.dataChecks.filter(c => c.status === 'unverified').length}`} />
+            </div>
+          </div>
+          <div className="divide-y divide-ink-100">
+            {extra.dataChecks.map((c, i) => {
+              const m = checkColor(c.status)
+              return (
+                <div key={i} className="py-3 grid grid-cols-1 lg:grid-cols-[1fr_1fr_120px_180px] gap-3 items-start">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-1">BP 声称</div>
+                    <div className="text-[13px] text-ink-900 font-medium">{c.claim}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-1">外部交叉验证</div>
+                    <div className="text-[13px] text-ink-700 leading-relaxed">{c.external}</div>
+                    {c.note && <div className="text-[11px] text-ink-500 mt-1 italic">{c.note}</div>}
+                  </div>
+                  <div>
+                    <span className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full ${m.bg} font-medium`} style={{ color: m.color }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.color }} />{m.label}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-ink-500">{c.source}</div>
                 </div>
               )
             })}
           </div>
-        </div>
+        </section>
+      )}
 
-        <div className="lg:col-span-5 space-y-5">
-          <div className="bg-white border border-ink-200 rounded-xl p-5">
-            <h2 className="text-[14px] font-semibold tracking-tight mb-3">投资论点对齐</h2>
-            <div className="space-y-2">
-              {thesisChecks.map((c) => (
-                <div key={c.title} className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded flex items-center justify-center text-white text-[10px] shrink-0 ${c.pass ? 'bg-emerald-600' : 'bg-rose-600'}`}>
-                    {c.pass ? '✓' : '✕'}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[13px] font-medium text-ink-900">{c.title}</span>
-                      <span className="text-[11px] text-ink-400 num">权重 {c.weight}%</span>
-                    </div>
-                    <div className="text-[11px] text-ink-500 mt-0.5">{c.detail}</div>
-                  </div>
-                </div>
+      {/* ─── 管理层访谈问题清单 ─── */}
+      {extra && extra.interviewQuestions.length > 0 && (
+        <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
+          <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h2 className="text-[15px] font-semibold tracking-tight">管理层访谈问题清单</h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">共 {extra.interviewQuestions.length} 题 · 按红线 / 评分缺口 / 关键不确定性自动生成</p>
+            </div>
+            <div className="flex items-center gap-1 bg-ink-50 border border-ink-200 rounded-lg p-1 flex-wrap">
+              {interviewCategories.map((c) => (
+                <button key={c.key} onClick={() => setInterviewFilter(c.key)} className={`px-2.5 py-1 text-[11px] rounded transition ${interviewFilter === c.key ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-white'}`}>{c.label}</button>
               ))}
             </div>
           </div>
-
-          <div className="bg-white border border-ink-200 rounded-xl p-5">
-            <h2 className="text-[14px] font-semibold tracking-tight mb-3">创始团队</h2>
-            <div className="space-y-3">
-              {deal.founders.map((f) => (
-                <div key={f.name} className="flex items-start gap-3 pb-3 border-b border-ink-100 last:border-0 last:pb-0">
-                  <div className="w-9 h-9 rounded-full bg-ink-100 flex items-center justify-center text-[12px] font-semibold text-ink-700 shrink-0">
-                    {f.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-medium">{f.name}</span>
-                      <span className="text-[11px] text-ink-500">· {f.role}</span>
+          <div className="space-y-3">
+            {filteredQuestions.map((q, i) => (
+              <div key={i} className="border border-ink-200 rounded-lg p-4 hover:border-brand-500/40 transition">
+                <div className="flex items-start gap-3">
+                  <div className="num w-7 h-7 rounded-full bg-brand-700 text-white text-[12px] font-medium flex items-center justify-center shrink-0">Q{i + 1}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                      <span className="text-[10px] tracking-wider uppercase font-medium text-brand-800 bg-brand-50 px-1.5 py-0.5 rounded">
+                        {interviewCategories.find(c => c.key === q.category)?.label || q.category}
+                      </span>
                     </div>
-                    <div className="text-[12px] text-ink-600 mt-0.5 leading-relaxed">{f.background}</div>
-                    {f.highlight && <div className="text-[11px] text-brand-700 mt-1">{f.highlight}</div>}
+                    <div className="text-[13.5px] text-ink-900 font-medium leading-relaxed">{q.question}</div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2.5 text-[12px]">
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-ink-500">为什么问</div>
+                        <div className="text-ink-700 mt-0.5 leading-relaxed">{q.why}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wider text-emerald-700">期待 / 警惕信号</div>
+                        <div className="text-ink-700 mt-0.5 leading-relaxed">{q.expect}{q.watch ? ` · ${q.watch}` : ''}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ─── 可比上市公司 ─── */}
+      {extra && extra.publicComps.length > 0 && (
+        <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
+          <div className="mb-3">
+            <h2 className="text-[15px] font-semibold tracking-tight">可比上市公司</h2>
+            <p className="text-[12px] text-ink-500 mt-0.5">用于估值锚定 · 数据来源：Bloomberg / PitchBook / 公司年报（2026-Q1）</p>
+          </div>
+          <div className="overflow-x-auto scrollbar-thin">
+            <table className="w-full text-[12.5px] min-w-[900px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wider text-ink-500 border-b border-ink-200">
+                  <th className="text-left py-2 px-2">公司 · 代码</th>
+                  <th className="text-right py-2 px-2 num">市值</th>
+                  <th className="text-right py-2 px-2 num">EV/Rev</th>
+                  <th className="text-right py-2 px-2 num">EV/EBITDA</th>
+                  <th className="text-right py-2 px-2 num">营收增速</th>
+                  <th className="text-right py-2 px-2 num">毛利率</th>
+                  <th className="text-left py-2 px-2">相似度 / 距离</th>
+                </tr>
+              </thead>
+              <tbody>
+                {extra.publicComps.map((c, i) => (
+                  <tr key={i} className="border-b border-ink-100 hover:bg-ink-50">
+                    <td className="py-3 px-2">
+                      <div className="font-medium text-ink-900">{c.name}</div>
+                      <div className="text-[11px] text-ink-500">{c.ticker}</div>
+                    </td>
+                    <td className="py-3 px-2 text-right num">{c.marketCap}</td>
+                    <td className="py-3 px-2 text-right num text-brand-700 font-medium">{c.evRevenue}</td>
+                    <td className="py-3 px-2 text-right num">{c.evEbitda}</td>
+                    <td className="py-3 px-2 text-right num">{c.growth}</td>
+                    <td className="py-3 px-2 text-right num">{c.grossMargin}</td>
+                    <td className="py-3 px-2 text-[12px] text-ink-700 max-w-[280px]">
+                      <div>{c.similarity}</div>
+                      <div className="text-ink-500 text-[11px] mt-0.5">{c.distance}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 p-3 bg-gradient-to-br from-brand-50 to-white border border-brand-500/20 rounded-lg">
+            <div className="text-[10px] uppercase tracking-wider text-brand-700 font-medium">估值锚定结论</div>
+            <div className="text-[13px] text-ink-800 mt-1 leading-relaxed">{extra.compsTakeaway}</div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── 投资论点对齐 + 创始团队 ─── */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
+        <div className="lg:col-span-7 bg-white border border-ink-200 rounded-xl p-5">
+          <h2 className="text-[14px] font-semibold tracking-tight mb-3">投资论点对齐</h2>
+          <div className="space-y-2">
+            {thesisChecks.map((c) => (
+              <div key={c.title} className="flex items-center gap-3">
+                <div className={`w-5 h-5 rounded flex items-center justify-center text-white text-[10px] shrink-0 ${c.pass ? 'bg-emerald-600' : 'bg-rose-600'}`}>
+                  {c.pass ? '✓' : '✕'}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-medium text-ink-900">{c.title}</span>
+                    <span className="text-[11px] text-ink-400 num">权重 {c.weight}%</span>
+                  </div>
+                  <div className="text-[11px] text-ink-500 mt-0.5">{c.detail}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
+        <div className="lg:col-span-5 bg-white border border-ink-200 rounded-xl p-5">
+          <h2 className="text-[14px] font-semibold tracking-tight mb-3">创始团队</h2>
+          <div className="space-y-3">
+            {deal.founders.map((f) => (
+              <div key={f.name} className="flex items-start gap-3 pb-3 border-b border-ink-100 last:border-0 last:pb-0">
+                <div className="w-9 h-9 rounded-full bg-ink-100 flex items-center justify-center text-[12px] font-semibold text-ink-700 shrink-0">
+                  {f.name.split(' ').map(w => w[0]).slice(0, 2).join('')}
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[13px] font-medium">{f.name}</span>
+                    <span className="text-[11px] text-ink-500">· {f.role}</span>
+                  </div>
+                  <div className="text-[12px] text-ink-600 mt-0.5 leading-relaxed">{f.background}</div>
+                  {f.highlight && <div className="text-[11px] text-brand-700 mt-1">{f.highlight}</div>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Wins / Concerns / Timeline ─── */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="bg-white border border-ink-200 rounded-xl p-5">
             <h2 className="text-[14px] font-semibold tracking-tight mb-3 text-emerald-700">核心亮点</h2>
@@ -279,5 +503,14 @@ function Row({ k, v }: { k: string; v: string }) {
       <span className="text-ink-500">{k}</span>
       <span className="text-ink-900 num font-medium">{v}</span>
     </div>
+  )
+}
+
+function Tag({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 num">
+      <span className="w-1.5 h-1.5 rounded-full" style={{ background: color }} />
+      <span style={{ color }}>{label}</span>
+    </span>
   )
 }
