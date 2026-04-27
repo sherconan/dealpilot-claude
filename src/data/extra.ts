@@ -211,7 +211,7 @@ export const dealExtras: Record<string, DealExtra> = {
     ],
     publicComps: [
       { name: 'iCAD', ticker: 'NASDAQ: ICAD', marketCap: '$220M', evRevenue: '4.2x', evEbitda: 'N/A', growth: '8% YoY', grossMargin: '70%', similarity: '医学影像 AI（乳腺）', distance: '美股估值倍数低反映医疗 AI 商业化难度' },
-      { name: '联影医疗', ticker: 'SH: 688271', marketCap: '$13B', evRevenue: '5.6x', evEbitda: '20x', growth: '20% YoY', grossMargin: '49%', similarity: '医学影像设备 + AI', distance: '硬件 + AI 模式估值高，纯 AI 公司估值会低于此' },
+      { name: '联影医疗', ticker: 'SH: 688271', marketCap: '约 ¥947 亿（≈$13.0B）', evRevenue: '~8.3x', evEbitda: '~12x', growth: '前 9 个月营收 ¥88.6 亿 · 净利率 12.6%', grossMargin: '净利率 12.6%（披露口径）', similarity: '医学影像设备 + AI 国产龙头', distance: 'EV/Revenue 8.3x 是医疗硬件 + AI 混合模式锚点；MetaMed 纯 AI 路径估值倍数会更高但 ARR 距离 50× 以上', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
       { name: '推想科技（已撤回 IPO）', ticker: '—', marketCap: '~$300M (上轮)', evRevenue: '8x', evEbitda: 'N/A', growth: '30% YoY', grossMargin: '60%', similarity: '中国放射 AI 直接对手', distance: '推想撤回 IPO 是赛道警示信号' },
     ],
     compsTakeaway: '医疗 AI 商业化历史性偏难，公开市场倍数仅 4-6x EV/Revenue。MetaMed 目前以 $22M 投前 / $0.3M ARR 计 73x，远超行业 — 需用"团队 + IP + 数据"三位一体作为估值锚，并附 ratchet 条款保护下行。',
@@ -250,7 +250,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'risk', question: '路鹰冷链 2024 关停的教训是什么？你们怎么避免同样的命运？', why: '同赛道有失败先例，必须问', expect: '具体差异化 + 财务纪律' },
     ],
     publicComps: [
-      { name: '顺丰控股', ticker: 'SZ: 002352', marketCap: '$25B', evRevenue: '1.2x', evEbitda: '14x', growth: '12% YoY', grossMargin: '14%', similarity: '物流主业 + 数字化', distance: '硬件物流估值倍数低，纯 SaaS 不应类比' },
+      { name: '顺丰控股', ticker: 'SZ: 002352', marketCap: '约 ¥1,808 亿（≈$25.0B）', evRevenue: '~0.6x', evEbitda: '~10x', growth: '2025 全年营收 ¥3,082 亿 · 净利 ¥111 亿', grossMargin: '净利率 3.6%（披露口径）', similarity: '物流主业 + 冷链 + 数字化', distance: '物流主业 EV/Revenue 仅 0.6x — 一旦混入硬件，估值倍数迅速回落；GreenLogistics 当前 33x ARR 严重高估', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
       { name: '日日顺（已退市）', ticker: '—', marketCap: '—', evRevenue: '—', evEbitda: '—', growth: '—', grossMargin: '—', similarity: '冷链物流 SaaS + 硬件', distance: '退市本身是赛道结构性警示' },
     ],
     compsTakeaway: '物流硬件 + SaaS 混合模式公开市场估值倍数极低（1-3x EV/Revenue）。GreenLogistics 当前 $60M 投前 / $1.8M（含硬件）= 33x，严重高估。建议要求估值降到 $20M 以下或 Pass。',

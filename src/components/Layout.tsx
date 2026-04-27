@@ -78,6 +78,20 @@ export default function Layout() {
       </aside>
 
       <main className="flex-1 overflow-y-auto scrollbar-thin">
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-[11.5px] text-amber-900 flex items-center gap-3 flex-wrap">
+          <span className="inline-flex items-center gap-1.5 font-medium">
+            <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 shrink-0" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM7.25 5a.75.75 0 011.5 0v3.5a.75.75 0 01-1.5 0V5zM8 12a1 1 0 110-2 1 1 0 010 2z"/></svg>
+            演示版本 · 数据透明声明
+          </span>
+          <span className="text-amber-800">
+            6 个项目均为<b>虚构演示</b>用于展示产品形态；可比上市公司表格中带
+            <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-100 border border-emerald-300 px-1 rounded mx-1"><svg viewBox="0 0 12 12" className="w-2 h-2" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>实时</span>
+            徽章的财务数据为 akshare/东方财富实时抓取（<span className="num">{new Date().toISOString().slice(0, 10)}</span>）。
+          </span>
+          <span className="text-amber-800">
+            生产路线：<code className="text-[10.5px] bg-amber-100 px-1 rounded">akshare</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">企查查</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">巨潮资讯</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">国知局</code> 已接入，BP 真实上传后自动调用核验
+          </span>
+        </div>
         <Outlet />
       </main>
     </div>
