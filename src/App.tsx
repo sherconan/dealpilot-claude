@@ -6,6 +6,7 @@ import DealDetail from './pages/DealDetail'
 import ICMemo from './pages/ICMemo'
 import Memory from './pages/Memory'
 import Thesis from './pages/Thesis'
+import Sources from './pages/Sources'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/pipeline" element={<Pipeline />} />
         <Route path="/thesis" element={<Thesis />} />
         <Route path="/memory" element={<Memory />} />
+        <Route path="/sources" element={<Sources />} />
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
       </Route>
