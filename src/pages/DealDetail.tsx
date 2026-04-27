@@ -360,56 +360,73 @@ export default function DealDetail() {
         </section>
       )}
 
-      {/* ─── 可比上市公司 ─── */}
-      {extra && extra.publicComps.length > 0 && (
+      {/* ─── 可比上市公司（真实 API 数据） ─── */}
+      {extra && (
         <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
-          <div className="mb-3">
-            <h2 className="text-[15px] font-semibold tracking-tight">可比上市公司</h2>
-            <p className="text-[12px] text-ink-500 mt-0.5">用于估值锚定 · 数据来源：Bloomberg / PitchBook / 公司年报（2026-Q1）</p>
+          <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <h2 className="text-[15px] font-semibold tracking-tight flex items-center gap-2">
+                可比上市公司
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                  <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                  全部真实数据
+                </span>
+              </h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">akshare · 东方财富实时接口 · 抓取于 2026-04-24</p>
+            </div>
           </div>
-          <div className="overflow-x-auto scrollbar-thin">
-            <table className="w-full text-[12.5px] min-w-[900px]">
-              <thead>
-                <tr className="text-[10px] uppercase tracking-wider text-ink-500 border-b border-ink-200">
-                  <th className="text-left py-2 px-2">公司 · 代码</th>
-                  <th className="text-right py-2 px-2 num">市值</th>
-                  <th className="text-right py-2 px-2 num">EV/Rev</th>
-                  <th className="text-right py-2 px-2 num">EV/EBITDA</th>
-                  <th className="text-right py-2 px-2 num">营收增速</th>
-                  <th className="text-right py-2 px-2 num">毛利率</th>
-                  <th className="text-left py-2 px-2">相似度 / 距离</th>
-                </tr>
-              </thead>
-              <tbody>
-                {extra.publicComps.map((c, i) => (
-                  <tr key={i} className="border-b border-ink-100 hover:bg-ink-50">
-                    <td className="py-3 px-2">
-                      <div className="font-medium text-ink-900 flex items-center gap-1.5">
-                        {c.name}
-                        {c.verified && (
-                          <span title={`真实数据 from ${c.source} · ${c.lastFetched}`} className="inline-flex items-center gap-0.5 text-[9px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded">
-                            <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
-                            实时
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[11px] text-ink-500">{c.ticker}</div>
-                      {c.verified && <div className="text-[9px] text-ink-400 mt-0.5">{c.source} · {c.lastFetched}</div>}
-                    </td>
-                    <td className="py-3 px-2 text-right num">{c.marketCap}</td>
-                    <td className="py-3 px-2 text-right num text-brand-700 font-medium">{c.evRevenue}</td>
-                    <td className="py-3 px-2 text-right num">{c.evEbitda}</td>
-                    <td className="py-3 px-2 text-right num">{c.growth}</td>
-                    <td className="py-3 px-2 text-right num">{c.grossMargin}</td>
-                    <td className="py-3 px-2 text-[12px] text-ink-700 max-w-[280px]">
-                      <div>{c.similarity}</div>
-                      <div className="text-ink-500 text-[11px] mt-0.5">{c.distance}</div>
-                    </td>
+          {extra.publicComps.length === 0 ? (
+            <div className="text-[13px] text-ink-500 bg-ink-50 border border-ink-200 rounded-lg px-4 py-6 text-center">
+              本项目无合规可比上市公司
+            </div>
+          ) : (
+            <div className="overflow-x-auto scrollbar-thin">
+              <table className="w-full text-[12.5px] min-w-[1000px]">
+                <thead>
+                  <tr className="text-[10px] uppercase tracking-wider text-ink-500 border-b border-ink-200">
+                    <th className="text-left py-2 px-2">公司 · 代码</th>
+                    <th className="text-right py-2 px-2 num">股价 · 报告期</th>
+                    <th className="text-right py-2 px-2 num">营收</th>
+                    <th className="text-right py-2 px-2 num">净利润</th>
+                    <th className="text-right py-2 px-2 num">净利率</th>
+                    <th className="text-right py-2 px-2 num">总资产</th>
+                    <th className="text-left py-2 px-2">相似度 / 距离</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {extra.publicComps.map((c, i) => (
+                    <tr key={i} className="border-b border-ink-100 hover:bg-ink-50">
+                      <td className="py-3 px-2">
+                        <div className="font-medium text-ink-900 flex items-center gap-1.5">
+                          {c.name}
+                          {c.verified && (
+                            <span title={`真实数据 from ${c.source}`} className="inline-flex items-center gap-0.5 text-[9px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded">
+                              <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                              实时
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-ink-500">{c.ticker}</div>
+                        {c.verified && <div className="text-[9px] text-ink-400 mt-0.5">{c.source}</div>}
+                      </td>
+                      <td className="py-3 px-2 text-right num">
+                        <div className="text-ink-900 font-medium">{c.price || '—'}</div>
+                        <div className="text-[10px] text-ink-400">{c.reportDate || '—'}</div>
+                      </td>
+                      <td className="py-3 px-2 text-right num text-brand-700 font-medium">{c.revenue || '—'}</td>
+                      <td className="py-3 px-2 text-right num">{c.netIncome || '—'}</td>
+                      <td className="py-3 px-2 text-right num font-medium">{c.netMargin || '—'}</td>
+                      <td className="py-3 px-2 text-right num text-ink-600">{c.totalAssets || '—'}</td>
+                      <td className="py-3 px-2 text-[12px] text-ink-700 max-w-[280px]">
+                        <div>{c.similarity}</div>
+                        <div className="text-ink-500 text-[11px] mt-0.5">{c.distance}</div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
           <div className="mt-4 p-3 bg-gradient-to-br from-brand-50 to-white border border-brand-500/20 rounded-lg">
             <div className="text-[10px] uppercase tracking-wider text-brand-700 font-medium">估值锚定结论</div>
             <div className="text-[13px] text-ink-800 mt-1 leading-relaxed">{extra.compsTakeaway}</div>

@@ -84,12 +84,10 @@ export default function Layout() {
             演示版本 · 数据透明声明
           </span>
           <span className="text-amber-800">
-            6 个项目均为<b>虚构演示</b>用于展示产品形态；可比上市公司表格中带
-            <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-100 border border-emerald-300 px-1 rounded mx-1"><svg viewBox="0 0 12 12" className="w-2 h-2" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>实时</span>
-            徽章的财务数据为 akshare/东方财富实时抓取（<span className="num">{new Date().toISOString().slice(0, 10)}</span>）。
+            6 个项目本身为<b>虚构演示</b>；但<b>所有可比上市公司表格 100% 真实数据</b>（akshare 实时财报 + 东方财富股价，<span className="num">2026-04-24</span> 抓取）。
           </span>
           <span className="text-amber-800">
-            生产路线：<code className="text-[10.5px] bg-amber-100 px-1 rounded">akshare</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">企查查</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">巨潮资讯</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">国知局</code> 已接入，BP 真实上传后自动调用核验
+            真信源已接入：<code className="text-[10.5px] bg-amber-100 px-1 rounded">akshare</code>(A 股财报) · <code className="text-[10.5px] bg-amber-100 px-1 rounded">企查查</code>(工商/IP) · <code className="text-[10.5px] bg-amber-100 px-1 rounded">巨潮</code>(年报) · <code className="text-[10.5px] bg-amber-100 px-1 rounded">国知局</code>(专利) — BP 真实上传后逐项调用
           </span>
         </div>
         <Outlet />
