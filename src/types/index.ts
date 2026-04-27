@@ -73,6 +73,9 @@ export interface PublicComp {
   grossMargin: string
   similarity: string
   distance: string
+  verified?: boolean        // 真实从 API 抓取，未编造
+  source?: string           // 数据源标识（akshare / qcc / cninfo / placeholder）
+  lastFetched?: string      // 抓取时间戳
 }
 
 export interface DealExtra {

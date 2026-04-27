@@ -384,8 +384,17 @@ export default function DealDetail() {
                 {extra.publicComps.map((c, i) => (
                   <tr key={i} className="border-b border-ink-100 hover:bg-ink-50">
                     <td className="py-3 px-2">
-                      <div className="font-medium text-ink-900">{c.name}</div>
+                      <div className="font-medium text-ink-900 flex items-center gap-1.5">
+                        {c.name}
+                        {c.verified && (
+                          <span title={`真实数据 from ${c.source} · ${c.lastFetched}`} className="inline-flex items-center gap-0.5 text-[9px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1 py-0.5 rounded">
+                            <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                            实时
+                          </span>
+                        )}
+                      </div>
                       <div className="text-[11px] text-ink-500">{c.ticker}</div>
+                      {c.verified && <div className="text-[9px] text-ink-400 mt-0.5">{c.source} · {c.lastFetched}</div>}
                     </td>
                     <td className="py-3 px-2 text-right num">{c.marketCap}</td>
                     <td className="py-3 px-2 text-right num text-brand-700 font-medium">{c.evRevenue}</td>
