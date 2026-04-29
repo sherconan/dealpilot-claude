@@ -165,6 +165,33 @@ export default function Dashboard() {
             </div>
           </div>
 
+          <div className="bg-white border border-ink-200 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-semibold text-[14px] tracking-tight">团队近 7 天活动</h2>
+              <span className="text-[10px] text-ink-400 num">14 件</span>
+            </div>
+            <ol className="space-y-2.5 relative pl-4 before:absolute before:left-[5px] before:top-1 before:bottom-1 before:w-px before:bg-ink-200">
+              {[
+                { who: 'Henry', t: '2 小时前', icon: '⤴', color: '#0f766e', text: '将 NebulaAI 标记为 Priority + 推入 4/30 IC' },
+                { who: 'Elaine', t: '4 小时前', icon: '✓', color: '#0ea5e9', text: 'NeoBank 财务尽调签署 by 德勤' },
+                { who: 'AI', t: '6 小时前', icon: '!', color: '#dc2626', text: '触发 CryptoVault 创始人风险预警 → 自动 Pass' },
+                { who: 'Martin', t: '今天上午', icon: '✎', color: '#7c3aed', text: '完成 MetaMed 临床顾问 reference check（3/3）' },
+                { who: 'Henry', t: '昨天 20:14', icon: '✎', color: '#0f766e', text: '更新 Lumen AI 投后季报：MoM 38%' },
+                { who: 'AI', t: '昨天 12:30', icon: '⤳', color: '#d97706', text: '检测到 Orbit Logistics 跑道 < 12 月，触发紧急预警' },
+                { who: 'Elaine', t: '前天', icon: '+', color: '#0ea5e9', text: '新增 7 个 BP 入箱（Fintech 4 / Health 2 / Robot 1）' },
+              ].map((a, i) => (
+                <li key={i} className="relative">
+                  <div className="absolute -left-4 top-1.5 w-2.5 h-2.5 rounded-full bg-white border-2" style={{ borderColor: a.color }} />
+                  <div className="flex items-center justify-between text-[10px] text-ink-500 mb-0.5">
+                    <span className="font-medium">{a.who}</span>
+                    <span className="num">{a.t}</span>
+                  </div>
+                  <div className="text-[12.5px] text-ink-800 leading-relaxed">{a.text}</div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <div className="bg-gradient-to-br from-brand-50 to-white border border-brand-500/20 rounded-xl p-5">
             <div className="text-[11px] tracking-[0.14em] text-brand-700 uppercase font-medium">AI 深度发现</div>
             <div className="text-[13px] text-ink-800 mt-2 leading-relaxed">
