@@ -25,9 +25,13 @@ export default function Dashboard() {
     <div className="px-8 py-6 max-w-[1400px] mx-auto">
       <header className="flex items-end justify-between flex-wrap gap-4 mb-6">
         <div>
-          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · 2026 年 4 月 24 日 · 周五</div>
+          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · 2026 年 4 月 30 日 · 周三</div>
           <h1 className="text-[28px] font-semibold tracking-tight mt-1">今天有 <span className="text-brand-700">3 个项目</span> 等你决策</h1>
-          <p className="text-[13px] text-ink-600 mt-1.5">NebulaAI 已进入 IC，4/26 周日表决 · MetaMed 合伙人会议 4/27 · GreenLogistics 客户集中度红线待确认</p>
+          <p className="text-[13px] text-ink-600 mt-1.5">NebulaAI 已进入 IC，4/30 周三表决 · MetaMed 合伙人会议 5/3 · GreenLogistics 客户集中度红线待确认</p>
+          <p className="text-[12px] text-ink-500 mt-2 max-w-2xl leading-relaxed italic border-l-2 border-brand-500/30 pl-3">
+            "VC 的核心赌注始终是「人」 — BP 只是敲门砖，真正的决策在「人」。"
+            <span className="not-italic ml-1.5 text-ink-400">— Sequoia Capital</span>
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button className="px-4 py-2 text-sm font-medium rounded-lg border border-ink-200 bg-white hover:bg-ink-50 transition">

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { deals } from '../data/deals'
 import { stageMeta } from '../lib/scoring'
+import { dealsToCSV, downloadCSV } from '../lib/csv'
 import type { Stage } from '../types'
 
 const LS_OVERRIDE = 'dp:stageOverride'
@@ -124,6 +125,16 @@ export default function Pipeline() {
               <button onClick={() => setView('kanban')} className={`px-2.5 py-1 text-[11px] rounded-md transition ${view === 'kanban' ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>看板</button>
               <button onClick={() => setView('list')} className={`px-2.5 py-1 text-[11px] rounded-md transition ${view === 'list' ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>列表</button>
             </div>
+            <button
+              onClick={() => {
+                const all = columns.flatMap((c) => grouped[c.stage])
+                downloadCSV(`dealpilot-pipeline-${new Date().toISOString().slice(0,10)}.csv`, dealsToCSV(all))
+              }}
+              className="text-[11px] px-2.5 py-1.5 bg-ink-900 text-white rounded-lg hover:bg-ink-800 transition inline-flex items-center gap-1"
+              title="导出当前筛选结果为 CSV"
+            >
+              CSV
+            </button>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-1 flex-wrap">
