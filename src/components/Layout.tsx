@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { deals } from '../data/deals'
 import { useApp } from '../contexts/AppContext'
@@ -8,6 +9,9 @@ export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
   const loc = useLocation()
   const priorityDeals = deals.filter((d) => d.recommendation === 'priority').slice(0, 3)
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => { setMobileOpen(false) }, [loc.pathname])
 
   const workspace = [
     { to: '/', label: t('nav.dashboard'), hint: t('nav.dashboard.hint') },
@@ -28,7 +32,10 @@ export default function Layout() {
 
   return (
     <div className="min-h-[100dvh] flex bg-ink-50">
-      <aside className="w-[248px] shrink-0 border-r border-ink-200 bg-white flex flex-col">
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-30 bg-ink-900/40 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+      )}
+      <aside className={`w-[248px] shrink-0 border-r border-ink-200 bg-white flex flex-col fixed md:relative inset-y-0 left-0 z-40 transition-transform md:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         <div className="px-5 py-5 border-b border-ink-200">
           <Link to="/" className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-lg bg-brand-700 flex items-center justify-center shadow-sm">
@@ -120,6 +127,25 @@ export default function Layout() {
       </aside>
 
       <main className="flex-1 overflow-y-auto scrollbar-thin flex flex-col">
+        {/* Mobile top bar */}
+        <div className="md:hidden flex items-center justify-between px-4 py-2.5 border-b border-ink-200 bg-white sticky top-0 z-20">
+          <button onClick={() => setMobileOpen(true)} aria-label="Menu" className="p-1.5 rounded hover:bg-ink-100">
+            <svg viewBox="0 0 16 16" className="w-5 h-5 text-ink-700" fill="currentColor"><path d="M2 4h12v1.5H2V4zm0 3.75h12v1.5H2v-1.5zM2 11.5h12V13H2v-1.5z"/></svg>
+          </button>
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-brand-700 flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M5 19l4-4 3 3 7-8" strokeLinecap="round" strokeLinejoin="round" /><circle cx="19" cy="10" r="1.5" fill="currentColor" /></svg>
+            </div>
+            <span className="font-semibold text-[14px] tracking-tight">{t('brand.title')}</span>
+          </Link>
+          <button onClick={toggleTheme} aria-label="Theme" className="p-1.5 rounded hover:bg-ink-100">
+            {theme === 'light' ? (
+              <svg viewBox="0 0 16 16" className="w-4 h-4 text-ink-700" fill="currentColor"><path d="M8 6a2 2 0 100 4 2 2 0 000-4zM8 1a.75.75 0 01.75.75v.5a.75.75 0 01-1.5 0v-.5A.75.75 0 018 1z"/></svg>
+            ) : (
+              <svg viewBox="0 0 16 16" className="w-4 h-4 text-ink-700" fill="currentColor"><path d="M6.95 1.21a.75.75 0 01.46.97A4.5 4.5 0 0013.82 8.6a.75.75 0 011.43.46 6 6 0 11-9.27-7.85.75.75 0 01.97.0z"/></svg>
+            )}
+          </button>
+        </div>
         <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-[11.5px] text-amber-900 flex items-center gap-3 flex-wrap">
           <span className="inline-flex items-center gap-1.5 font-medium">
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 shrink-0" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM7.25 5a.75.75 0 011.5 0v3.5a.75.75 0 01-1.5 0V5zM8 12a1 1 0 110-2 1 1 0 010 2z"/></svg>
