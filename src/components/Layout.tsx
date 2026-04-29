@@ -2,6 +2,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { deals } from '../data/deals'
 import { useApp } from '../contexts/AppContext'
 import CommandPalette from './CommandPalette'
+import HelpModal from './HelpModal'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -148,6 +149,7 @@ export default function Layout() {
         </footer>
       </main>
       <CommandPalette />
+      <HelpModal />
     </div>
   )
 }

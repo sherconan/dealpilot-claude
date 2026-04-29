@@ -4,6 +4,7 @@ import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
+import ThesisCanvas from '../components/ThesisCanvas'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
@@ -189,6 +190,9 @@ export default function DealDetail() {
           </div>
         </div>
       </section>
+
+      {/* ─── 投资逻辑画布 ─── */}
+      <ThesisCanvas deal={deal} />
 
       {/* ─── Sequoia 10 要素 vs 行业基准 ─── */}
       <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
