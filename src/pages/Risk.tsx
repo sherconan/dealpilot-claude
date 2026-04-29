@@ -1,0 +1,169 @@
+import { useState } from 'react'
+import { useApp } from '../contexts/AppContext'
+
+interface ScanResult {
+  category: string
+  shortName: string
+  count: number
+  status: 'clean' | 'low' | 'medium' | 'high'
+  detail: string
+  source: string
+}
+
+interface CompanyScan {
+  name: string
+  cnName: string
+  results: ScanResult[]
+  overall: 'clean' | 'caution' | 'critical'
+  notes: string
+}
+
+const cases: CompanyScan[] = [
+  {
+    name: '北京旷视科技有限公司',
+    cnName: '旷视 Megvii',
+    overall: 'clean',
+    notes: '已上市筹备阶段企业，工商画像完整、专利护城河深（434 条），无任何司法 / 失信记录。可作为 Founder reference 健康样本。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '无任何行政处罚记录', source: 'qcc-risk · get_administrative_penalty' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '不在最高人民法院失信被执行人名单', source: 'qcc-risk · get_dishonest_info' },
+      { category: '被执行人案件', shortName: '被执', count: 0, status: 'clean', detail: '无被执行人记录', source: 'qcc-risk · get_judgment_debtor_info' },
+      { category: '经营异常名录', shortName: '异常', count: 0, status: 'clean', detail: '工商正常经营状态', source: 'qcc-risk · get_business_exception' },
+      { category: '严重违法失信名单', shortName: '严重', count: 0, status: 'clean', detail: '不在市监总局严重违法失信名单', source: 'qcc-risk · get_serious_violation' },
+    ],
+  },
+  {
+    name: '虚构案例 · CryptoVault',
+    cnName: 'CryptoVault · 链库（虚构）',
+    overall: 'critical',
+    notes: '触发 4 项硬红线 — 创始人前公司 2024 年因合规问题被关停未披露、TAM 数据造假 50 倍、估值脱离基本面 7-10 倍、合规路径空白。建议直接 Pass 并存档机构记忆库创始人风险标签。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 1, status: 'high', detail: '前公司 2024-Q3 被香港 SFC 命令停止"未持牌经营"', source: '演示数据 · 真实查询模板' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '当前主体未列入失信名单', source: '演示数据' },
+      { category: '诚信披露', shortName: '披露', count: 1, status: 'high', detail: 'BP 未披露前公司被关停事实', source: 'Reference Check 3/3 前同事提及' },
+      { category: 'TAM 真实性', shortName: 'TAM', count: 1, status: 'high', detail: 'BP 声称 $4.2T，实际行业规模约 $80B（差 50 倍）', source: 'autoglm 反向核查 + Galaxy/Coinbase' },
+      { category: '估值合理性', shortName: '估值', count: 1, status: 'high', detail: '无收入要 $80M 估值，行业中位 $8-12M', source: 'PitchBook seed 估值' },
+    ],
+  },
+  {
+    name: '上海联影医疗科技股份有限公司',
+    cnName: '联影医疗 · United Imaging',
+    overall: 'clean',
+    notes: 'A 股科创板上市公司（688271），财务数据透明。akshare 实测 2025 全年营收 ¥88.59 亿（前 9 月）、净利率 12.6%。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '无重大行政处罚', source: 'qcc-risk' },
+      { category: '财务数据真实性', shortName: '财务', count: 0, status: 'clean', detail: 'akshare 抓取数据与公开年报对齐', source: 'akshare + cninfo 双源交叉' },
+      { category: '专利状态', shortName: '专利', count: 0, status: 'clean', detail: '专利授权率正常', source: 'qcc-ipr' },
+      { category: '司法风险', shortName: '司法', count: 0, status: 'clean', detail: '无重大司法纠纷', source: 'qcc-risk' },
+      { category: '股权变动', shortName: '股权', count: 0, status: 'clean', detail: '股权结构稳定', source: 'qcc-company · 历史变更' },
+    ],
+  },
+]
+
+const statusMeta = {
+  clean: { color: '#059669', bg: 'bg-emerald-50', label: '干净', icon: '✓' },
+  low: { color: '#0ea5e9', bg: 'bg-sky-50', label: '低', icon: 'i' },
+  medium: { color: '#d97706', bg: 'bg-amber-50', label: '中', icon: '!' },
+  high: { color: '#dc2626', bg: 'bg-rose-50', label: '高', icon: '✕' },
+}
+
+const overallMeta = {
+  clean: { color: '#059669', label: '通过 · 无重大风险', desc: '所有 5 类风险扫描通过，可作为机构合格创始人 / 公司参考' },
+  caution: { color: '#d97706', label: '观察 · 存在软扣分项', desc: '部分维度命中扣分项，建议尽调中重点核实' },
+  critical: { color: '#dc2626', label: '触发硬红线', desc: '存在不可接受的合规 / 诚信问题，建议 Pass + 创始人风险标签' },
+}
+
+export default function Risk() {
+  const { t } = useApp()
+  const [selected, setSelected] = useState(0)
+  const c = cases[selected]
+  const m = overallMeta[c.overall]
+
+  return (
+    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+      <header className="mb-5">
+        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Risk Scanner · 5 维合规扫描</div>
+        <h1 className="text-[26px] font-semibold tracking-tight mt-1">{t('nav.risk')}</h1>
+        <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
+          一键并行调用 <code className="text-[11px] bg-ink-100 px-1 rounded">qcc-risk</code> 五个工具：行政处罚 / 失信被执行 / 被执行人 / 经营异常 / 严重违法 → 任一命中触发硬红线 → 自动建议 Pass + 标记创始人风险
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <aside className="lg:col-span-4 space-y-3">
+          <div className="bg-white border border-ink-200 rounded-xl p-4">
+            <div className="text-[11px] tracking-wider uppercase text-ink-500 mb-2">扫描公司</div>
+            <input
+              type="text"
+              placeholder="输入公司全称（演示版预填案例）"
+              className="w-full text-[13px] bg-ink-50 border border-ink-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              readOnly
+              value={c.name}
+            />
+          </div>
+          <div className="bg-white border border-ink-200 rounded-xl p-4">
+            <div className="text-[11px] tracking-wider uppercase text-ink-500 mb-2">演示案例</div>
+            <div className="space-y-1.5">
+              {cases.map((cc, i) => {
+                const om = overallMeta[cc.overall]
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelected(i)}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-[13px] transition ${
+                      selected === i ? 'bg-brand-50 border border-brand-500/40' : 'hover:bg-ink-50 border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium truncate">{cc.cnName}</span>
+                      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: om.color }} />
+                    </div>
+                    <div className="text-[11px] text-ink-500 mt-0.5">{om.label}</div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </aside>
+
+        <div className="lg:col-span-8 space-y-4">
+          <div className="bg-white border border-ink-200 rounded-xl p-5">
+            <div className="flex items-start justify-between gap-3 flex-wrap">
+              <div>
+                <h2 className="text-[16px] font-semibold tracking-tight">{c.cnName}</h2>
+                <div className="text-[12px] text-ink-500 mt-0.5">{c.name}</div>
+              </div>
+              <span className="inline-flex items-center gap-2 text-[12.5px] font-medium px-3 py-1.5 rounded-full" style={{ color: m.color, background: m.color + '14' }}>
+                <span className="w-2 h-2 rounded-full" style={{ background: m.color }} />
+                {m.label}
+              </span>
+            </div>
+            <p className="text-[13px] text-ink-700 mt-3 leading-relaxed">{m.desc}</p>
+            <p className="text-[12.5px] text-ink-600 mt-2 leading-relaxed border-l-2 border-brand-500/40 pl-3">{c.notes}</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {c.results.map((r) => {
+              const sm = statusMeta[r.status]
+              return (
+                <div key={r.category} className="bg-white border border-ink-200 rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="text-[10px] tracking-wider uppercase text-ink-500">{r.category}</div>
+                      <div className="text-[18px] font-semibold tracking-tight mt-1 num" style={{ color: sm.color }}>
+                        {r.count} <span className="text-[11px] text-ink-500 font-normal">{sm.label}</span>
+                      </div>
+                    </div>
+                    <div className={`w-7 h-7 rounded-md flex items-center justify-center text-white text-[12px] font-semibold shrink-0`} style={{ background: sm.color }}>{sm.icon}</div>
+                  </div>
+                  <div className="text-[12px] text-ink-700 mt-2 leading-relaxed">{r.detail}</div>
+                  <div className="text-[10px] text-ink-400 mt-2 font-mono">{r.source}</div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

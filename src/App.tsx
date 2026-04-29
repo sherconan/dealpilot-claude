@@ -7,6 +7,10 @@ import ICMemo from './pages/ICMemo'
 import Memory from './pages/Memory'
 import Thesis from './pages/Thesis'
 import Sources from './pages/Sources'
+import Upload from './pages/Upload'
+import Risk from './pages/Risk'
+import Portfolio from './pages/Portfolio'
+import Signals from './pages/Signals'
 
 export default function App() {
   return (
@@ -17,6 +21,10 @@ export default function App() {
         <Route path="/thesis" element={<Thesis />} />
         <Route path="/memory" element={<Memory />} />
         <Route path="/sources" element={<Sources />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/risk" element={<Risk />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/signals" element={<Signals />} />
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
       </Route>
