@@ -22,6 +22,8 @@ export const dict: Dict = {
   'nav.portfolio.hint': { zh: '已投跟踪', en: 'Tracking' },
   'nav.signals': { zh: 'AI 信号雷达', en: 'Signals' },
   'nav.signals.hint': { zh: '招聘 / 代码', en: 'Hiring / Code' },
+  'nav.docs': { zh: '方法论', en: 'Docs' },
+  'nav.docs.hint': { zh: '产品宪法', en: 'Foundation' },
   'nav.workspace': { zh: '工作台', en: 'Workspace' },
   'nav.priority': { zh: '优先推进', en: 'Priority' },
   'nav.tools': { zh: '尽调工具', en: 'DD Tools' },

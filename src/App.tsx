@@ -11,6 +11,7 @@ import Upload from './pages/Upload'
 import Risk from './pages/Risk'
 import Portfolio from './pages/Portfolio'
 import Signals from './pages/Signals'
+import Docs from './pages/Docs'
 
 export default function App() {
   return (
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/risk" element={<Risk />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/signals" element={<Signals />} />
+        <Route path="/docs" element={<Docs />} />
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
       </Route>
