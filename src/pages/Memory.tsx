@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { deals } from '../data/deals'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
+import { dealsToCSV, downloadCSV } from '../lib/csv'
 
 type SortKey = 'score' | 'recent' | 'sector'
 type RecFilter = 'all' | 'priority' | 'monitor' | 'conditional' | 'pass'
@@ -51,6 +52,13 @@ export default function Memory() {
               <option value="sector">按赛道</option>
               <option value="recent">按更新时间</option>
             </select>
+            <button
+              onClick={() => downloadCSV(`dealpilot-memory-${new Date().toISOString().slice(0,10)}.csv`, dealsToCSV(filtered))}
+              className="text-[12px] px-3 py-1.5 bg-ink-900 text-white rounded-lg hover:bg-ink-800 transition inline-flex items-center gap-1.5"
+            >
+              <svg viewBox="0 0 16 16" className="w-3 h-3" fill="currentColor"><path d="M8 1a.75.75 0 01.75.75v8.69l2.72-2.72a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 011.06-1.06l2.72 2.72V1.75A.75.75 0 018 1zM2 13.75a.75.75 0 011.5 0V14h9v-.25a.75.75 0 011.5 0V14a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 012 14v-.25z"/></svg>
+              导出 CSV
+            </button>
           </div>
         </div>
 
