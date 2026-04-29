@@ -18,6 +18,18 @@
   * { box-sizing: border-box; }
 }
 
+/* ─── Print 优化（IC Memo PDF 导出） ─── */
+@media print {
+  aside, .no-print { display: none !important; }
+  main { overflow: visible !important; }
+  body { background: white !important; }
+  .bg-amber-50, .border-amber-200 { display: none !important; }
+  article, section { break-inside: avoid; page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  .shadow-card, .shadow-pop { box-shadow: none !important; }
+  @page { margin: 18mm; size: A4; }
+}
+
 /* ─── Dark mode 全局覆盖 ─── */
 @layer base {
   html.dark, html.dark body { background: #0b1220; color: #e5e7eb; }

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { sequoiaLabels } from '../lib/scoring'
@@ -5,7 +6,18 @@ import { sequoiaLabels } from '../lib/scoring'
 export default function ICMemo() {
   const { id } = useParams()
   const deal = getDealById(id || '')
+  const [shareCopied, setShareCopied] = useState(false)
   if (!deal) return <div className="p-10 text-center text-ink-500">项目未找到</div>
+
+  const handlePrint = () => window.print()
+  const handleShare = async () => {
+    const url = window.location.href
+    try {
+      await navigator.clipboard.writeText(url)
+      setShareCopied(true)
+      setTimeout(() => setShareCopied(false), 2200)
+    } catch { /* clipboard might be blocked */ }
+  }
 
   return (
     <div className="px-8 py-6 max-w-[980px] mx-auto">
@@ -21,9 +33,15 @@ export default function ICMemo() {
           <h1 className="text-[24px] font-semibold tracking-tight mt-1">{deal.name} · 投资委员会备忘录</h1>
           <p className="text-[12px] text-ink-500 mt-1.5">生成于 2026-04-24 10:32 GMT+8 · 基于 AI 自动聚合 + 人工校对 · <span className="text-brand-700">信念文件（Conviction Document）</span></p>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">Word 导出</button>
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">PDF 导出</button>
+        <div className="flex items-center gap-2 no-print">
+          <button onClick={handleShare} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50 inline-flex items-center gap-1.5">
+            <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor"><path d="M11 1.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM5 6.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm6 5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM6.85 7.4l3.3-1.9m-3.3 4.2l3.3 1.9" stroke="currentColor" strokeWidth="1" fill="none"/></svg>
+            {shareCopied ? '已复制 ✓' : '分享链接'}
+          </button>
+          <button onClick={handlePrint} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50 inline-flex items-center gap-1.5">
+            <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 7V2h10v5h2a1 1 0 011 1v5a1 1 0 01-1 1h-2v-3H3v3H1a1 1 0 01-1-1V8a1 1 0 011-1h2zm10 0V3H4v4h9zm0 5v-3H4v3h9z"/></svg>
+            打印 / 导出 PDF
+          </button>
           <button className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">提交投委会</button>
         </div>
       </header>
