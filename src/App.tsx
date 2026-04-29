@@ -12,6 +12,7 @@ import Risk from './pages/Risk'
 import Portfolio from './pages/Portfolio'
 import Signals from './pages/Signals'
 import Docs from './pages/Docs'
+import Compare from './pages/Compare'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/signals" element={<Signals />} />
         <Route path="/docs" element={<Docs />} />
+        <Route path="/compare" element={<Compare />} />
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
       </Route>

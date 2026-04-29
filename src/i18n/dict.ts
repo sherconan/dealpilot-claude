@@ -24,6 +24,8 @@ export const dict: Dict = {
   'nav.signals.hint': { zh: '招聘 / 代码', en: 'Hiring / Code' },
   'nav.docs': { zh: '方法论', en: 'Docs' },
   'nav.docs.hint': { zh: '产品宪法', en: 'Foundation' },
+  'nav.compare': { zh: '项目对比', en: 'Compare' },
+  'nav.compare.hint': { zh: '并排比较', en: 'Side-by-side' },
   'nav.workspace': { zh: '工作台', en: 'Workspace' },
   'nav.priority': { zh: '优先推进', en: 'Priority' },
   'nav.tools': { zh: '尽调工具', en: 'DD Tools' },

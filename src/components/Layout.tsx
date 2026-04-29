@@ -15,6 +15,7 @@ export default function Layout() {
   ]
   const tools = [
     { to: '/upload', label: t('nav.upload'), hint: t('nav.upload.hint') },
+    { to: '/compare', label: t('nav.compare'), hint: t('nav.compare.hint') },
     { to: '/risk', label: t('nav.risk'), hint: t('nav.risk.hint') },
     { to: '/signals', label: t('nav.signals'), hint: t('nav.signals.hint') },
     { to: '/thesis', label: t('nav.thesis'), hint: t('nav.thesis.hint') },
