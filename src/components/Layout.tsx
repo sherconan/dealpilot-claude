@@ -12,6 +12,7 @@ export default function Layout() {
     { to: '/', label: t('nav.dashboard'), hint: t('nav.dashboard.hint') },
     { to: '/pipeline', label: t('nav.pipeline'), hint: t('nav.pipeline.hint') },
     { to: '/portfolio', label: t('nav.portfolio'), hint: t('nav.portfolio.hint') },
+    { to: '/briefings', label: t('nav.briefings'), hint: t('nav.briefings.hint') },
   ]
   const tools = [
     { to: '/upload', label: t('nav.upload'), hint: t('nav.upload.hint') },
