@@ -14,6 +14,7 @@ import Signals from './pages/Signals'
 import Docs from './pages/Docs'
 import Compare from './pages/Compare'
 import Briefings from './pages/Briefings'
+import Changelog from './pages/Changelog'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/docs" element={<Docs />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/briefings" element={<Briefings />} />
+        <Route path="/changelog" element={<Changelog />} />
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
       </Route>

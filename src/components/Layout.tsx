@@ -118,7 +118,7 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto scrollbar-thin">
+      <main className="flex-1 overflow-y-auto scrollbar-thin flex flex-col">
         <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-[11.5px] text-amber-900 flex items-center gap-3 flex-wrap">
           <span className="inline-flex items-center gap-1.5 font-medium">
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 shrink-0" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM7.25 5a.75.75 0 011.5 0v3.5a.75.75 0 01-1.5 0V5zM8 12a1 1 0 110-2 1 1 0 010 2z"/></svg>
@@ -128,8 +128,24 @@ export default function Layout() {
           <span className="text-amber-800">
             {t('disclaimer.sources')}: <code className="text-[10.5px] bg-amber-100 px-1 rounded">akshare</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">qcc</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">cninfo</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">SIPO</code>
           </span>
+          <Link to="/changelog" className="ml-auto inline-flex items-center gap-1 text-[11px] font-medium text-brand-700 hover:underline">
+            7h Challenge · 18 Sprints →
+          </Link>
         </div>
         <Outlet />
+        <footer className="mt-auto border-t border-ink-200 px-6 py-4 text-[11px] text-ink-500 flex items-center justify-between flex-wrap gap-3 no-print">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span>© 2026 DealPilot · 仅用于产品演示，不构成投资建议</span>
+            <a href="https://github.com/sherconan/dealpilot-claude" target="_blank" className="hover:text-brand-700">GitHub</a>
+            <Link to="/docs" className="hover:text-brand-700">方法论</Link>
+            <Link to="/sources" className="hover:text-brand-700">真信源</Link>
+            <Link to="/changelog" className="hover:text-brand-700">7h Challenge</Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <kbd className="bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded num">⌘ K</kbd>
+            <span>唤起命令面板</span>
+          </div>
+        </footer>
       </main>
       <CommandPalette />
     </div>
