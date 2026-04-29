@@ -19,6 +19,7 @@ export default function Layout() {
     { to: '/thesis', label: t('nav.thesis'), hint: t('nav.thesis.hint') },
     { to: '/memory', label: t('nav.memory'), hint: t('nav.memory.hint') },
     { to: '/sources', label: t('nav.sources'), hint: t('nav.sources.hint') },
+    { to: '/docs', label: t('nav.docs'), hint: t('nav.docs.hint') },
   ]
 
   return (

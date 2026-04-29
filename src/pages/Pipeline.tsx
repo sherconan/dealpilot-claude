@@ -13,35 +13,88 @@ const columns: { stage: Stage; description: string; passRate: string }[] = [
   { stage: 'pass', description: '已 Pass · 保留机构记忆', passRate: '—' },
 ]
 
+type ScoreFilter = 'all' | '85+' | '70-85' | '50-70' | '<50'
+type SortKey = 'score' | 'recent' | 'valuation'
+
 export default function Pipeline() {
   const [sector, setSector] = useState<string>('all')
+  const [search, setSearch] = useState<string>('')
+  const [scoreFilter, setScoreFilter] = useState<ScoreFilter>('all')
+  const [sort, setSort] = useState<SortKey>('score')
+
   const grouped = useMemo(() => {
     const g: Record<string, typeof deals> = {}
     columns.forEach((c) => (g[c.stage] = []))
-    deals.forEach((d) => {
-      if (sector !== 'all' && d.sector !== sector) return
-      g[d.stage].push(d)
+    const q = search.trim().toLowerCase()
+    const matchScore = (s: number) => {
+      if (scoreFilter === 'all') return true
+      if (scoreFilter === '85+') return s >= 85
+      if (scoreFilter === '70-85') return s >= 70 && s < 85
+      if (scoreFilter === '50-70') return s >= 50 && s < 70
+      if (scoreFilter === '<50') return s < 50
+      return true
+    }
+    const filtered = deals.filter((d) => {
+      if (sector !== 'all' && d.sector !== sector) return false
+      if (!matchScore(d.score)) return false
+      if (q && !(d.name.toLowerCase().includes(q) || d.cnName.toLowerCase().includes(q) || d.tagline.toLowerCase().includes(q))) return false
+      return true
     })
+    const sortFn = (a: typeof deals[number], b: typeof deals[number]) => {
+      if (sort === 'score') return b.score - a.score
+      if (sort === 'valuation') {
+        const parse = (v: string) => parseFloat(v.replace(/[^0-9.]/g, '')) || 0
+        return parse(b.valuation) - parse(a.valuation)
+      }
+      // recent: 时间字符串里的中文长度近似
+      return a.lastUpdated.length - b.lastUpdated.length
+    }
+    filtered.sort(sortFn).forEach((d) => g[d.stage].push(d))
     return g
-  }, [sector])
+  }, [sector, search, scoreFilter, sort])
 
   const sectors = Array.from(new Set(deals.map((d) => d.sector)))
+  const total = Object.values(grouped).reduce((s, list) => s + list.length, 0)
 
   return (
     <div className="px-8 py-6 max-w-[1800px] mx-auto">
-      <header className="flex items-end justify-between mb-5 gap-4 flex-wrap">
-        <div>
-          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Pipeline · Kanban</div>
-          <h1 className="text-[24px] font-semibold tracking-tight mt-1">漏斗看板</h1>
-          <p className="text-[13px] text-ink-600 mt-1">6 阶段流转 · 可拖动卡片换阶段 · 支持按赛道 / 评分筛选</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-white border border-ink-200 rounded-lg p-1">
-            <button onClick={() => setSector('all')} className={`px-3 py-1 text-[12px] rounded-md transition ${sector === 'all' ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>全部</button>
-            {sectors.map((s) => (
-              <button key={s} onClick={() => setSector(s)} className={`px-3 py-1 text-[12px] rounded-md transition ${sector === s ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>{s}</button>
-            ))}
+      <header className="mb-5">
+        <div className="flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Pipeline · Kanban</div>
+            <h1 className="text-[24px] font-semibold tracking-tight mt-1">漏斗看板</h1>
+            <p className="text-[13px] text-ink-600 mt-1">6 阶段流转 · 共 <span className="num font-semibold text-ink-900">{total}</span> 个项目</p>
           </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400" fill="currentColor"><path d="M11.7 10.6l3 3-1 1-3-3a5.5 5.5 0 11.99-1zM7 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+              <input
+                type="text"
+                placeholder="搜索名称 / 中文 / 一句话简介…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="text-[12px] pl-8 pr-3 py-1.5 bg-white border border-ink-200 rounded-lg w-[220px] focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+              />
+            </div>
+            <div className="flex items-center gap-1 bg-white border border-ink-200 rounded-lg p-1">
+              {(['all', '85+', '70-85', '50-70', '<50'] as ScoreFilter[]).map((s) => (
+                <button key={s} onClick={() => setScoreFilter(s)} className={`px-2.5 py-1 text-[11px] rounded-md transition num ${scoreFilter === s ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>
+                  {s === 'all' ? '全部' : s}
+                </button>
+              ))}
+            </div>
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="text-[12px] bg-white border border-ink-200 rounded-lg px-3 py-1.5 focus:outline-none">
+              <option value="score">按评分排序</option>
+              <option value="valuation">按估值排序</option>
+              <option value="recent">按更新时间</option>
+            </select>
+          </div>
+        </div>
+        <div className="mt-3 flex items-center gap-1 flex-wrap">
+          <button onClick={() => setSector('all')} className={`px-2.5 py-1 text-[11px] rounded-md border transition ${sector === 'all' ? 'bg-ink-900 text-white border-ink-900' : 'bg-white text-ink-600 border-ink-200 hover:bg-ink-50'}`}>全部赛道</button>
+          {sectors.map((s) => (
+            <button key={s} onClick={() => setSector(s)} className={`px-2.5 py-1 text-[11px] rounded-md border transition ${sector === s ? 'bg-ink-900 text-white border-ink-900' : 'bg-white text-ink-600 border-ink-200 hover:bg-ink-50'}`}>{s}</button>
+          ))}
         </div>
       </header>
 
