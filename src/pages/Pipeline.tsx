@@ -23,6 +23,7 @@ export default function Pipeline() {
   const [search, setSearch] = useState<string>('')
   const [scoreFilter, setScoreFilter] = useState<ScoreFilter>('all')
   const [sort, setSort] = useState<SortKey>('score')
+  const [view, setView] = useState<'kanban' | 'list'>('kanban')
   const [overrides, setOverrides] = useState<Record<string, Stage>>(() => {
     try { return JSON.parse(localStorage.getItem(LS_OVERRIDE) || '{}') } catch { return {} }
   })
@@ -119,6 +120,10 @@ export default function Pipeline() {
               <option value="valuation">按估值排序</option>
               <option value="recent">按更新时间</option>
             </select>
+            <div className="flex items-center gap-0.5 bg-white border border-ink-200 rounded-lg p-0.5">
+              <button onClick={() => setView('kanban')} className={`px-2.5 py-1 text-[11px] rounded-md transition ${view === 'kanban' ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>看板</button>
+              <button onClick={() => setView('list')} className={`px-2.5 py-1 text-[11px] rounded-md transition ${view === 'list' ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-100'}`}>列表</button>
+            </div>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-1 flex-wrap">
@@ -136,6 +141,53 @@ export default function Pipeline() {
         </div>
       )}
 
+      {view === 'list' ? (
+        <section className="bg-white border border-ink-200 rounded-xl overflow-hidden">
+          <div className="grid grid-cols-[1.4fr_100px_100px_120px_120px_120px_140px] gap-3 px-5 py-3 text-[10px] tracking-wider uppercase text-ink-500 bg-ink-50 border-b border-ink-200">
+            <div>项目</div>
+            <div>阶段</div>
+            <div className="text-right">评分</div>
+            <div className="text-right">本轮 / 估值</div>
+            <div className="text-right">ARR</div>
+            <div>Red Flag</div>
+            <div>更新</div>
+          </div>
+          <div className="divide-y divide-ink-100">
+            {columns.flatMap((col) => grouped[col.stage].map((d) => {
+              const sm = stageMeta[col.stage]
+              return (
+                <Link key={d.id} to={`/deal/${d.id}`} className="grid grid-cols-[1.4fr_100px_100px_120px_120px_120px_140px] gap-3 px-5 py-3 text-[12.5px] hover:bg-ink-50 transition items-center">
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{d.name}<span className="text-ink-500 font-normal ml-1.5">{d.cnName}</span></div>
+                    <div className="text-[11px] text-ink-500 truncate">{d.sector} · {d.round}</div>
+                  </div>
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full" style={{ color: sm.color, background: sm.color + '14' }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: sm.color }} />
+                      {sm.label}
+                    </span>
+                  </div>
+                  <div className="num font-semibold text-right" style={{ color: d.accentColor }}>{d.score}</div>
+                  <div className="text-right num">
+                    <div>{d.askAmount}</div>
+                    <div className="text-[10px] text-ink-500">{d.valuation}</div>
+                  </div>
+                  <div className="text-right num">{d.arr || '—'}</div>
+                  <div>
+                    {d.redFlags.filter(f => f.severity === 'hard').length > 0
+                      ? <span className="text-[10px] text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded">硬 {d.redFlags.filter(f => f.severity === 'hard').length}</span>
+                      : d.redFlags.length > 0
+                      ? <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">软 {d.redFlags.length}</span>
+                      : <span className="text-[10px] text-emerald-700">干净</span>}
+                  </div>
+                  <div className="text-[11px] text-ink-500">{d.lastUpdated}</div>
+                </Link>
+              )
+            }))}
+          </div>
+        </section>
+      ) : (
+      <>
       <div className="flex gap-4 overflow-x-auto scrollbar-thin pb-4">
         {columns.map((col) => {
           const m = stageMeta[col.stage]
@@ -207,6 +259,8 @@ export default function Pipeline() {
       <div className="text-[11px] text-ink-500 mt-2 px-1">
         提示：拖动卡片可在阶段间调整 · 修改保存到 localStorage（仅本机生效）
       </div>
+      </>
+      )}
     </div>
   )
 }
