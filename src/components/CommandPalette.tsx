@@ -63,7 +63,12 @@ export default function CommandPalette() {
       hint: `${d.score} 分`,
       group: '项目',
       action: () => navigate(`/deal/${d.id}`),
-      keywords: `${d.name} ${d.cnName} ${d.sector} ${d.tagline}`,
+      keywords: [
+        d.name, d.cnName, d.sector, d.round, d.tagline, d.location, d.champion,
+        d.founders.map((f) => `${f.name} ${f.role} ${f.background}`).join(' '),
+        d.wins.join(' '), d.concerns.join(' '),
+        d.redFlags.map((f) => f.label).join(' '),
+      ].filter(Boolean).join(' '),
     }))
     const acts: Cmd[] = [
       { id: 'lang', label: `切换语言 → ${lang === 'zh' ? 'English' : '中文'}`, hint: 'cmd+L', group: '动作', action: toggleLang, keywords: 'language 语言 中英' },
