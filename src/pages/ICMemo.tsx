@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
-import { sequoiaLabels } from '../lib/scoring'
+import { getDealExtra } from '../data/extra'
+import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
+import ScoreRing from '../components/ScoreRing'
+import ThesisCanvas from '../components/ThesisCanvas'
 
 export default function ICMemo() {
   const { id } = useParams()
   const deal = getDealById(id || '')
+  const extra = getDealExtra(id || '')
   const [shareCopied, setShareCopied] = useState(false)
   if (!deal) return <div className="p-10 text-center text-ink-500">项目未找到</div>
+  const recMeta = recommendationMeta[deal.recommendation]
+  const topComp = extra?.publicComps[0]
 
   const handlePrint = () => window.print()
   const handleShare = async () => {
@@ -47,6 +53,22 @@ export default function ICMemo() {
       </header>
 
       <article className="bg-white border border-ink-200 rounded-xl p-10 shadow-card prose-sm">
+        {/* Visual Hero — 评分 + 推荐 + 真实可比锚定 */}
+        <div className="flex items-center gap-6 mb-8 pb-6 border-b border-ink-100">
+          <ScoreRing score={deal.score} color={deal.accentColor} size={120} label="Scorecard" />
+          <div className="flex-1">
+            <div className="text-[11px] tracking-wider uppercase text-ink-500">投决建议</div>
+            <div className="text-[24px] font-semibold tracking-tight mt-0.5" style={{ color: recMeta.color }}>{recMeta.label}</div>
+            <p className="text-[12.5px] text-ink-700 mt-1.5 leading-relaxed">{recMeta.rationale}</p>
+            {topComp && (
+              <div className="mt-2.5 text-[11px] text-ink-600 bg-ink-50 rounded px-2.5 py-1.5 inline-block">
+                估值锚定：<b>{topComp.name}</b> {topComp.ticker} · 营收 <span className="num">{topComp.revenue}</span> · 净利率 <span className="num">{topComp.netMargin}</span>
+                <span className="text-emerald-700 ml-2 num font-medium">✓ akshare 实时</span>
+              </div>
+            )}
+          </div>
+        </div>
+
         <Section num="1" title="执行摘要（Executive Summary）">
           <div className="grid grid-cols-4 gap-3 mb-4 text-[12px]">
             <Kv k="公司" v={`${deal.name} / ${deal.cnName}`} />
