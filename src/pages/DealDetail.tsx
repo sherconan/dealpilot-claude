@@ -279,8 +279,15 @@ export default function DealDetail() {
         <section className="bg-white border border-ink-200 rounded-xl p-5 mb-5">
           <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
             <div>
-              <h2 className="text-[15px] font-semibold tracking-tight">BP 数据真实性核验</h2>
-              <p className="text-[12px] text-ink-500 mt-0.5">BP 声称 vs 外部独立数据源 · 仅展示已交叉验证条目</p>
+              <h2 className="text-[15px] font-semibold tracking-tight flex items-center gap-2">
+                BP 数据真实性核验
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                  <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                  实时 {extra.dataChecks.filter(c => c.verified).length}
+                </span>
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-ink-500 bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded">演示 {extra.dataChecks.filter(c => !c.verified).length}</span>
+              </h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">绿色「实时」= 已通过 MCP 工具实测调通；灰色「演示」= 等待真实 BP 触发对应信源调用</p>
             </div>
             <div className="flex items-center gap-3 text-[11px] text-ink-500">
               <Tag color="#059669" label={`一致 ${extra.dataChecks.filter(c => c.status === 'aligned').length}`} />
@@ -293,7 +300,7 @@ export default function DealDetail() {
             {extra.dataChecks.map((c, i) => {
               const m = checkColor(c.status)
               return (
-                <div key={i} className="py-3 grid grid-cols-1 lg:grid-cols-[1fr_1fr_120px_180px] gap-3 items-start">
+                <div key={i} className={`py-3 grid grid-cols-1 lg:grid-cols-[1fr_1fr_120px_200px] gap-3 items-start ${c.verified ? 'bg-emerald-50/30 -mx-2 px-2 rounded' : ''}`}>
                   <div>
                     <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-1">BP 声称</div>
                     <div className="text-[13px] text-ink-900 font-medium">{c.claim}</div>
@@ -308,7 +315,17 @@ export default function DealDetail() {
                       <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.color }} />{m.label}
                     </span>
                   </div>
-                  <div className="text-[11px] text-ink-500">{c.source}</div>
+                  <div className="space-y-0.5">
+                    {c.verified ? (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-emerald-700 bg-emerald-100 border border-emerald-300 px-1.5 py-0.5 rounded">
+                        <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                        实时
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-0.5 text-[10px] font-medium text-ink-500 bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded">演示</span>
+                    )}
+                    <div className="text-[11px] text-ink-500">{c.source}</div>
+                  </div>
                 </div>
               )
             })}

@@ -90,6 +90,7 @@ export const dealExtras: Record<string, DealExtra> = {
       },
     },
     dataChecks: [
+      { claim: 'BP 援引"对标寒武纪净利率水平"', external: 'akshare 实测寒武纪 (688256) 2025 全年：营收 ¥64.97 亿、净利 ¥20.59 亿、净利率 31.7%、股价 ¥1,353.20。BP 中"对标寒武纪 25-30% 净利率"基本吻合，但寒武纪的高净利率高度依赖国产替代政策溢价，NebulaAI 应用层 SaaS 不可直接套用', status: 'partial', source: 'akshare · 东方财富 · 2026-04-24 实测', verified: true, note: '同业可比锚点真数据已抓取 — 见可比上市公司表' },
       { claim: 'ARR $4.8M（38% MoM）', external: '客户合同抽查 8/47 + 银行流水验证：年化收入 $4.6M，差距 4%（合理范围）', status: 'aligned', source: '财务尽调 · 毕马威', note: 'BP 数据真实，但 Q1 收入有约 $0.4M 来自一次性 setup fee，订阅 ARR 应表述为 $4.4M' },
       { claim: '47 家企业客户 · NRR 143%', external: 'LinkedIn / 客户官网公开提及 38 家；客户深访 5 家全部确认续约且扩张', status: 'aligned', source: 'LinkedIn + 5 家客户访谈' },
       { claim: '8 项核心专利已授权', external: '中国专利局检索：6 项已授权，2 项实质审查中', status: 'partial', source: '国知局公开数据', note: '"已授权"用词偏宽松，建议在 IC Memo 中精确表述为"6 项已授权 + 2 项受理"' },
