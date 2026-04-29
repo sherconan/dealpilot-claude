@@ -109,9 +109,11 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'governance', question: '首席科学家 / 联创 vesting cliff 是否已通过？任一离开的回购条款？', why: '股权稳定性风险', expect: '能在 60 秒内说清条款', watch: '需要回去查 → 治理颗粒度低' },
     ],
     publicComps: [
-      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；其 31.7% 净利率反映稀缺性溢价，NebulaAI 若验证 Agent 编排为底层标准，估值锚可参考', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；31.7% 净利率反映稀缺性溢价', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
+      { name: '海光信息', ticker: 'SH: 688041', price: '¥278.77', reportDate: '2026-03-31', revenue: '¥40.34 亿', netIncome: '¥6.87 亿', netMargin: '17.0%', totalAssets: '¥351.85 亿', similarity: '国产 CPU/DCU 算力底座', distance: '海光 17.0% 净利率反映芯片国产化的盈利能力中位水平；NebulaAI 应用层若跑通可参考', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
+      { name: '科大讯飞', ticker: 'SZ: 002230', price: '¥48.06', reportDate: '2026-03-31', revenue: '¥52.74 亿', netIncome: '¥-1.70 亿（亏损）', netMargin: '-3.2%', totalAssets: '¥456.57 亿', similarity: 'A 股 AI 应用龙头（语音/教育）', distance: '讯飞当前亏损反映 AI 应用层 GPU 投入期的现实；NebulaAI 也将面临同样毛利与 GPU 成本的张力', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
     ],
-    compsTakeaway: '中国 A 股直接对标稀缺：寒武纪（688256）作为 AI 底层算力的国产代表，TTM 营收 ¥65 亿、净利率 31.7%，反映"硬科技 + 国产替代"叙事下的高估值溢价。NebulaAI 应用层 SaaS 路径毛利天花板更高（行业可达 75-85%），但需要在 36 个月内证明 ARR 突破 $30M 才可对位锚定。',
+    compsTakeaway: 'A 股 AI 真实可比锚定：底座层（寒武纪 31.7% / 海光 17.0%）净利率 > 应用层（讯飞 -3.2%）。NebulaAI 处于应用层但聚焦企业 SaaS（毛利潜力 75-85%）— 估值需匹配"应用层 + 高毛利 SaaS"双重叙事。当前投前 $120M 偏高，建议 IC 重点辩论是否值得为"潜在天花板"支付当下溢价。',
   },
 
   // ────────────────────────── NeoBank Digital ──────────────────────────
