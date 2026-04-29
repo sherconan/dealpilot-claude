@@ -15,6 +15,16 @@ export default function ICMemo() {
   const recMeta = recommendationMeta[deal.recommendation]
   const topComp = extra?.publicComps[0]
 
+  const sections = [
+    { id: 'memo-1', title: '执行摘要' },
+    { id: 'memo-2', title: '市场分析' },
+    { id: 'memo-3', title: '团队评估' },
+    { id: 'memo-4', title: '产品 / 牵引力' },
+    { id: 'memo-5', title: '单位经济学' },
+    { id: 'memo-6', title: '风险与缓释' },
+    { id: 'memo-7', title: '投资结构与退出' },
+    { id: 'memo-8', title: 'Sequoia 10 附录' },
+  ]
   const handlePrint = () => window.print()
   const handleShare = async () => {
     const url = window.location.href
@@ -26,7 +36,24 @@ export default function ICMemo() {
   }
 
   return (
-    <div className="px-8 py-6 max-w-[980px] mx-auto">
+    <div className="px-8 py-6 max-w-[1280px] mx-auto grid lg:grid-cols-[200px_1fr] gap-8">
+      <aside className="hidden lg:block sticky top-6 self-start no-print">
+        <div className="text-[10px] tracking-wider uppercase text-ink-500 font-medium mb-2">本页目录</div>
+        <ol className="space-y-1.5 border-l border-ink-200 pl-3">
+          {sections.map((s, i) => (
+            <li key={s.id}>
+              <a href={`#${s.id}`} className="text-[12.5px] text-ink-600 hover:text-brand-700 transition flex items-baseline gap-1.5">
+                <span className="num text-[10px] text-ink-400 font-medium">0{i + 1}</span>
+                <span>{s.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4 text-[10px] text-ink-400 leading-relaxed">
+          <kbd className="bg-ink-100 border border-ink-200 px-1 rounded num">⌘P</kbd> 打印 / <kbd className="bg-ink-100 border border-ink-200 px-1 rounded num">esc</kbd> 取消
+        </div>
+      </aside>
+      <div>
       <div className="flex items-center gap-2 text-[12px] text-ink-500 mb-3">
         <Link to={`/deal/${deal.id}`} className="hover:text-brand-700">{deal.name}</Link>
         <span>/</span>
@@ -174,13 +201,14 @@ export default function ICMemo() {
           <span>状态：草稿 · 待 IC 表决</span>
         </div>
       </article>
+      </div>
     </div>
   )
 }
 
 function Section({ num, title, children }: { num: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-8">
+    <section id={`memo-${num}`} className="mb-8 scroll-mt-6">
       <h3 className="text-[15px] font-semibold tracking-tight mb-2 flex items-center gap-2 text-ink-900">
         <span className="num w-6 h-6 rounded bg-brand-700 text-white text-[11px] flex items-center justify-center">{num}</span>
         {title}
