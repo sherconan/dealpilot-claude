@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { deals } from '../data/deals'
 import { useApp } from '../contexts/AppContext'
+import CommandPalette from './CommandPalette'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -70,6 +71,19 @@ export default function Layout() {
         </nav>
 
         <div className="p-3 border-t border-ink-200 space-y-2">
+          <button
+            onClick={() => {
+              const ev = new KeyboardEvent('keydown', { key: 'k', metaKey: true, bubbles: true })
+              window.dispatchEvent(ev)
+            }}
+            className="w-full px-3 py-1.5 text-[11px] rounded-md border border-ink-200 hover:bg-ink-50 transition flex items-center justify-between text-ink-600"
+          >
+            <span className="inline-flex items-center gap-1.5">
+              <svg viewBox="0 0 16 16" className="w-3 h-3" fill="currentColor"><path d="M11.7 10.6l3 3-1 1-3-3a5.5 5.5 0 11.99-1zM7 11a4 4 0 100-8 4 4 0 000 8z"/></svg>
+              快速搜索
+            </span>
+            <kbd className="text-[9px] bg-ink-100 border border-ink-200 px-1 rounded num">⌘ K</kbd>
+          </button>
           <div className="flex items-center gap-1">
             <button
               onClick={toggleLang}
@@ -115,6 +129,7 @@ export default function Layout() {
         </div>
         <Outlet />
       </main>
+      <CommandPalette />
     </div>
   )
 }
