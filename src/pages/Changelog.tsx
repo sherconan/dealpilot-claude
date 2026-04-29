@@ -21,12 +21,21 @@ const sprints: SprintEntry[] = [
   { num: 15, title: '/compare 项目并排对比', detail: '最多 3 个 BP 同时比较：评分 + Sequoia 10 + Red Flag + 量化指标', files: ['pages/Compare.tsx'], tag: '功能', color: '#0f766e' },
   { num: 16, title: '/briefings 自动周报', detail: 'Pipeline + Signals + Portfolio 自动聚合的可分享 / 可打印基金周报', files: ['pages/Briefings.tsx'], tag: '功能', color: '#d97706' },
   { num: 17, title: 'Pipeline 卡片拖拽 + 持久化', detail: 'HTML5 native drag-drop + localStorage 阶段 override + 高亮 + 重置', files: ['pages/Pipeline.tsx'], tag: 'UX', color: '#0ea5e9' },
-  { num: 18, title: '/changelog + 7 小时挑战赛总结', detail: '本页 — 全部 18 个 sprint 的 changelog + 致谢', files: ['pages/Changelog.tsx'], tag: 'Polish', color: '#475569' },
+  { num: 18, title: '/changelog + 全局 footer', detail: '本页雏形 — 全部 sprint 的 changelog + 共享 footer + Cmd-K 提示', files: ['pages/Changelog.tsx', 'components/Layout.tsx'], tag: 'Polish', color: '#475569' },
+  { num: 19, title: 'Investment Thesis Canvas 4 象限', detail: 'DealDetail 增加投资逻辑画布：Core Bet · Critical Risks · Milestones · Exit Path 自动按阶段/赛道生成', files: ['components/ThesisCanvas.tsx', 'pages/DealDetail.tsx'], tag: '功能', color: '#0f766e' },
+  { num: 20, title: '全局键盘快捷键', detail: 'Shift+? 帮助 modal · T 主题 · L 语言 · G+字母 双键导航跳转（D/P/B/U/C/R/S/M）', files: ['components/HelpModal.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 21, title: 'Dashboard 团队活动流', detail: 'Dashboard 右栏增加近 7 天活动 timeline · Henry/Elaine/Martin/AI 4 个角色的事件', files: ['pages/Dashboard.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 22, title: 'Pipeline 看板/列表视图切换', detail: '一键切换 kanban 与 list 两种视图，列表模式适合宽屏快速浏览全部 deal', files: ['pages/Pipeline.tsx'], tag: 'UX', color: '#0f766e' },
+  { num: 23, title: 'Memory 多维度筛选 + 搜索', detail: '搜索（项目/创始人/赛道）+ 推荐分级筛选 + 硬红线快筛 + 多维度排序', files: ['pages/Memory.tsx'], tag: '功能', color: '#0ea5e9' },
+  { num: 24, title: '/deal/:id/brief 一页 IC 简报', detail: '合伙人会前 5 分钟读的浓缩版 — Hero + 3 个核心论点 + 3 个会前必问 + 关键数字 + 真实可比锚定', files: ['pages/DealBrief.tsx'], tag: '功能', color: '#0f766e' },
+  { num: 25, title: 'IC Memo 视觉增强', detail: 'Memo 顶部加 ScoreRing + 推荐结论 + akshare 实时可比锚定带，打印 PDF 更专业', files: ['pages/ICMemo.tsx'], tag: 'Polish', color: '#0f766e' },
+  { num: 26, title: 'CSV 数据导出', detail: 'Memory 一键导出筛选后的项目为 CSV（UTF-8 BOM 兼容 Excel · 35 列结构化字段含 Sequoia 10）', files: ['lib/csv.ts', 'pages/Memory.tsx'], tag: '功能', color: '#475569' },
+  { num: 27, title: '7h Challenge 收官', detail: '更新 Changelog + 全部 27 sprint 总结 + 全程 27 次 commit · CI 全绿 · 17 个路由全部 200', files: ['pages/Changelog.tsx', 'README.md'], tag: 'Final', color: '#059669' },
 ]
 
 const milestones = [
   { tag: 'init', title: '产品初版（pre-challenge）', detail: 'Dashboard / Pipeline / DealDetail / IC Memo / Memory / Thesis / Sources 7 页 + 6 deals 完整数据 + 8 家 akshare 真实可比公司 + qcc 实测旷视专利 / 工商画像', count: 7 },
-  { tag: '7h', title: '7 小时挑战赛新增', detail: '+ Upload / Risk / Portfolio / Signals / Docs / Compare / Briefings / Changelog（共 8 页）+ i18n + Dark mode + Cmd-K + SEO + 拖拽 + PDF 导出 + 周报', count: 8 },
+  { tag: '7h', title: '7 小时挑战赛新增', detail: '+ Upload / Risk / Portfolio / Signals / Docs / Compare / Briefings / Changelog / DealBrief（共 9 页）+ i18n + Dark mode + Cmd-K + Shift+? / G+letter 快捷键 + SEO + 拖拽 + PDF 导出 + 周报 + CSV 导出 + Investment Thesis Canvas + ICMemo 视觉增强', count: 9 },
 ]
 
 export default function Changelog() {
@@ -43,9 +52,9 @@ export default function Changelog() {
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划" />
-        <Stat label="累计页面" value={15} accent="#0ea5e9" hint="全部 200 OK" />
+        <Stat label="累计页面" value={17} accent="#0ea5e9" hint="全部 200 OK" />
         <Stat label="真信源接入" value={7} accent="#059669" hint="3 实测 + 4 已接" />
-        <Stat label="提交次数" value={18} accent="#d97706" hint="平均 23 min/commit" />
+        <Stat label="累计提交" value={27} accent="#d97706" hint="CI 全绿" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
