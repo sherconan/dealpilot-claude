@@ -57,7 +57,7 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3 text-[10px] text-ink-500">
               <span className="inline-flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-brand-700" />入箱 BP</span>
-              <span>· 当月平均评分 <span className="num text-ink-900 font-semibold">{avgScoreTrend.at(-1)}</span></span>
+              <span>· 当月平均评分 <span className="num text-ink-900 font-semibold">{avgScoreTrend[avgScoreTrend.length - 1]}</span></span>
               <div className="w-16"><Sparkline values={avgScoreTrend} /></div>
             </div>
           </div>
