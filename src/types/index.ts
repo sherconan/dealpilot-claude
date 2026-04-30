@@ -134,4 +134,5 @@ export interface Deal {
   champion?: string
   source: string
   accentColor: string
+  deepAnalysisRaw?: string  // LLM 真分析返回的 10 段完整报告（含 ===SECTION 1=== 等分隔符）
 }

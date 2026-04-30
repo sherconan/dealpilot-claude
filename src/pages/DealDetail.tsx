@@ -206,6 +206,45 @@ export default function DealDetail() {
         </div>
       </section>
 
+      {/* ─── LLM 深度分析报告（仅用户上传项目）─── */}
+      {deal.deepAnalysisRaw && (
+        <section className="bg-gradient-to-br from-brand-50/50 via-white to-white border-2 border-brand-500/30 rounded-xl p-5 mb-5">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-brand-700 font-medium">Deep Analysis · 真 LLM 撰写</div>
+              <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">10 段深度分析报告</h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">由 Pollinations LLM 基于上传 PDF 真实内容生成 · 不是模板</p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {deal.deepAnalysisRaw.split(/===\s*SECTION\s*\d+\s*===/i).slice(1).map((section, i) => {
+              const labels = ['公司画像与定位', '问题与机会判断', '产品与解决方案', '商业模式', '市场规模与竞争', '团队评估', '牵引与财务', '风险与红线', '投资论点', '尽调建议与关键问题']
+              const trimmed = section.trim()
+              if (!trimmed) return null
+              return (
+                <details key={i} className="bg-white border border-ink-200 rounded-lg p-3" open={i < 3}>
+                  <summary className="cursor-pointer flex items-center gap-2 text-[13px] font-semibold tracking-tight">
+                    <span className="num w-6 h-6 rounded bg-brand-700 text-white text-[11px] flex items-center justify-center">{(i + 1).toString().padStart(2, '0')}</span>
+                    <span>{labels[i] || `第 ${i + 1} 段`}</span>
+                  </summary>
+                  <div className="mt-2 text-[12.5px] text-ink-800 leading-[1.85] whitespace-pre-wrap">
+                    {trimmed.split('\n').map((line, li) => {
+                      const renderedLine = line.split(/(\*\*[^*]+\*\*)/g).map((part, pi) => {
+                        if (part.startsWith('**') && part.endsWith('**')) {
+                          return <b key={pi} className="text-ink-900">{part.slice(2, -2)}</b>
+                        }
+                        return part
+                      })
+                      return <p key={li} className={line.match(/^[-·•*]/) ? 'pl-2' : ''}>{renderedLine}</p>
+                    })}
+                  </div>
+                </details>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {/* ─── 投资逻辑画布 ─── */}
       <ThesisCanvas deal={deal} />
 
