@@ -46,6 +46,19 @@ const cases: CompanyScan[] = [
     ],
   },
   {
+    name: '上海寻梦信息技术有限公司（拼多多运营主体）',
+    cnName: '拼多多 · 高额监管处罚案例',
+    overall: 'critical',
+    notes: 'qcc-risk 实测（2026-04-30）：累计 4 条行政处罚，罚没合计 ¥51.13 亿（含国家市监总局 2026-04-17 ¥15.16 亿 + 历史 ¥35.97 亿食品安全处罚）。证明产品对"超大额监管处罚"的真实识别能力 — 即使行业龙头也存在系统性合规风险。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 4, status: 'high', detail: '累计 ¥51.13 亿罚没（最新 2026-04-17 国家市监总局 ¥15.16 亿 · 蛋糕店资质审查 + 消保不力 + 暂停新增蛋糕店 9 月）', source: 'qcc-risk · get_administrative_penalty · 实测' },
+      { category: '处罚累计金额', shortName: '金额', count: 0, status: 'high', detail: '¥51.13 亿（5,113,380,000 元）— 行业最高级别监管', source: 'qcc-risk' },
+      { category: '处罚机关', shortName: '机关', count: 0, status: 'high', detail: '国家市监总局 (2 次) + 长宁税务局 + 长宁市监局', source: 'qcc-risk' },
+      { category: '机构判定', shortName: '判定', count: 0, status: 'high', detail: '高风险但非诚信红线 — 巨型平台监管常态化，需在 IC Memo 风险章节专项分析、量化对增长拖累', source: '产品规则引擎' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '未列入失信名单（处罚已执行）', source: 'qcc-risk · get_dishonest_info' },
+    ],
+  },
+  {
     name: '北京抖音信息服务有限公司（曾用名：字节跳动）',
     cnName: '字节跳动 · 真实监管案例',
     overall: 'caution',
