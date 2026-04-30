@@ -337,4 +337,10 @@ export const deals: Deal[] = [
   },
 ]
 
-export const getDealById = (id: string) => deals.find((d) => d.id === id)
+// 同时查 mock deals 和 用户上传的真 deals
+import { getUserDeals } from '../lib/userDealStore'
+
+export const getAllDeals = (): Deal[] => [...getUserDeals(), ...deals]
+
+export const getDealById = (id: string): Deal | undefined =>
+  getAllDeals().find((d) => d.id === id)
