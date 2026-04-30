@@ -21,14 +21,14 @@ interface CompanyScan {
 const cases: CompanyScan[] = [
   {
     name: '北京旷视科技有限公司',
-    cnName: '旷视 Megvii',
+    cnName: '旷视 Megvii · 真实数据',
     overall: 'clean',
-    notes: '已上市筹备阶段企业，工商画像完整、专利护城河深（434 条），无任何司法 / 失信记录。可作为 Founder reference 健康样本。',
+    notes: 'qcc-risk 实测（2026-04-30）：仅 1 条 9,000 元消防小额处罚（2023-10），失信 / 经营异常均为 0。整体合规画像优秀，小额事件需在 IC Memo 中如实披露。',
     results: [
-      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '无任何行政处罚记录', source: 'qcc-risk · get_administrative_penalty' },
-      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '不在最高人民法院失信被执行人名单', source: 'qcc-risk · get_dishonest_info' },
+      { category: '行政处罚', shortName: '处罚', count: 1, status: 'low', detail: '¥9,000 · 顺义区消防救援支队 · 2023-10-07 · 文号 顺(一)消行罚决字〔2023〕第100127号 · 小额合规事件，不影响投资', source: 'qcc-risk · get_administrative_penalty · 实测' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '不在最高人民法院失信被执行人名单 · 同步排查限高 / 被执行均无', source: 'qcc-risk · get_dishonest_info · 实测' },
       { category: '被执行人案件', shortName: '被执', count: 0, status: 'clean', detail: '无被执行人记录', source: 'qcc-risk · get_judgment_debtor_info' },
-      { category: '经营异常名录', shortName: '异常', count: 0, status: 'clean', detail: '工商正常经营状态', source: 'qcc-risk · get_business_exception' },
+      { category: '经营异常名录', shortName: '异常', count: 0, status: 'clean', detail: '工商正常经营状态', source: 'qcc-risk · get_business_exception · 实测' },
       { category: '严重违法失信名单', shortName: '严重', count: 0, status: 'clean', detail: '不在市监总局严重违法失信名单', source: 'qcc-risk · get_serious_violation' },
     ],
   },
