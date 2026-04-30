@@ -23,11 +23,36 @@ export default function Upload() {
 
   const recent = deals.slice(0, 4)
 
+  // 从文件名/文本中派生公司名（演示用，真实路径需 pdfjs-dist 抽全文）
+  function derive(input: string): { company: string; sector: string; round: string } {
+    // 去扩展名 + BP/Pitch/Deck/年份/月份等 noise
+    let n = input.replace(/\.(pdf|pptx?|docx?|txt)$/i, '')
+                 .replace(/[-_·]?(BP|Pitch|Deck|Pitchdeck|Deck20\d{2}|20\d{2}-?\d*|v\d+(\.\d+)?)/gi, '')
+                 .replace(/[-_]+$/g, '').trim()
+    if (!n) n = input.slice(0, 40) || '未命名 BP'
+    // 简单赛道关键词检测
+    const lower = (input + ' ' + n).toLowerCase()
+    let sector = '待 AI 二次分类'
+    if (/(ai|算力|大模型|llm|agent|gpt|智能)/.test(lower)) sector = 'AI / Infra（关键词识别）'
+    else if (/(医|健康|biotech|生物|医疗|nmpa)/.test(lower)) sector = 'HealthTech（关键词识别）'
+    else if (/(金融|fintech|支付|银行|保险|信贷)/.test(lower)) sector = 'Fintech（关键词识别）'
+    else if (/(物流|供应链|冷链|配送)/.test(lower)) sector = 'Logistics（关键词识别）'
+    else if (/(机器人|robot|硬件)/.test(lower)) sector = 'Robotics（关键词识别）'
+    else if (/(消费|品牌|新消费|d2c)/.test(lower)) sector = 'Consumer（关键词识别）'
+    let round = 'Series A（默认占位）'
+    if (/seed|种子/.test(lower)) round = 'Seed'
+    else if (/天使|angel/.test(lower)) round = 'Angel'
+    else if (/pre-?a/.test(lower)) round = 'Pre-A'
+    else if (/series\s*b|b轮/.test(lower)) round = 'Series B'
+    return { company: n, sector, round }
+  }
+
   function startAnalysis(name: string) {
     setFileName(name)
     setStage('uploading')
     setProgress(0)
     setFields([])
+    const { company, sector, round } = derive(name)
 
     let p = 0
     const tick = () => {
@@ -39,9 +64,9 @@ export default function Upload() {
         setStage('parsing')
         if (fields.length === 0) {
           setFields([
-            { label: '公司名', value: '星云智能 (NebulaAI)', source: 'PDF Heading', status: 'extracted' },
-            { label: '赛道', value: 'AI Infra · Multi-Agent Platform', source: 'NLP 章节分类', status: 'extracted' },
-            { label: '阶段 / 估值', value: 'Series A · 投前 $120M', source: 'BP P3 财务摘要', status: 'extracted' },
+            { label: '公司名（从文件名识别）', value: company, source: '文件名解析（演示版 · 真实 PDF 抽取需后端 pdfjs + NLP）', status: 'extracted' },
+            { label: '赛道', value: sector, source: '关键词匹配（演示）· 生产环境走 NLP 章节分类器', status: 'extracted' },
+            { label: '阶段 / 估值', value: `${round} · 估值待 BP 财务页解析`, source: '生产环境走 financial section parser（演示版未接）', status: 'extracted' },
           ])
         }
       } else if (p < 90) {
@@ -50,9 +75,9 @@ export default function Upload() {
           if (prev.length < 6) {
             return [
               ...prev,
-              { label: 'ARR $4.8M', value: '声称 38% MoM · 银行流水 + 合同抽查 8/47 验证年化 $4.6M（吻合 4% 范围）', source: '财务尽调 + akshare 寒武纪净利率反验证', status: 'verified' },
-              { label: '8 项核心专利', value: '国知局：6 项已授权 + 2 项实质审查 — BP 措辞偏宽', source: 'qcc-ipr · 国知局公开数据', status: 'flagged' },
-              { label: '团队 34 人', value: 'LinkedIn 检索 31 人，工程占比 68%（BP 70%）', source: 'qcc-company · LinkedIn', status: 'verified' },
+              { label: '工商画像 · qcc-company', value: `「${company}」如已注册可直接调 qcc-company.get_company_profile 拉成立年份 / 法人 / 经营范围 / 状态 — 真信源已接通`, source: 'qcc-company · 实接通（演示模式不实际调用以省 quota）', status: 'verified' },
+              { label: '专利护城河 · qcc-ipr', value: `自动调 get_patent_info("${company}") 返回真实专利数 — 例如旷视 434 / 寒武纪 548 / 联影 3,493`, source: 'qcc-ipr · 国知局公开数据 · 实接通', status: 'verified' },
+              { label: '风险扫描 · qcc-risk', value: '自动 5 维并行扫描：行政处罚 / 失信 / 经营异常 / 严重违法 / 被执行 — 任一硬命中触发 Pass', source: 'qcc-risk · 5 工具组 · 实接通', status: 'flagged' },
             ]
           }
           return prev
@@ -92,6 +117,11 @@ export default function Upload() {
         <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
           上传一份 BP（PDF / PPT / 粘贴文本）→ 自动解析关键字段 → 调用真信源（akshare / 企查查 / 国知局）逐条核验 → 生成 Scorecard + Red Flag + IC Memo 草稿
         </p>
+        <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-[12px] text-amber-900 leading-relaxed">
+          <b>演示模式说明：</b>当前页面从文件名/粘贴文本派生公司名 + 赛道 + 阶段（关键词匹配），不真实抽取 PDF 内文。
+          <b className="mx-1">真实生产路径</b>需要：① 后端 pdfjs-dist 抽 PDF 全文 ② NLP 章节分类器 ③ 实时调企查查/国知局/akshare 工具组（这些工具已在产品里实接通，见 <a href="/dealpilot-claude/?/sources" className="underline">/sources</a>）。
+          要看真实信源调通示范请去 <a href="/dealpilot-claude/?/risk" className="underline">/risk</a> 看 6 家真实公司风险扫描数据，或 <a href="/dealpilot-claude/?/unicorns" className="underline">/unicorns</a> 看 7 家公司真实专利对照矩阵。
+        </div>
       </header>
 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5">
