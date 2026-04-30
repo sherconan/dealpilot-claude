@@ -49,6 +49,15 @@ const sprints: SprintEntry[] = [
   { num: 43, title: 'cninfo 招股书工具实测', detail: '寒武纪 2020 + 联影 2022 招股书直挂 publicComps prospectusUrl，DealDetail 表格新增「招股书」紫色链接', files: ['types/index.ts', 'data/extra.ts', 'pages/DealDetail.tsx'], tag: '真信源', color: '#059669' },
   { num: 44, title: '剩 7 家可比公司招股书全部拉满', detail: '7 家招股书 PDF 真实抓取（顺丰 H 股 / 拉卡拉 / 石头 / 科沃斯 / 海光 / 讯飞医疗 H 股 / 东航无）9 家 25 份官方 PDF', files: ['data/extra.ts', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
   { num: 45, title: 'sourceProofs/HANDOFF/Changelog 同步终态', detail: 'cninfo proofRows 列出 9 家年报+招股书全量；HANDOFF 升级到 45 sprint 25 PDF；Changelog 加 43-45', files: ['data/sourceProofs.ts', 'HANDOFF.md', 'pages/Changelog.tsx'], tag: '文档', color: '#475569' },
+  { num: 46, title: 'qcc-ipr 实测 3 家专利护城河', detail: '联影 3,493 + 寒武纪 548 + 旷视 434 = 4,475 条全量授权专利', files: ['data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 47, title: 'Dashboard hero 加真信源资产 KPI', detail: '5 个 chips：5/7 信源 / 4475 专利 / 25 PDF / 9 公司 / 46 sprint', files: ['pages/Dashboard.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 48, title: 'Risk 加拼多多真实高额监管处罚', detail: '4 条 ¥51.13 亿（国家市监总局 2026-04 ¥15.16 亿）— 高风险但非诚信红线', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 49, title: '/sources 顶部 KPI 升 5 维真实资产', detail: '5/7 信源 / 4475 专利 / 25 PDF / 9 可比 / 5 风险扫描', files: ['pages/Sources.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 50, title: 'Risk 加暴风集团真实暴雷案例', detail: '79 条失信 ¥4,549 万 + 202 条限高 + 证监会处罚 — 5 颗粒度全员真实', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 51, title: 'Moonshot/Kimi 真实独角兽画像', detail: 'qcc 三工具实测：杨植麟 / 注册资本 ¥100 万 / 1 条专利 CN118052282B', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 52, title: '智谱 + MiniMax 专利实测', detail: '智谱 80 条 + MiniMax 12 条 → 6 家 4,568 条专利矩阵', files: ['data/sourceProofs.ts', 'pages/Dashboard.tsx', 'pages/Sources.tsx'], tag: '真信源', color: '#059669' },
+  { num: 53, title: '/unicorns AI 独角兽对照矩阵页', detail: '7 家真实公司（4 独角兽 + 3 上市）IP 储备横向对比 + 合规画像网格', files: ['pages/Unicorns.tsx', 'App.tsx', 'i18n/dict.ts'], tag: '功能', color: '#0f766e' },
+  { num: 54, title: 'Changelog + HANDOFF + KPI 同步 53 状态', detail: '全量更新到 53 sprint / 51 commit / 7 真实公司 IP / 6 公司风险', files: ['pages/Changelog.tsx', 'HANDOFF.md'], tag: '文档', color: '#475569' },
 ]
 
 const milestones = [
@@ -70,9 +79,9 @@ export default function Changelog() {
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 全部闭环" />
-        <Stat label="累计页面" value={17} accent="#0ea5e9" hint="全部 200 OK" />
-        <Stat label="真信源已 live" value={'5/7'} accent="#059669" hint="akshare / qcc-company / qcc-ipr / qcc-risk / cninfo" />
-        <Stat label="官方 PDF 资产" value={'25'} accent="#d97706" hint="9 家公司 · 年报 18 + 招股书 7" />
+        <Stat label="累计页面" value={18} accent="#0ea5e9" hint="全部 200 OK" />
+        <Stat label="真信源已 live" value={'5/7'} accent="#059669" hint="akshare / qcc(3) / cninfo" />
+        <Stat label="实测公司画像" value={'10+'} accent="#d97706" hint="6 风险 · 7 IP · 9 财报" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
