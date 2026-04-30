@@ -24,7 +24,7 @@ export default function Sources() {
 
       <section className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <SummaryCard label="信源已实测" value={`${liveCount}/7`} accent="#059669" hint="akshare · qcc(3) · cninfo" />
-        <SummaryCard label="专利记录" value={'4,475'} accent="#0f766e" hint="联影 3493 + 寒武纪 548 + 旷视 434" />
+        <SummaryCard label="专利记录" value={'4,568'} accent="#0f766e" hint="6 家：联影 3493 / 寒武 548 / 旷视 434 / 智谱 80 / MiniMax 12 / Kimi 1" />
         <SummaryCard label="官方 PDF" value={'25'} accent="#7c3aed" hint="9 家 × 年报 18 + 招股书 7" />
         <SummaryCard label="可比公司" value={'9'} accent="#0ea5e9" hint="A 股 8 + 港股 1 全部带实时财报" />
         <SummaryCard label="风险扫描" value={'5'} accent="#dc2626" hint="联影/旷视/字节/拼多多/暴风（暴雷）" />
