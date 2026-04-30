@@ -65,75 +65,146 @@ export function detectSections(text: string): SectionMap {
 
 export function extractFields(text: string, hintFromName?: string): ExtractedFields {
   const fields: ExtractedFields = { founders: [], comparables: [] }
-  const t = text || ''
+  const t = (text || '').replace(/\s+/g, ' ')  // 把多余空白合并，更便于 regex 跨行匹配
 
-  // 公司名 — 优先扫描"XXX 有限公司/股份" / 全大写英文 / 文件名 hint
-  const compMatch =
-    t.match(/([一-龥][一-龥A-Za-z·]{1,18}(?:科技|智能|医疗|生物|网络|信息|金融|物流|传媒|集团|能源|文化))/) ||
-    t.match(/([一-龥][一-龥A-Za-z]{2,15}(?:有限公司|股份有限公司|集团有限公司))/)
-  if (compMatch) fields.company = compMatch[1]
-  else if (hintFromName) fields.company = hintFromName
+  // —— 公司名 —— 多策略并行
+  const compStrategies = [
+    /([一-龥]{2,12}(?:科技|智能|医疗|生物|网络|信息|金融|物流|传媒|集团|能源|文化|资本|教育|健康|半导体|机器人))/,
+    /([一-龥]{2,12})\s*(?:有限公司|股份有限公司|集团有限公司)/,
+    /(?:公司名称|项目名称|名称)[\s:：]*([一-龥A-Za-z]{2,18})/,
+  ]
+  for (const re of compStrategies) {
+    const m = t.match(re)
+    if (m) { fields.company = m[1].trim(); break }
+  }
+  if (!fields.company && hintFromName) {
+    fields.company = hintFromName.replace(/[-_·\s]?(BP|Pitch|Deck|20\d{2}|v\d+)/gi, '').replace(/[-_]+$/, '').trim()
+  }
 
-  // ARR
-  const arrMatch = t.match(/(?:ARR|年化经常性收入|年化收入|annual\s+recurring\s+revenue)[\s:：]*\$?[¥]?\s*([\d.,]+)\s*(亿|万|千万|M|B|million|billion)?/i)
-  if (arrMatch) fields.arr = `${arrMatch[1]}${arrMatch[2] || ''}`
+  // —— ARR / 年收入 —— 更宽松（允许"营收 X 亿"、"收入 X 万"、独立数字段）
+  const arrPatterns = [
+    /(?:ARR|年化经常性收入|年化收入|annual\s+recurring\s+revenue)[\s:：是为达]*\$?[¥]?\s*([\d.,]+)\s*(亿|万|千万|M|B|million|billion)?/i,
+    /(?:营业?收入|年收入|总收入|revenue)[\s:：是为达]*\$?[¥]?\s*([\d.,]+)\s*(亿|万|千万|M|B|million|billion)/i,
+    /\$?[¥]?\s*([\d.,]+)\s*(亿|万|M|B)\s*(?:ARR|营收|收入|recurring)/i,
+  ]
+  for (const re of arrPatterns) {
+    const m = t.match(re); if (m) { fields.arr = `${m[1]}${m[2] || ''}`; break }
+  }
 
-  // TAM / 市场规模
-  const tamMatch = t.match(/(?:TAM|市场规模|目标市场)[\s:：]*\$?[¥]?\s*([\d.,]+)\s*(亿|千亿|万亿|B|T|billion|trillion)?/i)
-  if (tamMatch) fields.tam = `${tamMatch[1]}${tamMatch[2] || ''}`
+  // —— TAM / 市场规模 ——
+  const tamPatterns = [
+    /(?:TAM|市场规模|目标市场|可触达市场)[\s:：是为达约超过过]*\$?[¥]?\s*([\d.,]+)\s*(亿|千亿|万亿|B|T|billion|trillion)?/i,
+    /市场容量[\s:：是为达]*\$?[¥]?\s*([\d.,]+)\s*(亿|千亿|万亿|B|T)?/i,
+    /\$?[¥]?\s*([\d.,]+)\s*(亿|千亿|万亿|B|T)\s*(?:市场|TAM|规模)/,
+  ]
+  for (const re of tamPatterns) {
+    const m = t.match(re); if (m) { fields.tam = `${m[1]}${m[2] || ''}`; break }
+  }
 
-  // 估值
-  const valMatch = t.match(/(?:估值|valuation|pre-?money|投前估值|post-?money)[\s:：]*\$?[¥]?\s*([\d.,]+)\s*(亿|千万|万|M|B|million|billion)?/i)
-  if (valMatch) fields.valuation = `${valMatch[1]}${valMatch[2] || ''}`
+  // —— 估值 ——
+  const valPatterns = [
+    /(?:估值|valuation|pre-?money|投前估值|post-?money|投后估值)[\s:：是为达]*\$?[¥]?\s*([\d.,]+)\s*(亿|千万|万|M|B|million|billion)?/i,
+    /(?:本轮估值|公司估值|目前估值|当前估值)[\s:：]*\$?[¥]?\s*([\d.,]+)\s*(亿|千万|万|M|B)/i,
+  ]
+  for (const re of valPatterns) {
+    const m = t.match(re); if (m) { fields.valuation = `${m[1]}${m[2] || ''}`; break }
+  }
 
-  // 专利声明
-  const patentMatch = t.match(/(\d+)\s*(?:项|条|个|件)\s*(?:核心|发明|实用新型)?专利/)
-  if (patentMatch) fields.patentClaim = `${patentMatch[1]} 项专利`
+  // —— 融资金额 ——
+  const askPatterns = [
+    /(?:本轮融资|融资金额|计划融资|计划募集|本次融资|募资)[\s:：是为达约]*\$?[¥]?\s*([\d.,]+)\s*(亿|千万|万|M|B)/i,
+    /拟融资\s*([\d.,]+)\s*(亿|千万|万|M|B)/,
+  ]
+  // 暂不存（types 没有 askAmount 字段在 ExtractedFields），但可附在 valuation hint
 
-  // 创始人
-  const founderRegex = /(?:创始人|联合创始人|联创|CEO|CTO|首席|founder)[\s:：是兼\-]*([一-龥]{2,4}|[A-Z][a-z]+\s[A-Z][a-z]+)/g
+  // —— 专利声明（更宽松）——
+  const patentPatterns = [
+    /(\d+)\s*(?:项|条|个|件)\s*(?:核心|发明|授权|国家|实用新型|外观)?\s*专利/,
+    /专利[\s（(]*([\d]+)[\s）)]*[多]?项/,
+    /拥有[\s\d]*([\d]+)\s*项专利/,
+  ]
+  for (const re of patentPatterns) {
+    const m = t.match(re); if (m) { fields.patentClaim = `${m[1]} 项专利`; break }
+  }
+
+  // —— 创始人（更宽松，支持"X 总"、"X 博士"、"姓 + 名 + 职务"）——
+  const founderPatterns = [
+    /(?:创始人|联合创始人|联创|CEO|CTO|首席执行官|首席技术官|创始团队|项目负责人|founder)[\s:：是兼为\-、，,]*([一-龥]{2,4}|[A-Z][a-z]+\s[A-Z][a-z]+)/g,
+    /([一-龥]{2,4})[\s:：]*(?:创始人|CEO|CTO|联合创始人|创办)/g,
+    /(?:博士|总裁|董事长|总经理)[\s:：]*([一-龥]{2,4})/g,
+  ]
   const seen = new Set<string>()
-  let fm
-  while ((fm = founderRegex.exec(t)) !== null) {
-    if (!seen.has(fm[1])) { seen.add(fm[1]); fields.founders.push(fm[1]) }
+  for (const re of founderPatterns) {
+    let m
+    while ((m = re.exec(t)) !== null) {
+      const name = m[1]
+      if (name && !seen.has(name) && name.length >= 2 && !/[公司科技智能集团团队]/.test(name)) {
+        seen.add(name); fields.founders.push(name)
+      }
+      if (fields.founders.length >= 5) break
+    }
     if (fields.founders.length >= 5) break
   }
 
-  // 增长率
-  const growthMatch = t.match(/(\d+\.?\d*\s*%)\s*(?:MoM|月环比|YoY|同比|CAGR|年增长)/i)
-  if (growthMatch) fields.growthRate = growthMatch[0].trim()
-
-  // 客户数
-  const custMatch = t.match(/(\d+)\s*(?:家\s*)?(?:客户|企业客户|付费客户|商户)/)
-  if (custMatch) fields.customers = `${custMatch[1]} 家客户`
-
-  // LTV/CAC
-  const lcMatch = t.match(/LTV\s*[\/／]\s*CAC[\s:：]*([\d.]+)\s*x?/i)
-  if (lcMatch) fields.ltvCac = `${lcMatch[1]}x`
-
-  // 对标公司
-  const compRegex = /(?:对标|对照|类似|参考|对比|对位|benchmark|comparable\s*to)[\s:：]*([一-龥A-Za-z]{2,15})/g
-  let cm
-  while ((cm = compRegex.exec(t)) !== null) {
-    if (!fields.comparables.includes(cm[1])) fields.comparables.push(cm[1])
-    if (fields.comparables.length >= 5) break
+  // —— 增长率 ——
+  const growthPatterns = [
+    /(\d+\.?\d*\s*%)\s*(?:MoM|月环比|月增长|YoY|同比|CAGR|年增长|年复合|月均增长)/i,
+    /(?:增长|增速|增幅|growth)[\s:：达约超过]*(\d+\.?\d*\s*%)/i,
+  ]
+  for (const re of growthPatterns) {
+    const m = t.match(re); if (m) { fields.growthRate = m[0].trim().slice(0, 30); break }
   }
 
-  // 赛道关键词
-  const lower = t.slice(0, 4000).toLowerCase()
-  if (/(ai|算力|大模型|llm|agent|gpt|智能体|机器学习)/.test(lower)) fields.sector = 'AI / Infra'
-  else if (/(医|健康|biotech|医疗|nmpa)/.test(lower)) fields.sector = 'HealthTech'
-  else if (/(金融|fintech|支付|银行|保险|信贷)/.test(lower)) fields.sector = 'Fintech'
-  else if (/(物流|供应链|冷链|配送)/.test(lower)) fields.sector = 'Logistics'
-  else if (/(机器人|robot|硬件)/.test(lower)) fields.sector = 'Robotics'
-  else if (/(消费|品牌|新消费|d2c)/.test(lower)) fields.sector = 'Consumer'
+  // —— 客户数 ——
+  const custPatterns = [
+    /(\d+)\s*(?:家|位)\s*(?:付费\s*)?(?:客户|企业客户|商户|用户)/,
+    /服务\s*(\d+)\s*家/,
+    /累计客户\s*(\d+)/,
+  ]
+  for (const re of custPatterns) {
+    const m = t.match(re); if (m) { fields.customers = `${m[1]} 家客户`; break }
+  }
 
-  // 轮次
+  // —— LTV/CAC ——
+  const lcMatch = t.match(/LTV\s*[\/／:：]\s*CAC[\s:：是为达约]*([\d.]+)\s*x?/i)
+  if (lcMatch) fields.ltvCac = `${lcMatch[1]}x`
+
+  // —— 对标公司 ——
+  const compRegex = /(?:对标|对照|类似|参考|对比|对位|benchmark|comparable\s*to|国内外?\s*[类似的]+)[\s:：]*([一-龥A-Za-z]{2,15})/g
+  let cm
+  while ((cm = compRegex.exec(t)) !== null) {
+    const name = cm[1].trim()
+    if (!fields.comparables.includes(name) && name.length >= 2) fields.comparables.push(name)
+    if (fields.comparables.length >= 5) break
+  }
+  // 同时检测是否提到知名公司
+  const knownCompanies = ['寒武纪', '海光', '联影', '科大讯飞', '商汤', '旷视', '智谱', 'MiniMax', 'Moonshot', 'Anthropic', 'OpenAI', 'Palantir', 'Snowflake', 'UiPath', '科沃斯', '石头', '顺丰', '京东', '美团', '阿里', '腾讯', '字节', '拼多多']
+  knownCompanies.forEach(c => {
+    if (t.includes(c) && !fields.comparables.includes(c)) {
+      if (fields.comparables.length < 8) fields.comparables.push(c)
+    }
+  })
+
+  // —— 赛道关键词（更全）——
+  const lower = (t + ' ' + (hintFromName || '')).slice(0, 8000).toLowerCase()
+  if (/(ai|人工智能|算力|大模型|llm|agent|gpt|智能体|机器学习|深度学习|nlp|cv|视觉)/.test(lower)) fields.sector = 'AI / Infra'
+  else if (/(医|健康|biotech|医疗|nmpa|药|临床|诊断|hospital|drug)/.test(lower)) fields.sector = 'HealthTech'
+  else if (/(金融|fintech|支付|银行|保险|信贷|借款|理财)/.test(lower)) fields.sector = 'Fintech'
+  else if (/(物流|供应链|冷链|配送|快递|warehouse|logistics)/.test(lower)) fields.sector = 'Logistics'
+  else if (/(机器人|robot|硬件|无人机|drone|自动化设备)/.test(lower)) fields.sector = 'Robotics'
+  else if (/(消费|品牌|新消费|d2c|餐饮|零售|服装|美妆)/.test(lower)) fields.sector = 'Consumer'
+  else if (/(教育|edtech|培训|学习|课程)/.test(lower)) fields.sector = 'EdTech'
+  else if (/(能源|新能源|储能|碳中和|光伏|电动)/.test(lower)) fields.sector = 'Energy'
+  else if (/(芯片|半导体|chip|fpga|gpu)/.test(lower)) fields.sector = 'Semiconductor'
+
+  // —— 轮次 ——
   if (/seed\b|种子轮/i.test(t)) fields.round = 'Seed'
-  else if (/天使|angel/i.test(t)) fields.round = 'Angel'
-  else if (/pre-?a/i.test(t)) fields.round = 'Pre-A'
-  else if (/series\s*b|b\s*轮/i.test(t)) fields.round = 'Series B'
-  else if (/series\s*a|a\s*轮/i.test(t)) fields.round = 'Series A'
+  else if (/天使轮|angel/i.test(t)) fields.round = 'Angel'
+  else if (/pre-?a|pre[-\s]?a\s*轮/i.test(t)) fields.round = 'Pre-A'
+  else if (/series\s*b|b\s*轮|b\+\s*轮/i.test(t)) fields.round = 'Series B'
+  else if (/series\s*c|c\s*轮/i.test(t)) fields.round = 'Series C'
+  else if (/series\s*a|a\s*轮|a\+\s*轮/i.test(t)) fields.round = 'Series A'
+  else if (/ipo|首发|上市/i.test(t)) fields.round = 'Pre-IPO'
 
   return fields
 }
