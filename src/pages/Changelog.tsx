@@ -39,6 +39,13 @@ const sprints: SprintEntry[] = [
   { num: 33, title: 'cninfo 升 live 实测', detail: '联影 + 顺丰 + 寒武纪 2024 年报真实 PDF 直链（巨潮资讯 query_annual_reports_tool）', files: ['data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
   { num: 34, title: 'HANDOFF.md 跨会话交接', detail: '产品级交接文档 — 列出已完成 / 真信源状态 / 关键文件路径 / 恢复后 todo', files: ['HANDOFF.md'], tag: '文档', color: '#475569' },
   { num: 35, title: 'qcc-risk wired→live 实测', detail: '旷视 3 维风险扫描真实数据：1 条 ¥9,000 消防 + 失信/异常 0；Risk 页升级为真数据', files: ['data/sourceProofs.ts', 'pages/Risk.tsx'], tag: '真信源', color: '#059669' },
+  { num: 36, title: 'Changelog/Layout 同步 + HANDOFF 链接', detail: 'footer 加 HANDOFF 链接，Changelog 头部计数升到 35 sprint 35 commits 5 真信源', files: ['pages/Changelog.tsx', 'components/Layout.tsx'], tag: '文档', color: '#475569' },
+  { num: 37, title: 'publicComps 加 reportUrl 字段', detail: '寒武纪/联影/顺丰直挂 cninfo PDF；DealDetail 表格点击「年报 PDF」一键跳官方公告', files: ['types/index.ts', 'data/extra.ts', 'pages/DealDetail.tsx'], tag: '真信源', color: '#059669' },
+  { num: 38, title: '联影也接真实 qcc-risk 扫描', detail: '联影 3 维实测全 0 + akshare/cninfo 双源交叉验证一致；Risk 页升级真数据', files: ['pages/Risk.tsx'], tag: '真信源', color: '#059669' },
+  { num: 39, title: '6 家可比公司全部直挂 cninfo PDF', detail: '拉卡拉/东航/石头/科沃斯/海光/讯飞 全部加 reportUrl，9 家全员真实可点 PDF', files: ['data/extra.ts'], tag: '真信源', color: '#059669' },
+  { num: 40, title: 'sourceProofs cninfo 升 9 家 + HANDOFF 同步', detail: 'cninfo proofRows 列出 9 家真实 PDF 直链（共 18 份官方公告），HANDOFF 同步状态', files: ['data/sourceProofs.ts', 'HANDOFF.md'], tag: '真信源', color: '#059669' },
+  { num: 41, title: 'Risk 加字节跳动真实监管案例', detail: 'qcc-risk 实测字节 1 条网信办高级别监管处罚（2025-09-23 约谈+责令改正）；Risk 页 4 颗粒度全覆盖（干净/小额/监管/硬红线）', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 42, title: 'Changelog 同步 sprint 36-41 全量', detail: '本页 — 41 sprint 全闭环，41 commits CI 绿，5 真信源全 live，9 家可比公司全直挂 PDF', files: ['pages/Changelog.tsx'], tag: 'Polish', color: '#475569' },
 ]
 
 const milestones = [
@@ -61,8 +68,8 @@ export default function Changelog() {
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 全部闭环" />
         <Stat label="累计页面" value={17} accent="#0ea5e9" hint="全部 200 OK" />
-        <Stat label="真信源已实测" value={5} accent="#059669" hint="akshare / qcc-company / qcc-ipr / qcc-risk / cninfo" />
-        <Stat label="累计提交" value={35} accent="#d97706" hint="CI 全绿 · 35 次 push" />
+        <Stat label="真信源已 live" value={'5/7'} accent="#059669" hint="akshare / qcc-company / qcc-ipr / qcc-risk / cninfo" />
+        <Stat label="真实数据资产" value={'9 家 + 18 PDF'} accent="#d97706" hint="可比公司 + 官方年报" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
