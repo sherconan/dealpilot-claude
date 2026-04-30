@@ -33,6 +33,19 @@ const cases: CompanyScan[] = [
     ],
   },
   {
+    name: '暴风集团股份有限公司（已退市暴雷）',
+    cnName: '暴风集团 · 真实硬红线案例',
+    overall: 'critical',
+    notes: 'qcc-risk 实测（2026-04-30）：典型暴雷企业全画像 — 中国证监会 2021-09 行政处罚 + 79 条失信被执行（涉案 ¥4,549.65 万）+ 202 条限制高消费。证明产品对真实"硬红线"的识别能力 — 触发任一即直接 Pass + 创始人风险标签入机构记忆库。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 1, status: 'high', detail: '中国证监会 2021-09-02 警告 + 罚款 ¥600,000 · 文号〔2021〕68号', source: 'qcc-risk · get_administrative_penalty · 实测' },
+      { category: '失信被执行', shortName: '失信', count: 79, status: 'high', detail: '79 条记录 · 涉案 ¥4,549.65 万 · 时间跨度 2019-06 至 2021-06 · 多家法院（北京海淀/石景山/朝阳/上海/杭州）', source: 'qcc-risk · get_dishonest_info · 实测' },
+      { category: '限制高消费', shortName: '限高', count: 202, status: 'high', detail: '202 条限高记录 — 法定代表人 / 实控人 / 公司主体均被限制高消费', source: 'qcc-risk · get_dishonest_info 关联分析' },
+      { category: '机构判定', shortName: '判定', count: 0, status: 'high', detail: '硬红线全部触发（证券违规 + 大量未履行判决 + 实控人限高）— 直接 Pass + 创始人风险永久标签入机构记忆库', source: '产品规则引擎' },
+      { category: '产品价值', shortName: '价值', count: 0, status: 'high', detail: '5 秒 1 次接口调用，识别"暴雷企业"，避免投资误判 — 这正是真信源核验的核心 ROI', source: '产品规则引擎' },
+    ],
+  },
+  {
     name: '虚构案例 · CryptoVault',
     cnName: 'CryptoVault · 链库（虚构）',
     overall: 'critical',
