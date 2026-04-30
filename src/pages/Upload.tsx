@@ -7,10 +7,12 @@ import {
   extractFields,
   detectRedFlags,
   computeScore,
+  renderPdfPagesAsImages,
   type ExtractedFields,
   type RedFlag,
 } from '../lib/pdfPipeline'
-import { deepAnalyzeBP, SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
+import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
+import { analyzeWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
@@ -40,6 +42,10 @@ export default function Upload() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [progressMsg, setProgressMsg] = useState<string>('')
   const [pasted, setPasted] = useState('')
+  const [provider, setProviderState] = useState<Provider>(getProvider())
+  const [apiKey, setApiKeyState] = useState<string>(getApiKey() || '')
+  const [showKeyInput, setShowKeyInput] = useState(false)
+  const [pageImages, setPageImages] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   function typewriter(key: SectionKey, full: string, speed = 14): Promise<void> {
@@ -56,7 +62,7 @@ export default function Upload() {
     })
   }
 
-  async function run(text: string, pages: number, name: string) {
+  async function run(text: string, pages: number, name: string, pdfFile?: File) {
     try {
       setErrorMsg(null)
       setStage('reading')
@@ -74,11 +80,17 @@ export default function Upload() {
 
       // ② 调 LLM 真分析
       setStage('llm-calling')
-      setProgressMsg('调用 Pollinations LLM 深度分析中（30-60 秒）...')
-      // 初始化 10 个 section 为 pending
       setSections(SECTION_ORDER.map((k) => ({ key: k, label: getSectionLabel(k), status: 'pending', shown: '', full: '' })))
 
-      const analysis = await deepAnalyzeBP(text, f, flags, (msg) => setProgressMsg(msg))
+      const providerMeta = PROVIDER_META[provider]
+      let images: string[] = []
+      if (providerMeta.multimodal && pdfFile && name.toLowerCase().endsWith('.pdf')) {
+        setProgressMsg(`渲染 PDF 前 ${Math.min(pages, 8)} 页为图像（多模态模型将真看 PDF 视觉）...`)
+        images = await renderPdfPagesAsImages(pdfFile, 8, 1.4, 0.7)
+        setPageImages(images)
+      }
+      setProgressMsg(`调用 ${providerMeta.label} 分析中（${providerMeta.multimodal ? `${images.length} 页图像 + 文本` : '纯文本'}，预计 30-90 秒）...`)
+      const analysis = await analyzeWithProvider(provider, apiKey || null, images, text, f, flags, (msg) => setProgressMsg(msg))
       setLlmDuration(analysis.duration)
 
       // ③ 流式 typewriter 10 段
@@ -129,7 +141,7 @@ export default function Upload() {
       try {
         setProgressMsg('pdfjs 抽取 PDF 全文中...')
         const { text, pages } = await extractPdfText(file)
-        await run(text, pages, file.name)
+        await run(text, pages, file.name, file)
       } catch (e: any) {
         setErrorMsg(`PDF 抽取失败：${e?.message || e}`)
         setStage('error')
@@ -165,10 +177,73 @@ export default function Upload() {
         <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
           上传 PDF → <b>pdfjs 真读全文</b> → regex 抽字段 → <b>调 Pollinations LLM 写完整 10 段深度报告</b>（约 30-60 秒）→ 流式 typewriter 呈现 → 自动创建项目入箱。报告由模型基于你 PDF 真实内容生成，不再是 regex 模板。
         </p>
-        <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-[12px] text-emerald-900 leading-relaxed">
-          <b>真 LLM 已接通：</b>用 <code className="bg-emerald-100 px-1 rounded">text.pollinations.ai</code> 免费通道（OpenAI 兼容 / 无 key），把 PDF 全文 + 已抽字段喂给模型，让 GPT-4 级别 LLM 生成 10 段深度分析。报告内容**真由模型基于你的 BP 写出**，不是模板。
-        </div>
       </header>
+
+      {/* Provider 选择 + BYOK */}
+      <section className="bg-white border border-ink-200 rounded-xl p-4 mb-5">
+        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div>
+            <div className="text-[12.5px] font-semibold tracking-tight">分析模式</div>
+            <div className="text-[11px] text-ink-500 mt-0.5">免费文本 LLM 默认开启 · 想要真多模态请填 key（仅存浏览器，不上传）</div>
+          </div>
+          <div className="text-[10px] text-ink-400">key 存储：<code className="bg-ink-100 px-1 rounded">localStorage / dp:llm-key</code></div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+          {(Object.keys(PROVIDER_META) as Provider[]).map((p) => {
+            const meta = PROVIDER_META[p]
+            const active = provider === p
+            const needsKey = !meta.free && !apiKey
+            return (
+              <button
+                key={p}
+                onClick={() => { setProvider(p); setProviderState(p); if (!meta.free) setShowKeyInput(true) }}
+                className={`text-left p-3 rounded-lg border-2 transition ${
+                  active ? 'border-brand-600 bg-brand-50/50' : 'border-ink-200 hover:bg-ink-50'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[12px] font-semibold tracking-tight">{meta.label.split(' (')[0]}</span>
+                  {meta.multimodal && <span className="text-[9px] text-violet-700 bg-violet-50 px-1 py-0.5 rounded font-medium">视觉</span>}
+                  {meta.free && <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded font-medium">免费</span>}
+                </div>
+                <div className="text-[10.5px] text-ink-600 leading-snug">{meta.desc}</div>
+                {needsKey && <div className="text-[10px] text-amber-700 mt-1">⚠️ 需要 API key</div>}
+                {active && !meta.free && apiKey && <div className="text-[10px] text-emerald-700 mt-1">✓ key 已配置</div>}
+              </button>
+            )
+          })}
+        </div>
+        {(showKeyInput || (!PROVIDER_META[provider].free && !apiKey)) && (
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              type="password"
+              value={apiKey}
+              onChange={(e) => setApiKeyState(e.target.value)}
+              placeholder={
+                provider === 'moonshot-vision' ? '粘贴 Moonshot API key (sk-...)，去 platform.moonshot.cn 申请' :
+                provider === 'openai-vision' ? '粘贴 OpenAI API key (sk-...)' :
+                provider === 'deepseek' ? '粘贴 DeepSeek API key' : ''
+              }
+              className="flex-1 text-[12px] bg-ink-50 border border-ink-200 rounded px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500/30 font-mono"
+            />
+            <button
+              onClick={() => {
+                if (apiKey) { setApiKey(apiKey); setShowKeyInput(false) }
+                else { clearApiKey(); setShowKeyInput(false) }
+              }}
+              className="px-3 py-1.5 text-[12px] rounded bg-brand-700 text-white hover:bg-brand-800"
+            >保存</button>
+            {apiKey && (
+              <button onClick={() => { setApiKeyState(''); clearApiKey() }} className="text-[11px] text-rose-700 hover:underline">清除</button>
+            )}
+          </div>
+        )}
+        <div className="mt-2 text-[10.5px] text-ink-500 leading-relaxed">
+          {PROVIDER_META[provider].multimodal ?
+            '✓ 此模式下系统会渲染 PDF 每页为图像，连同 pdfjs 抽到的文字一起喂给多模态模型 — 模型能真看到 BP 的图表、产品截图、视觉布局。' :
+            'ⓘ 此模式下仅把 pdfjs 抽到的文字喂给文本 LLM — 看不到 PDF 里的图表/截图/布局。如要真多模态请选 Moonshot Kimi 或 OpenAI GPT-4o。'}
+        </div>
+      </section>
 
       {/* 上传区 */}
       {stage === 'idle' && (
