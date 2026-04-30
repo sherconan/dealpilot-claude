@@ -30,7 +30,15 @@ const sprints: SprintEntry[] = [
   { num: 24, title: '/deal/:id/brief 一页 IC 简报', detail: '合伙人会前 5 分钟读的浓缩版 — Hero + 3 个核心论点 + 3 个会前必问 + 关键数字 + 真实可比锚定', files: ['pages/DealBrief.tsx'], tag: '功能', color: '#0f766e' },
   { num: 25, title: 'IC Memo 视觉增强', detail: 'Memo 顶部加 ScoreRing + 推荐结论 + akshare 实时可比锚定带，打印 PDF 更专业', files: ['pages/ICMemo.tsx'], tag: 'Polish', color: '#0f766e' },
   { num: 26, title: 'CSV 数据导出', detail: 'Memory 一键导出筛选后的项目为 CSV（UTF-8 BOM 兼容 Excel · 35 列结构化字段含 Sequoia 10）', files: ['lib/csv.ts', 'pages/Memory.tsx'], tag: '功能', color: '#475569' },
-  { num: 27, title: '7h Challenge 收官', detail: '更新 Changelog + 全部 27 sprint 总结 + 全程 27 次 commit · CI 全绿 · 17 个路由全部 200', files: ['pages/Changelog.tsx', 'README.md'], tag: 'Final', color: '#059669' },
+  { num: 27, title: '7h Challenge 阶段性收官', detail: '更新 Changelog + 27 sprint 总结 + CI 全绿 + 17 路由全部 200', files: ['pages/Changelog.tsx', 'README.md'], tag: 'Polish', color: '#475569' },
+  { num: 28, title: 'Pipeline CSV 导出 + Dashboard hero quote', detail: 'Pipeline 加 CSV 按钮（复用 lib/csv）+ Dashboard 顶部 Sequoia 引语 + 日期更新', files: ['pages/Pipeline.tsx', 'pages/Dashboard.tsx'], tag: 'Polish', color: '#0f766e' },
+  { num: 29, title: 'Mobile drawer sidebar', detail: '< 768px 侧栏隐藏为 drawer + 顶部 mobile bar（汉堡 / brand / theme 切换）', files: ['components/Layout.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 30, title: 'ICMemo 左侧 sticky TOC', detail: '8 段 anchor 跳转 + scroll-mt 偏移 + 打印时自动隐藏', files: ['pages/ICMemo.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 31, title: 'Cmd-K 深度搜索', detail: '搜索关键词覆盖 wins / concerns / founders / redFlags — 任意一句话都能定位 deal', files: ['components/CommandPalette.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 32, title: 'nebula-ai 真实可比扩充到 3 家', detail: '+ 海光信息 (688041) + 科大讯飞 (002230)，反映 AI 底座/应用层不同盈利能力', files: ['data/extra.ts', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 33, title: 'cninfo 升 live 实测', detail: '联影 + 顺丰 + 寒武纪 2024 年报真实 PDF 直链（巨潮资讯 query_annual_reports_tool）', files: ['data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 34, title: 'HANDOFF.md 跨会话交接', detail: '产品级交接文档 — 列出已完成 / 真信源状态 / 关键文件路径 / 恢复后 todo', files: ['HANDOFF.md'], tag: '文档', color: '#475569' },
+  { num: 35, title: 'qcc-risk wired→live 实测', detail: '旷视 3 维风险扫描真实数据：1 条 ¥9,000 消防 + 失信/异常 0；Risk 页升级为真数据', files: ['data/sourceProofs.ts', 'pages/Risk.tsx'], tag: '真信源', color: '#059669' },
 ]
 
 const milestones = [
@@ -51,10 +59,10 @@ export default function Changelog() {
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划" />
+        <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 全部闭环" />
         <Stat label="累计页面" value={17} accent="#0ea5e9" hint="全部 200 OK" />
-        <Stat label="真信源接入" value={7} accent="#059669" hint="3 实测 + 4 已接" />
-        <Stat label="累计提交" value={27} accent="#d97706" hint="CI 全绿" />
+        <Stat label="真信源已实测" value={5} accent="#059669" hint="akshare / qcc-company / qcc-ipr / qcc-risk / cninfo" />
+        <Stat label="累计提交" value={35} accent="#d97706" hint="CI 全绿 · 35 次 push" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
