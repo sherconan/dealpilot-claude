@@ -22,10 +22,12 @@ export default function Sources() {
         </p>
       </header>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <SummaryCard label="已实测调通" value={liveCount} accent="#059669" hint="本会话内已抓到真数据并归档" />
-        <SummaryCard label="已接入待触发" value={wiredCount} accent="#2563eb" hint="工具加载完成，等待真实 BP 触发实战调用" />
-        <SummaryCard label="累计已抓真数据条目" value={`${sources.find(s=>s.id==='akshare')?.proofRows?.length || 0} + ${sources.find(s=>s.id==='qcc-ipr')?.proofData?.totalPatents || 0} + ${(sources.find(s=>s.id==='qcc-company')?.proofRows?.length || 0)}`} accent="#0f766e" hint="A 股财报 8 行 + 旷视专利 434 + 工商画像 7" />
+      <section className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <SummaryCard label="信源已实测" value={`${liveCount}/7`} accent="#059669" hint="akshare · qcc(3) · cninfo" />
+        <SummaryCard label="专利记录" value={'4,475'} accent="#0f766e" hint="联影 3493 + 寒武纪 548 + 旷视 434" />
+        <SummaryCard label="官方 PDF" value={'25'} accent="#7c3aed" hint="9 家 × 年报 18 + 招股书 7" />
+        <SummaryCard label="可比公司" value={'9'} accent="#0ea5e9" hint="A 股 8 + 港股 1 全部带实时财报" />
+        <SummaryCard label="风险扫描" value={'5'} accent="#dc2626" hint="联影/旷视/字节/拼多多/虚构 critical" />
       </section>
 
       <div className="space-y-5">
