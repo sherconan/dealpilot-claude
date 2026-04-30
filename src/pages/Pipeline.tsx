@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deals } from '../data/deals'
 import { stageMeta } from '../lib/scoring'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
+import { useAllDeals } from '../lib/userDealStore'
 import type { Stage } from '../types'
 
 const LS_OVERRIDE = 'dp:stageOverride'
@@ -20,6 +20,7 @@ type ScoreFilter = 'all' | '85+' | '70-85' | '50-70' | '<50'
 type SortKey = 'score' | 'recent' | 'valuation'
 
 export default function Pipeline() {
+  const deals = useAllDeals()
   const [sector, setSector] = useState<string>('all')
   const [search, setSearch] = useState<string>('')
   const [scoreFilter, setScoreFilter] = useState<ScoreFilter>('all')

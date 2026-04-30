@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
 import { deals } from '../data/deals'
 import {
@@ -15,6 +15,7 @@ import {
   type SectionMap,
   type VerificationRoute,
 } from '../lib/pdfPipeline'
+import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
 type Stage = 'idle' | 'reading' | 'parsing' | 'verifying' | 'scoring' | 'memoing' | 'done' | 'error'
 
@@ -44,9 +45,12 @@ const stages: { key: Stage; label: string; pct: number; desc: string }[] = [
 
 export default function Upload() {
   const { t } = useApp()
+  const navigate = useNavigate()
   const [state, setState] = useState<PipelineState>({ stage: 'idle', progress: 0 })
   const [pasted, setPasted] = useState('')
   const [matchedDealId, setMatchedDealId] = useState<string | null>(null)
+  const [createdDealId, setCreatedDealId] = useState<string | null>(null)
+  const [autoCreated, setAutoCreated] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const recent = deals.slice(0, 4)
 
@@ -77,15 +81,23 @@ export default function Upload() {
       setState((s) => ({ ...s, stage: 'memoing', progress: 95, memo }))
       await sleep(220)
 
-      setState((s) => ({ ...s, stage: 'done', progress: 100 }))
-
-      // 匹配现有 deal
+      // 匹配现有 deal（避免重复创建）
       const lower = (fileName + ' ' + text.slice(0, 2000)).toLowerCase()
       const m = deals.find((d) =>
         lower.includes(d.name.toLowerCase()) || lower.includes(d.cnName) ||
         (fields.company && (d.name.toLowerCase().includes(fields.company.toLowerCase()) || d.cnName.includes(fields.company))),
       )
       setMatchedDealId(m?.id || null)
+
+      // 没匹配现有 → 自动创建新 deal 入箱
+      if (!m) {
+        const newDeal = buildDealFromExtraction(fields, redFlags, score, fileName, text)
+        addUserDeal(newDeal)
+        setCreatedDealId(newDeal.id)
+        setAutoCreated(true)
+      }
+
+      setState((s) => ({ ...s, stage: 'done', progress: 100 }))
     } catch (e: any) {
       setState((s) => ({ ...s, stage: 'error', errorMsg: e?.message || 'PDF 解析失败' }))
     }
@@ -339,19 +351,45 @@ export default function Upload() {
                 </div>
               )}
 
-              {/* 完成跳转 */}
+              {/* 完成跳转 — 真创建项目 */}
               {state.stage === 'done' && (
                 matchedDealId ? (
                   <Link to={`/deal/${matchedDealId}`} className="block w-full text-center px-3.5 py-2.5 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition">
-                    匹配「{deals.find(d => d.id === matchedDealId)?.name}」· 进入完整分析报告 →
+                    匹配现有项目「{deals.find(d => d.id === matchedDealId)?.name}」· 进入完整分析报告 →
                   </Link>
+                ) : createdDealId && autoCreated ? (
+                  <div className="bg-emerald-50 border-2 border-emerald-500 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg viewBox="0 0 16 16" className="w-5 h-5 text-emerald-700" fill="currentColor"><path d="M10.4 3.6L4.8 9.2 1.6 6l1.4-1.4L4.8 6.4l4.2-4.2z"/></svg>
+                      <div className="text-[13px] font-semibold text-emerald-800">✓ 项目已自动创建并入箱</div>
+                    </div>
+                    <div className="text-[12px] text-emerald-900 leading-relaxed mb-3">
+                      <b>「{state.fields?.company}」</b>已存入机构记忆库 · 出现在 Pipeline 初筛栏 · 含 Sequoia 10 评分 / Red Flag / 时间线
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => navigate(`/deal/${createdDealId}`)}
+                        className="px-3 py-2 text-[12px] rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 transition font-medium"
+                      >
+                        进入项目详情 →
+                      </button>
+                      <Link to="/pipeline" className="px-3 py-2 text-[12px] rounded-lg border border-emerald-600 text-emerald-700 hover:bg-emerald-100 transition text-center font-medium">
+                        看 Pipeline 看板
+                      </Link>
+                      <Link to={`/deal/${createdDealId}/memo`} className="px-3 py-2 text-[12px] rounded-lg border border-ink-200 hover:bg-ink-50 transition text-center">
+                        生成 IC Memo
+                      </Link>
+                      <Link to={`/deal/${createdDealId}/brief`} className="px-3 py-2 text-[12px] rounded-lg border border-ink-200 hover:bg-ink-50 transition text-center">
+                        一页简报
+                      </Link>
+                    </div>
+                    <div className="text-[10px] text-ink-500 mt-2 leading-relaxed">
+                      项目 ID: <code className="bg-emerald-100 px-1 rounded">{createdDealId}</code> · 数据存于 localStorage（清浏览器缓存会丢，生产环境走后端持久化）
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-[12px] text-amber-900 bg-amber-50 border border-amber-200 rounded-md p-3">
-                    <b>识别为「{state.fields?.company}」</b> — 当前演示库无此项目完整档案。生产环境会基于抽取字段 + 真信源调用结果自动构建首份档案存入 <Link to="/memory" className="underline">机构记忆</Link>。
-                    <div className="mt-2 flex items-center gap-2">
-                      <Link to="/deal/nebula-ai" className="text-[11px] px-2 py-1 rounded bg-brand-700 text-white">看 NebulaAI 完整分析示例</Link>
-                      <Link to="/sources" className="text-[11px] px-2 py-1 rounded border border-amber-300">真信源已接通清单</Link>
-                    </div>
+                    <b>识别为「{state.fields?.company}」</b> — 处理中…
                   </div>
                 )
               )}

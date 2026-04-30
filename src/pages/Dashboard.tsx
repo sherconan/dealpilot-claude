@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { deals } from '../data/deals'
 import { fundingFunnel } from '../lib/scoring'
+import { useAllDeals } from '../lib/userDealStore'
 import MetricCard from '../components/MetricCard'
 import DealCard from '../components/DealCard'
 import { StagePill } from '../components/StatusPill'
@@ -9,6 +9,7 @@ import { MonthlyTrendChart, DonutChart, BarChart, ConversionFlow, Sparkline } fr
 import { monthlyInbound, sectorMix, scoreDistribution, conversionRates, avgScoreTrend } from '../data/analytics'
 
 export default function Dashboard() {
+  const deals = useAllDeals()
   const stats = useMemo(() => {
     const total = deals.length
     const priority = deals.filter((d) => d.recommendation === 'priority').length

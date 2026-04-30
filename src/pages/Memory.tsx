@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deals } from '../data/deals'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
+import { useAllDeals } from '../lib/userDealStore'
 
 type SortKey = 'score' | 'recent' | 'sector'
 type RecFilter = 'all' | 'priority' | 'monitor' | 'conditional' | 'pass'
 
 export default function Memory() {
+  const deals = useAllDeals()
   const [search, setSearch] = useState('')
   const [recFilter, setRecFilter] = useState<RecFilter>('all')
   const [sort, setSort] = useState<SortKey>('score')
