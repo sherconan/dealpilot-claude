@@ -156,7 +156,7 @@ export default function Layout() {
             {t('disclaimer.sources')}: <code className="text-[10.5px] bg-amber-100 px-1 rounded">akshare</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">qcc</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">cninfo</code> · <code className="text-[10.5px] bg-amber-100 px-1 rounded">SIPO</code>
           </span>
           <Link to="/changelog" className="ml-auto inline-flex items-center gap-1 text-[11px] font-medium text-brand-700 hover:underline">
-            7h Challenge · 18 Sprints →
+            35-Sprint Self-Driven Build →
           </Link>
         </div>
         <Outlet />
@@ -166,7 +166,8 @@ export default function Layout() {
             <a href="https://github.com/sherconan/dealpilot-claude" target="_blank" className="hover:text-brand-700">GitHub</a>
             <Link to="/docs" className="hover:text-brand-700">方法论</Link>
             <Link to="/sources" className="hover:text-brand-700">真信源</Link>
-            <Link to="/changelog" className="hover:text-brand-700">7h Challenge</Link>
+            <Link to="/changelog" className="hover:text-brand-700">35-Sprint Challenge</Link>
+            <a href="https://github.com/sherconan/dealpilot-claude/blob/main/HANDOFF.md" target="_blank" className="hover:text-brand-700">HANDOFF</a>
           </div>
           <div className="flex items-center gap-2">
             <kbd className="bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded num">⌘ K</kbd>
