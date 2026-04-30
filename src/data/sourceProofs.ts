@@ -113,8 +113,8 @@ export const sources: SourceConnector[] = [
       { name: 'download_prospectus_tool', useCase: '招股书下载' },
     ],
     lastVerified: '2026-04-30',
-    proofTitle: '9 家真实可比公司 2024 年报全量已抓取',
-    proofSummary: '所有 6 个 deal 的 publicComps 现在都直挂 cninfo PDF 直链（9 家 × 2024 年报 = 18 份官方公告），DealDetail 表格点击即跳官方原文，IC Memo 引用有据可查。',
+    proofTitle: '9 家真实可比公司 · 25 份官方 PDF（年报 18 + 招股书 7）',
+    proofSummary: 'cninfo 双工具实测：query_annual_reports（9/9 全覆盖）+ query_prospectus（7/9 — 东航分拆上市无招股书 / 顺丰挂 H 股 / 讯飞挂讯飞医疗 H 股）。DealDetail 表格点击「年报」「招股书」直跳官方原文。',
     proofRows: [
       { k: '联影医疗 (688271)', v: '2024 年报 + 摘要 · 2025-04-29 · 1223362977.PDF' },
       { k: '顺丰控股 (002352)', v: '2024 年报 + 摘要 · 2025-03-29 · 1222943385.PDF' },
