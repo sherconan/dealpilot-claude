@@ -16,6 +16,7 @@ import Compare from './pages/Compare'
 import Briefings from './pages/Briefings'
 import Changelog from './pages/Changelog'
 import DealBrief from './pages/DealBrief'
+import Unicorns from './pages/Unicorns'
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
         <Route path="/deal/:id" element={<DealDetail />} />
         <Route path="/deal/:id/memo" element={<ICMemo />} />
         <Route path="/deal/:id/brief" element={<DealBrief />} />
+        <Route path="/unicorns" element={<Unicorns />} />
       </Route>
     </Routes>
   )

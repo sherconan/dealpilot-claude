@@ -28,6 +28,8 @@ export const dict: Dict = {
   'nav.compare.hint': { zh: '并排比较', en: 'Side-by-side' },
   'nav.briefings': { zh: '基金周报', en: 'Briefings' },
   'nav.briefings.hint': { zh: '自动聚合', en: 'Auto roll-up' },
+  'nav.unicorns': { zh: 'AI 独角兽', en: 'Unicorns' },
+  'nav.unicorns.hint': { zh: '真实矩阵', en: 'Real matrix' },
   'nav.workspace': { zh: '工作台', en: 'Workspace' },
   'nav.priority': { zh: '优先推进', en: 'Priority' },
   'nav.tools': { zh: '尽调工具', en: 'DD Tools' },
