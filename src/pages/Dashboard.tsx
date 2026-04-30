@@ -52,13 +52,13 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-4 py-2 text-sm font-medium rounded-lg border border-ink-200 bg-white hover:bg-ink-50 transition">
+          <Link to="/briefings" className="px-4 py-2 text-sm font-medium rounded-lg border border-ink-200 bg-white hover:bg-ink-50 transition">
             导出本周简报
-          </button>
-          <button className="px-4 py-2 text-sm font-medium rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition inline-flex items-center gap-2">
+          </Link>
+          <Link to="/upload" className="px-4 py-2 text-sm font-medium rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition inline-flex items-center gap-2">
             <svg viewBox="0 0 20 20" className="w-4 h-4" fill="currentColor"><path d="M10 2a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H3a1 1 0 110-2h6V3a1 1 0 011-1z"/></svg>
             上传 BP
-          </button>
+          </Link>
         </div>
       </header>
 
