@@ -21,6 +21,30 @@ export async function extractPdfText(file: File): Promise<{ text: string; pages:
   return { text, pages: pdf.numPages }
 }
 
+// 渲染 PDF 每页为 base64 JPEG — 用于多模态 LLM 真看 PDF 视觉布局
+export async function renderPdfPagesAsImages(
+  file: File,
+  maxPages = 10,
+  scale = 1.4,
+  quality = 0.7,
+): Promise<string[]> {
+  const buf = await file.arrayBuffer()
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise
+  const images: string[] = []
+  const limit = Math.min(pdf.numPages, maxPages)
+  for (let i = 1; i <= limit; i++) {
+    const page = await pdf.getPage(i)
+    const viewport = page.getViewport({ scale })
+    const canvas = document.createElement('canvas')
+    canvas.width = viewport.width
+    canvas.height = viewport.height
+    const ctx = canvas.getContext('2d')!
+    await page.render({ canvasContext: ctx, viewport, canvas }).promise
+    images.push(canvas.toDataURL('image/jpeg', quality))
+  }
+  return images
+}
+
 export interface ExtractedFields {
   company?: string
   founders: string[]
