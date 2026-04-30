@@ -45,7 +45,10 @@ const sprints: SprintEntry[] = [
   { num: 39, title: '6 家可比公司全部直挂 cninfo PDF', detail: '拉卡拉/东航/石头/科沃斯/海光/讯飞 全部加 reportUrl，9 家全员真实可点 PDF', files: ['data/extra.ts'], tag: '真信源', color: '#059669' },
   { num: 40, title: 'sourceProofs cninfo 升 9 家 + HANDOFF 同步', detail: 'cninfo proofRows 列出 9 家真实 PDF 直链（共 18 份官方公告），HANDOFF 同步状态', files: ['data/sourceProofs.ts', 'HANDOFF.md'], tag: '真信源', color: '#059669' },
   { num: 41, title: 'Risk 加字节跳动真实监管案例', detail: 'qcc-risk 实测字节 1 条网信办高级别监管处罚（2025-09-23 约谈+责令改正）；Risk 页 4 颗粒度全覆盖（干净/小额/监管/硬红线）', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
-  { num: 42, title: 'Changelog 同步 sprint 36-41 全量', detail: '本页 — 41 sprint 全闭环，41 commits CI 绿，5 真信源全 live，9 家可比公司全直挂 PDF', files: ['pages/Changelog.tsx'], tag: 'Polish', color: '#475569' },
+  { num: 42, title: 'Changelog 同步 sprint 36-41 全量', detail: '41 sprint 全闭环，5 真信源全 live，9 家可比公司全直挂 PDF', files: ['pages/Changelog.tsx'], tag: 'Polish', color: '#475569' },
+  { num: 43, title: 'cninfo 招股书工具实测', detail: '寒武纪 2020 + 联影 2022 招股书直挂 publicComps prospectusUrl，DealDetail 表格新增「招股书」紫色链接', files: ['types/index.ts', 'data/extra.ts', 'pages/DealDetail.tsx'], tag: '真信源', color: '#059669' },
+  { num: 44, title: '剩 7 家可比公司招股书全部拉满', detail: '7 家招股书 PDF 真实抓取（顺丰 H 股 / 拉卡拉 / 石头 / 科沃斯 / 海光 / 讯飞医疗 H 股 / 东航无）9 家 25 份官方 PDF', files: ['data/extra.ts', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
+  { num: 45, title: 'sourceProofs/HANDOFF/Changelog 同步终态', detail: 'cninfo proofRows 列出 9 家年报+招股书全量；HANDOFF 升级到 45 sprint 25 PDF；Changelog 加 43-45', files: ['data/sourceProofs.ts', 'HANDOFF.md', 'pages/Changelog.tsx'], tag: '文档', color: '#475569' },
 ]
 
 const milestones = [
@@ -69,7 +72,7 @@ export default function Changelog() {
         <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 全部闭环" />
         <Stat label="累计页面" value={17} accent="#0ea5e9" hint="全部 200 OK" />
         <Stat label="真信源已 live" value={'5/7'} accent="#059669" hint="akshare / qcc-company / qcc-ipr / qcc-risk / cninfo" />
-        <Stat label="真实数据资产" value={'9 家 + 18 PDF'} accent="#d97706" hint="可比公司 + 官方年报" />
+        <Stat label="官方 PDF 资产" value={'25'} accent="#d97706" hint="9 家公司 · 年报 18 + 招股书 7" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">

@@ -4,13 +4,13 @@
 
 ---
 
-## 当前状态（最后更新 · 2026-04-30 · Sprint 40）
+## 当前状态（最后更新 · 2026-04-30 · Sprint 45）
 
 - **线上主站**：https://sherconan.github.io/dealpilot-claude/
 - **Vercel 镜像**：https://dealpilot-claude.vercel.app/
 - **GitHub Repo**：https://github.com/sherconan/dealpilot-claude
 - **CI**：全绿 · 17 路由全部 200
-- **进度**：Sprint 40 闭环（5 真信源全部 live · 9 家可比公司全部直挂 cninfo PDF · 旷视 qcc-risk 真实扫描）
+- **进度**：45 sprint 全闭环 · 5 真信源 live · 9 家可比公司 25 份官方 PDF（年报 18 + 招股书 7）· qcc-risk 4 公司 6 维实测
 
 ## 已交付清单（33 Sprints）
 
