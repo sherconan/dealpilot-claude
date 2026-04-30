@@ -20,6 +20,19 @@ interface CompanyScan {
 
 const cases: CompanyScan[] = [
   {
+    name: '北京月之暗面科技有限公司（Moonshot · Kimi）',
+    cnName: 'Moonshot AI · 真实独角兽对照',
+    overall: 'clean',
+    notes: 'qcc 三工具实测（2026-04-30）：成立 2023-04-17，法定代表人杨植麟，注册资本 ¥100 万。行政处罚 0、专利 1 条（大语言推理系统）。代表性 AI 独角兽 Series B 阶段画像，可作 NebulaAI 等虚构 deal 的"真实参考"。',
+    results: [
+      { category: '工商画像', shortName: '工商', count: 0, status: 'clean', detail: '成立 2023-04-17 · 法人杨植麟 · 注册资本 ¥100 万 · 海淀区知春路 76 号 13 层 · 状态：存续', source: 'qcc-company · get_company_profile · 实测' },
+      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '主体在此维度的经营表现良好，无历史遗留违规', source: 'qcc-risk · get_administrative_penalty · 实测' },
+      { category: '核心专利', shortName: '专利', count: 1, status: 'clean', detail: '"一种大语言推理系统及方法"（CN118052282B · 2024-02 申请 · 2025-02-28 授权）— Series B 阶段公司专利数量正常水平', source: 'qcc-ipr · get_patent_info · 实测' },
+      { category: '经营范围', shortName: '范围', count: 0, status: 'clean', detail: 'AI 基础软件 + 应用软件开发 + 网络文化经营 + 增值电信业务（许可证项目齐全）', source: 'qcc-company' },
+      { category: '机构判定', shortName: '判定', count: 0, status: 'clean', detail: '真实健康创业公司画像 — 早期 AI 独角兽典型样本，工商 / 风险 / IP 三维度均符合机构投资门槛', source: '产品规则引擎' },
+    ],
+  },
+  {
     name: '北京旷视科技有限公司',
     cnName: '旷视 Megvii · 真实数据',
     overall: 'clean',
