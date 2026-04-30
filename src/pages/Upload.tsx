@@ -19,6 +19,8 @@ export default function Upload() {
   const [progress, setProgress] = useState(0)
   const [fields, setFields] = useState<ParsedField[]>([])
   const [pasted, setPasted] = useState('')
+  const [matchedDealId, setMatchedDealId] = useState<string | null>(null)
+  const [parsedCompany, setParsedCompany] = useState<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const recent = deals.slice(0, 4)
@@ -53,6 +55,16 @@ export default function Upload() {
     setProgress(0)
     setFields([])
     const { company, sector, round } = derive(name)
+    setParsedCompany(company)
+    // 检查是否匹配现有 6 个 deal — 不匹配则不跳，诚实说明
+    const lower = (name + ' ' + company).toLowerCase()
+    const m = deals.find((d) =>
+      lower.includes(d.name.toLowerCase()) ||
+      lower.includes(d.cnName) ||
+      d.name.toLowerCase().includes(company.toLowerCase()) ||
+      d.cnName.includes(company),
+    )
+    setMatchedDealId(m?.id || null)
 
     let p = 0
     const tick = () => {
@@ -201,12 +213,22 @@ export default function Upload() {
               </ol>
             )}
             {stage === 'done' && (
-              <Link
-                to="/deal/nebula-ai"
-                className="mt-4 block w-full text-center px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition"
-              >
-                进入完整分析报告 →
-              </Link>
+              matchedDealId ? (
+                <Link
+                  to={`/deal/${matchedDealId}`}
+                  className="mt-4 block w-full text-center px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 transition"
+                >
+                  匹配到现有项目「{deals.find(d => d.id === matchedDealId)?.name}」· 进入完整分析 →
+                </Link>
+              ) : (
+                <div className="mt-4 text-[12px] text-amber-900 bg-amber-50 border border-amber-200 rounded-md p-3 leading-relaxed">
+                  <b>识别到「{parsedCompany}」</b> — 当前演示库无此项目完整档案（生产环境会通过工商画像、专利核验、信号雷达等真信源自动构建首份档案）。
+                  <div className="mt-2 flex items-center gap-2">
+                    <Link to="/deal/nebula-ai" className="text-[11px] px-2 py-1 rounded bg-brand-700 text-white hover:bg-brand-800">看 NebulaAI 完整分析示例</Link>
+                    <Link to="/sources" className="text-[11px] px-2 py-1 rounded border border-amber-300 hover:bg-amber-100">看真信源接入清单</Link>
+                  </div>
+                </div>
+              )
             )}
           </div>
 
