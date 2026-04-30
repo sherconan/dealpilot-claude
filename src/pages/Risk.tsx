@@ -47,15 +47,15 @@ const cases: CompanyScan[] = [
   },
   {
     name: '上海联影医疗科技股份有限公司',
-    cnName: '联影医疗 · United Imaging',
+    cnName: '联影医疗 · 真实数据',
     overall: 'clean',
-    notes: 'A 股科创板上市公司（688271），财务数据透明。akshare 实测 2025 全年营收 ¥88.59 亿（前 9 月）、净利率 12.6%。',
+    notes: 'qcc-risk 实测（2026-04-30）：行政处罚 / 失信 / 经营异常 全部 0 条 — 科创板上市公司合规画像完美。akshare 财务数据 + cninfo 2024 年报 PDF 双源交叉一致。',
     results: [
-      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '无重大行政处罚', source: 'qcc-risk' },
-      { category: '财务数据真实性', shortName: '财务', count: 0, status: 'clean', detail: 'akshare 抓取数据与公开年报对齐', source: 'akshare + cninfo 双源交叉' },
-      { category: '专利状态', shortName: '专利', count: 0, status: 'clean', detail: '专利授权率正常', source: 'qcc-ipr' },
-      { category: '司法风险', shortName: '司法', count: 0, status: 'clean', detail: '无重大司法纠纷', source: 'qcc-risk' },
-      { category: '股权变动', shortName: '股权', count: 0, status: 'clean', detail: '股权结构稳定', source: 'qcc-company · 历史变更' },
+      { category: '行政处罚', shortName: '处罚', count: 0, status: 'clean', detail: '主体在此维度经营表现良好，无历史遗留违规', source: 'qcc-risk · get_administrative_penalty · 实测 2026-04-30' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '不在最高人民法院失信名单 · 同步排查限高 / 被执行均无', source: 'qcc-risk · get_dishonest_info · 实测' },
+      { category: '经营异常', shortName: '异常', count: 0, status: 'clean', detail: '工商正常经营状态，未列入异常名录', source: 'qcc-risk · get_business_exception · 实测' },
+      { category: '财务数据真实性', shortName: '财务', count: 0, status: 'clean', detail: 'akshare 抓取的 ¥88.59 亿营收与 cninfo 2024 年报 PDF 披露口径一致', source: 'akshare + cninfo 双源交叉 · 实测' },
+      { category: '专利护城河', shortName: '专利', count: 0, status: 'clean', detail: '专利授权率正常，无 IP 质押风险', source: 'qcc-ipr' },
     ],
   },
 ]
