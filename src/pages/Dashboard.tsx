@@ -32,6 +32,24 @@ export default function Dashboard() {
             "VC 的核心赌注始终是「人」 — BP 只是敲门砖，真正的决策在「人」。"
             <span className="not-italic ml-1.5 text-ink-400">— Sequoia Capital</span>
           </p>
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+              <span className="num font-semibold">5/7</span> 真信源 live
+            </Link>
+            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-brand-50 border border-brand-500/30 text-brand-800 hover:bg-brand-50/80 transition">
+              <span className="num font-semibold">4,475</span> 专利已抓
+            </Link>
+            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-800 hover:bg-violet-100 transition">
+              <span className="num font-semibold">25</span> 份官方 PDF
+            </Link>
+            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-800 hover:bg-sky-100 transition">
+              <span className="num font-semibold">9</span> 家真实可比公司
+            </Link>
+            <Link to="/changelog" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition">
+              <span className="num font-semibold">46</span> Sprint 闭环
+            </Link>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <button className="px-4 py-2 text-sm font-medium rounded-lg border border-ink-200 bg-white hover:bg-ink-50 transition">
