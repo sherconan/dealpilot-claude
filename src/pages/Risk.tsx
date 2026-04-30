@@ -46,6 +46,19 @@ const cases: CompanyScan[] = [
     ],
   },
   {
+    name: '北京抖音信息服务有限公司（曾用名：字节跳动）',
+    cnName: '字节跳动 · 真实监管案例',
+    overall: 'caution',
+    notes: 'qcc-risk 实测（2026-04-30）：识别到 1 条网信办高级别监管处罚（2025-09-23 约谈 + 责令限期改正 + 警告 + 从严处理责任人）。证明产品能识别"超大型公司也存在的合规事件"，颗粒度区分硬红线 vs 中等监管事件。',
+    results: [
+      { category: '行政处罚', shortName: '处罚', count: 1, status: 'medium', detail: '国家网信办 2025-09-23 对今日头条平台采取约谈、责令限期改正、警告、从严处理责任人等处置处罚措施 — 平台型监管事件，多见于头部公司，需在 IC Memo 中专项分析监管常态化对估值的影响', source: 'qcc-risk · get_administrative_penalty · 实测' },
+      { category: '失信被执行', shortName: '失信', count: 0, status: 'clean', detail: '无失信被执行人记录，限高 / 被执行均无', source: 'qcc-risk · get_dishonest_info · 实测' },
+      { category: '工商画像', shortName: '工商', count: 0, status: 'clean', detail: '成立 2012，曾用名"字节跳动"，AI + 移动互联网，旗下今日头条 / 抖音 / 西瓜视频等', source: 'qcc-company · get_company_profile · 实测' },
+      { category: '业务体量', shortName: '体量', count: 0, status: 'clean', detail: '全球化战略 + 技术出海，估值 / 用户体量超大型', source: 'qcc-company' },
+      { category: '机构判定', shortName: '判定', count: 0, status: 'medium', detail: '中等风险：监管事件存在但属赛道常态，不构成投资硬红线 — 需在尽调中量化监管时间线对增长的拖累', source: '产品规则引擎' },
+    ],
+  },
+  {
     name: '上海联影医疗科技股份有限公司',
     cnName: '联影医疗 · 真实数据',
     overall: 'clean',
