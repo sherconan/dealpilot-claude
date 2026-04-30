@@ -127,13 +127,25 @@ export default function Upload() {
     try {
       setFileName(file.name)
       setRuns([])
+      setFields(null); setRedFlags([]); setScore(null); setRoutes([])
+      setCreatedDealId(null); setMatchedDealId(null); setCompletedAll(false)
+
       if (file.name.toLowerCase().endsWith('.pdf')) {
+        // 立即抽 PDF 文本并显示 — 让用户先看到读到了什么
         const { text, pages } = await extractPdfText(file)
         setPdfText(text); setPdfPages(pages)
+        // 立即抽字段 — 让用户第一秒看到字段抽取结果
+        const f = extractFields(text, file.name.replace(/\.(pdf|pptx?|docx?|txt)$/i, ''))
+        setFields(f)
+        // 短暂停顿让用户看到，然后启动 12 阶段
+        await sleep(400)
         await runFullAnalysis(text, pages, file.name)
       } else {
         const fakeText = `文件名：${file.name}\n（非 PDF 文件，pdfjs 仅支持 PDF — 真实抽取需要 PPTX/DOCX 解析器）`
         setPdfText(fakeText); setPdfPages(0)
+        const f = extractFields(fakeText, file.name)
+        setFields(f)
+        await sleep(400)
         await runFullAnalysis(fakeText, 0, file.name)
       }
     } catch (e: any) {
@@ -211,6 +223,56 @@ export default function Upload() {
       {errorMsg && (
         <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-5 text-[13px] text-rose-800">
           <b>解析失败</b><div className="mt-1 text-[12px]">{errorMsg}</div>
+        </div>
+      )}
+
+      {/* PDF 抽取真文本预览 — 上传后立即可见，证明 pdfjs 真读到了 */}
+      {pdfText && pdfText.length > 0 && (
+        <div className="bg-white border border-ink-200 rounded-xl p-4 mb-5">
+          <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+            <div>
+              <div className="text-[12.5px] font-semibold tracking-tight">PDF 抽取真文本（前 1500 字）</div>
+              <div className="text-[11px] text-ink-500 num">
+                {pdfPages > 0 ? `${pdfPages} 页 · ` : ''}共抽取 <b className="text-ink-800">{pdfText.length.toLocaleString()}</b> 字符 · 文件名：{fileName}
+              </div>
+            </div>
+            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">pdfjs-dist 真抽</span>
+          </div>
+          {pdfText.length < 100 ? (
+            <div className="bg-rose-50 border border-rose-200 rounded p-3 text-[12px] text-rose-800">
+              <b>⚠️ PDF 抽取内容过少（{pdfText.length} 字符）</b>
+              <div className="mt-1 text-[11.5px]">极可能是图片型扫描件，pdfjs 无法识别 — 需要 OCR（如 PaddleOCR / Tesseract）。生产环境会自动降级到 OCR pipeline。</div>
+              <div className="mt-1 text-[11.5px]">演示版仅支持文字型 PDF（用 Word/PPT 转的 PDF）。</div>
+            </div>
+          ) : (
+            <div className="text-[11.5px] text-ink-700 bg-ink-50 rounded-md p-3 max-h-[180px] overflow-y-auto leading-relaxed font-mono whitespace-pre-wrap scrollbar-thin">
+              {pdfText.slice(0, 1500)}{pdfText.length > 1500 ? '…' : ''}
+            </div>
+          )}
+          {fields && (
+            <div className="mt-3 pt-3 border-t border-ink-100">
+              <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-2">实时字段抽取结果（来自上面的真文本）</div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 text-[11.5px]">
+                <FieldKV k="公司名" v={fields.company} />
+                <FieldKV k="赛道" v={fields.sector} />
+                <FieldKV k="轮次" v={fields.round} />
+                <FieldKV k="估值" v={fields.valuation} />
+                <FieldKV k="ARR" v={fields.arr} />
+                <FieldKV k="增长率" v={fields.growthRate} />
+                <FieldKV k="TAM" v={fields.tam} />
+                <FieldKV k="LTV/CAC" v={fields.ltvCac} />
+                <FieldKV k="客户" v={fields.customers} />
+                <FieldKV k="专利" v={fields.patentClaim} />
+                <FieldKV k="创始人" v={fields.founders.length > 0 ? fields.founders.join(' / ') : undefined} />
+                <FieldKV k="对标" v={fields.comparables.length > 0 ? fields.comparables.slice(0, 3).join(' / ') : undefined} />
+              </div>
+              {Object.values(fields).every(v => v === undefined || (Array.isArray(v) && v.length === 0)) && (
+                <div className="mt-2 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded p-2">
+                  ⚠️ 字段抽取为空 — 说明 PDF 文本与 regex 模式不吻合（例如纯英文 BP 用了独特排版）。这是产品级缺陷，建议：① 把 PDF 关键页文字粘贴到右上文本框 ② 真生产环境会用 LLM 多模态做语义抽取（不依赖固定 regex）。
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -319,6 +381,15 @@ export default function Upload() {
           })}
         </section>
       )}
+    </div>
+  )
+}
+
+function FieldKV({ k, v }: { k: string; v?: string }) {
+  return (
+    <div className={`rounded px-2 py-1 ${v ? 'bg-emerald-50 border border-emerald-200/60' : 'bg-ink-50 border border-ink-200/60'}`}>
+      <div className="text-[10px] text-ink-500">{k}</div>
+      <div className={`text-[12px] num font-medium mt-0.5 truncate ${v ? 'text-emerald-800' : 'text-ink-400'}`}>{v || '— 未抽到'}</div>
     </div>
   )
 }
