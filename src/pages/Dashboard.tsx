@@ -38,7 +38,7 @@ export default function Dashboard() {
               <span className="num font-semibold">5/7</span> 真信源 live
             </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-brand-50 border border-brand-500/30 text-brand-800 hover:bg-brand-50/80 transition">
-              <span className="num font-semibold">4,475</span> 专利已抓
+              <span className="num font-semibold">4,568</span> 专利已抓 · 6 家
             </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-800 hover:bg-violet-100 transition">
               <span className="num font-semibold">25</span> 份官方 PDF
