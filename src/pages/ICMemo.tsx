@@ -75,7 +75,12 @@ export default function ICMemo() {
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 7V2h10v5h2a1 1 0 011 1v5a1 1 0 01-1 1h-2v-3H3v3H1a1 1 0 01-1-1V8a1 1 0 011-1h2zm10 0V3H4v4h9zm0 5v-3H4v3h9z"/></svg>
             打印 / 导出 PDF
           </button>
-          <button className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">提交投委会</button>
+          <button
+            onClick={() => {
+              const ok = confirm(`将「${deal.name}」IC Memo 提交投委会？\n\n· 触发投委会成员投票（5 票）\n· 锁定 Term Sheet 起草任务\n· 冠军合伙人：${deal.champion}\n\n演示版不会真实发送，仅做流程演示`)
+              if (ok) alert(`✓ 已提交投委会\n\n下一步：等待 IC 投票（72h 内）\n投票通过后自动进入 TS 起草阶段`)
+            }}
+            className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">提交投委会</button>
         </div>
       </header>
 

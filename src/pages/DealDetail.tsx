@@ -84,8 +84,22 @@ export default function DealDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">安排会议</button>
-          <button className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
+          <button
+            onClick={() => alert(`已安排合伙人会议\n\n项目：${deal.name}\n创始人：${deal.founders[0]?.name}\n邀请将通过邮件发送（演示版未实际发送）`)}
+            className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">安排会议</button>
+          <button
+            onClick={() => {
+              const ok = confirm(`将 ${deal.name} 推入「尽调」阶段？\n\n· 自动启动 5 项 reference check\n· 触发 financial DD 任务\n· 通知冠军合伙人 ${deal.champion}`)
+              if (ok) {
+                try {
+                  const cur = JSON.parse(localStorage.getItem('dp:stageOverride') || '{}')
+                  cur[deal.id] = 'dd'
+                  localStorage.setItem('dp:stageOverride', JSON.stringify(cur))
+                  alert(`✓ ${deal.name} 已进入尽调阶段\n（看板已自动更新，前往 Pipeline 查看）`)
+                } catch (e) { alert('✓ 已记录（演示版）') }
+              }
+            }}
+            className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
           <Link to={`/deal/${deal.id}/brief`} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">一页简报</Link>
           <Link to={`/deal/${deal.id}/memo`} className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">生成 IC Memo</Link>
         </div>
