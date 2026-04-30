@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
 import { deals } from '../data/deals'
@@ -7,212 +7,188 @@ import {
   extractFields,
   detectRedFlags,
   computeScore,
-  routeVerification,
   type ExtractedFields,
   type RedFlag,
-  type VerificationRoute,
 } from '../lib/pdfPipeline'
-import { ANALYSIS_STEPS, type AnalysisContext, type StepStatus } from '../lib/analysisSteps'
+import { deepAnalyzeBP, SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
-interface StepRun {
-  id: string
-  status: StepStatus
-  shownInsight: string  // typewriter 已显示的部分
-  fullInsight: string   // 完整内容
-  card?: { title: string; rows: { k: string; v: string }[] }
-  startedAt?: number
+type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
+
+interface SectionState {
+  key: SectionKey
+  label: string
+  status: 'pending' | 'streaming' | 'done'
+  shown: string
+  full: string
 }
 
 export default function Upload() {
   const { t } = useApp()
   const navigate = useNavigate()
+  const [stage, setStage] = useState<Stage>('idle')
   const [fileName, setFileName] = useState('')
   const [pdfText, setPdfText] = useState('')
   const [pdfPages, setPdfPages] = useState(0)
   const [fields, setFields] = useState<ExtractedFields | null>(null)
   const [score, setScore] = useState<number | null>(null)
   const [redFlags, setRedFlags] = useState<RedFlag[]>([])
-  const [routes, setRoutes] = useState<VerificationRoute[]>([])
-  const [running, setRunning] = useState(false)
-  const [runs, setRuns] = useState<StepRun[]>([])
-  const [completedAll, setCompletedAll] = useState(false)
+  const [sections, setSections] = useState<SectionState[]>([])
+  const [llmDuration, setLlmDuration] = useState<number>(0)
   const [createdDealId, setCreatedDealId] = useState<string | null>(null)
   const [matchedDealId, setMatchedDealId] = useState<string | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [progressMsg, setProgressMsg] = useState<string>('')
   const [pasted, setPasted] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
-  const stickyRef = useRef<HTMLDivElement>(null)
 
-  // typewriter 动效
-  function typewriter(stepId: string, text: string, speed = 18) {
-    return new Promise<void>((resolve) => {
+  function typewriter(key: SectionKey, full: string, speed = 14): Promise<void> {
+    return new Promise((resolve) => {
       let i = 0
+      const step = Math.max(2, Math.ceil(full.length / 80))
       const tick = () => {
-        i = Math.min(text.length, i + Math.ceil(text.length / 80))
-        setRuns((rs) => rs.map(r => r.id === stepId ? { ...r, shownInsight: text.slice(0, i) } : r))
-        if (i < text.length) setTimeout(tick, speed)
+        i = Math.min(full.length, i + step)
+        setSections((arr) => arr.map(s => s.key === key ? { ...s, shown: full.slice(0, i) } : s))
+        if (i < full.length) setTimeout(tick, speed)
         else resolve()
       }
       tick()
     })
   }
 
-  async function runFullAnalysis(text: string, pages: number, name: string) {
-    setRunning(true)
-    setCompletedAll(false)
-    setErrorMsg(null)
+  async function run(text: string, pages: number, name: string) {
+    try {
+      setErrorMsg(null)
+      setStage('reading')
+      setPdfText(text); setPdfPages(pages); setFileName(name)
+      await sleep(200)
 
-    // 第一阶段：抽取字段（在所有 step 之前完成，作为 context）
-    const f = extractFields(text, name.replace(/\.(pdf|pptx?|docx?|txt)$/i, ''))
-    const flags = detectRedFlags(text, f)
-    const sc = computeScore(f, flags)
-    const rt = routeVerification(f)
-    setFields(f); setRedFlags(flags); setScore(sc); setRoutes(rt)
+      // ① 字段抽取
+      setStage('extracting')
+      setProgressMsg('regex 抽取关键字段...')
+      const f = extractFields(text, name.replace(/\.(pdf|pptx?|docx?|txt)$/i, ''))
+      const flags = detectRedFlags(text, f)
+      const sc = computeScore(f, flags)
+      setFields(f); setRedFlags(flags); setScore(sc)
+      await sleep(500)
 
-    const ctx: AnalysisContext = { fileName: name, text, pdfPages: pages, fields: f, redFlags: flags, routes: rt, score: sc }
+      // ② 调 LLM 真分析
+      setStage('llm-calling')
+      setProgressMsg('调用 Pollinations LLM 深度分析中（30-60 秒）...')
+      // 初始化 10 个 section 为 pending
+      setSections(SECTION_ORDER.map((k) => ({ key: k, label: getSectionLabel(k), status: 'pending', shown: '', full: '' })))
 
-    // 初始化所有 step 为 pending
-    setRuns(ANALYSIS_STEPS.map((s) => ({
-      id: s.id,
-      status: 'pending',
-      shownInsight: '',
-      fullInsight: s.insight(ctx),
-      card: s.card?.(ctx),
-    })))
+      const analysis = await deepAnalyzeBP(text, f, flags, (msg) => setProgressMsg(msg))
+      setLlmDuration(analysis.duration)
 
-    // 逐步执行
-    for (const step of ANALYSIS_STEPS) {
-      // 标记 running
-      setRuns((rs) => rs.map(r => r.id === step.id ? { ...r, status: 'running', startedAt: Date.now() } : r))
+      // ③ 流式 typewriter 10 段
+      setStage('streaming')
+      for (const key of SECTION_ORDER) {
+        const full = analysis.sections[key]
+        if (!full) {
+          setSections((arr) => arr.map(s => s.key === key ? { ...s, full: '（LLM 未生成此段）', status: 'done', shown: '（LLM 未生成此段）' } : s))
+          continue
+        }
+        setSections((arr) => arr.map(s => s.key === key ? { ...s, full, status: 'streaming' } : s))
+        // 滚动到当前段
+        setTimeout(() => document.getElementById(`sec-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80)
+        await typewriter(key, full)
+        setSections((arr) => arr.map(s => s.key === key ? { ...s, status: 'done' } : s))
+      }
 
-      // 滚动到当前阶段
-      setTimeout(() => {
-        const el = document.getElementById(`step-${step.id}`)
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }, 100)
+      // ④ 创建项目
+      setStage('creating')
+      setProgressMsg('创建项目并入箱机构记忆...')
+      const lower = (name + ' ' + text.slice(0, 2000)).toLowerCase()
+      const m = deals.find((d) =>
+        lower.includes(d.name.toLowerCase()) || lower.includes(d.cnName) ||
+        (f.company && (d.name.toLowerCase().includes(f.company.toLowerCase()) || d.cnName.includes(f.company))),
+      )
+      setMatchedDealId(m?.id || null)
+      if (!m) {
+        const newDeal = buildDealFromExtraction(f, flags, sc, name, text, analysis.raw)
+        addUserDeal(newDeal)
+        setCreatedDealId(newDeal.id)
+      }
 
-      // typewriter 流式打字
-      const insight = step.insight(ctx)
-      const typewriterDuration = Math.min(step.durationMs * 0.7, insight.length * 30)
-      const speed = Math.max(8, typewriterDuration / insight.length)
-      await typewriter(step.id, insight, speed)
-
-      // 模拟剩余处理时间
-      const remaining = step.durationMs - typewriterDuration
-      if (remaining > 0) await sleep(remaining)
-
-      // 标记 done
-      setRuns((rs) => rs.map(r => r.id === step.id ? { ...r, status: 'done' } : r))
+      setStage('done')
+    } catch (e: any) {
+      console.error(e)
+      setErrorMsg(`深度分析失败：${e?.message || e}`)
+      setStage('error')
     }
-
-    // 全部完成 → 创建项目
-    const lower = (name + ' ' + text.slice(0, 2000)).toLowerCase()
-    const m = deals.find((d) =>
-      lower.includes(d.name.toLowerCase()) || lower.includes(d.cnName) ||
-      (f.company && (d.name.toLowerCase().includes(f.company.toLowerCase()) || d.cnName.includes(f.company))),
-    )
-    setMatchedDealId(m?.id || null)
-    if (!m) {
-      const newDeal = buildDealFromExtraction(f, flags, sc, name, text)
-      addUserDeal(newDeal)
-      setCreatedDealId(newDeal.id)
-    }
-
-    setCompletedAll(true)
-    setRunning(false)
   }
 
   async function handleFile(file: File) {
-    try {
-      setFileName(file.name)
-      setRuns([])
-      setFields(null); setRedFlags([]); setScore(null); setRoutes([])
-      setCreatedDealId(null); setMatchedDealId(null); setCompletedAll(false)
+    setStage('reading')
+    setSections([]); setFields(null); setRedFlags([]); setScore(null)
+    setCreatedDealId(null); setMatchedDealId(null); setErrorMsg(null)
+    setFileName(file.name)
 
-      if (file.name.toLowerCase().endsWith('.pdf')) {
-        // 立即抽 PDF 文本并显示 — 让用户先看到读到了什么
+    if (file.name.toLowerCase().endsWith('.pdf')) {
+      try {
+        setProgressMsg('pdfjs 抽取 PDF 全文中...')
         const { text, pages } = await extractPdfText(file)
-        setPdfText(text); setPdfPages(pages)
-        // 立即抽字段 — 让用户第一秒看到字段抽取结果
-        const f = extractFields(text, file.name.replace(/\.(pdf|pptx?|docx?|txt)$/i, ''))
-        setFields(f)
-        // 短暂停顿让用户看到，然后启动 12 阶段
-        await sleep(400)
-        await runFullAnalysis(text, pages, file.name)
-      } else {
-        const fakeText = `文件名：${file.name}\n（非 PDF 文件，pdfjs 仅支持 PDF — 真实抽取需要 PPTX/DOCX 解析器）`
-        setPdfText(fakeText); setPdfPages(0)
-        const f = extractFields(fakeText, file.name)
-        setFields(f)
-        await sleep(400)
-        await runFullAnalysis(fakeText, 0, file.name)
+        await run(text, pages, file.name)
+      } catch (e: any) {
+        setErrorMsg(`PDF 抽取失败：${e?.message || e}`)
+        setStage('error')
       }
-    } catch (e: any) {
-      setErrorMsg(`PDF 抽取失败：${e?.message || e}`)
-      setRunning(false)
+    } else {
+      const txt = `文件名：${file.name}\n（非 PDF · pdfjs 不支持，仅识别文件名）`
+      await run(txt, 0, file.name)
     }
   }
 
   function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (f) handleFile(f)
+    const f = e.target.files?.[0]; if (f) handleFile(f)
   }
   function onDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault()
-    const f = e.dataTransfer.files?.[0]
-    if (f) handleFile(f)
+    const f = e.dataTransfer.files?.[0]; if (f) handleFile(f)
   }
   async function onPasteSubmit() {
     if (pasted.trim().length < 30) return
-    setFileName('粘贴文本.txt'); setPdfText(pasted); setPdfPages(0); setRuns([])
-    await runFullAnalysis(pasted, 0, '粘贴文本.txt')
+    setSections([]); setFields(null); setRedFlags([]); setScore(null)
+    setCreatedDealId(null); setMatchedDealId(null); setErrorMsg(null)
+    setFileName('粘贴文本.txt'); setPdfText(pasted); setPdfPages(0)
+    await run(pasted, 0, '粘贴文本.txt')
   }
 
-  const totalDuration = ANALYSIS_STEPS.reduce((s, x) => s + x.durationMs, 0)
-  const doneCount = runs.filter(r => r.status === 'done').length
-  const overallProgress = runs.length > 0 ? (doneCount / runs.length) * 100 : 0
+  const isRunning = stage !== 'idle' && stage !== 'done' && stage !== 'error'
 
   return (
     <div className="px-8 py-6 max-w-[1280px] mx-auto">
       <header className="mb-5">
-        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">BP Deep Analysis · Long-Running Pipeline</div>
-        <h1 className="text-[26px] font-semibold tracking-tight mt-1">深度分析你的 BP</h1>
+        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">BP Deep Analysis · Real LLM Pipeline</div>
+        <h1 className="text-[26px] font-semibold tracking-tight mt-1">真 LLM 深度分析你的 BP</h1>
         <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
-          上传 PDF → pdfjs 真读全文 → 启动 <b>12 阶段深度分析任务</b>（约 60-90 秒）→ 流式逐步呈现：章节结构 / 工商核查 / 风险扫描 / 专利量化 / 可比锚定 / TAM 反查 / Red Flag / Scorecard / IC Memo 草稿 / 机构记忆比对 → <b>自动创建项目入箱</b>。
+          上传 PDF → <b>pdfjs 真读全文</b> → regex 抽字段 → <b>调 Pollinations LLM 写完整 10 段深度报告</b>（约 30-60 秒）→ 流式 typewriter 呈现 → 自动创建项目入箱。报告由模型基于你 PDF 真实内容生成，不再是 regex 模板。
         </p>
+        <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-[12px] text-emerald-900 leading-relaxed">
+          <b>真 LLM 已接通：</b>用 <code className="bg-emerald-100 px-1 rounded">text.pollinations.ai</code> 免费通道（OpenAI 兼容 / 无 key），把 PDF 全文 + 已抽字段喂给模型，让 GPT-4 级别 LLM 生成 10 段深度分析。报告内容**真由模型基于你的 BP 写出**，不是模板。
+        </div>
       </header>
 
       {/* 上传区 */}
-      {!running && !completedAll && (
+      {stage === 'idle' && (
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-5">
-          <div
-            onDrop={onDrop}
-            onDragOver={(e) => e.preventDefault()}
-            onClick={() => inputRef.current?.click()}
-            className="lg:col-span-2 bg-white border-2 border-dashed border-ink-300 rounded-2xl p-10 text-center cursor-pointer hover:border-brand-600 hover:bg-brand-50/30 transition"
-          >
+          <div onDrop={onDrop} onDragOver={(e) => e.preventDefault()} onClick={() => inputRef.current?.click()}
+            className="lg:col-span-2 bg-white border-2 border-dashed border-ink-300 rounded-2xl p-10 text-center cursor-pointer hover:border-brand-600 hover:bg-brand-50/30 transition">
             <input ref={inputRef} type="file" accept=".pdf,.pptx,.ppt,.docx,.txt" className="hidden" onChange={onFile} />
             <div className="w-14 h-14 mx-auto rounded-xl bg-brand-50 border border-brand-500/30 flex items-center justify-center text-brand-700">
               <svg viewBox="0 0 24 24" className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4v12M5 11l7-7 7 7M4 20h16" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
-            <div className="text-[15px] font-semibold tracking-tight mt-3">拖入 BP 文件 · 启动深度分析</div>
-            <div className="text-[12px] text-ink-500 mt-1">优先支持 PDF（pdfjs 真抽全文）· 预计耗时 60-90 秒 · 12 阶段流式呈现</div>
+            <div className="text-[15px] font-semibold tracking-tight mt-3">拖入 BP PDF · 启动真 LLM 深度分析</div>
+            <div className="text-[12px] text-ink-500 mt-1">pdfjs 真读 PDF + Pollinations LLM 真写 10 段报告 · 约 30-60 秒</div>
           </div>
           <div className="bg-white border border-ink-200 rounded-2xl p-5">
             <div className="text-[11px] uppercase tracking-wider text-ink-500 mb-2">或粘贴 BP 文本</div>
-            <textarea
-              value={pasted}
-              onChange={(e) => setPasted(e.target.value)}
-              rows={5}
+            <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={5}
               placeholder="粘贴 BP 内容…"
-              className="w-full text-[12px] bg-ink-50 border border-ink-200 rounded-lg px-2.5 py-2 leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-            />
-            <button
-              onClick={onPasteSubmit}
-              disabled={pasted.trim().length < 30}
-              className="mt-2 w-full px-3 py-2 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 disabled:bg-ink-300 disabled:cursor-not-allowed transition"
-            >
+              className="w-full text-[12px] bg-ink-50 border border-ink-200 rounded-lg px-2.5 py-2 leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
+            <button onClick={onPasteSubmit} disabled={pasted.trim().length < 30}
+              className="mt-2 w-full px-3 py-2 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 disabled:bg-ink-300 disabled:cursor-not-allowed transition">
               开始深度分析
             </button>
           </div>
@@ -220,165 +196,138 @@ export default function Upload() {
       )}
 
       {/* 错误 */}
-      {errorMsg && (
+      {stage === 'error' && (
         <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-5 text-[13px] text-rose-800">
-          <b>解析失败</b><div className="mt-1 text-[12px]">{errorMsg}</div>
+          <b>分析失败</b>
+          <div className="mt-1 text-[12px]">{errorMsg}</div>
+          <button onClick={() => setStage('idle')} className="mt-2 px-3 py-1 text-[12px] rounded bg-rose-700 text-white">重新上传</button>
         </div>
       )}
 
-      {/* PDF 抽取真文本预览 — 上传后立即可见，证明 pdfjs 真读到了 */}
-      {pdfText && pdfText.length > 0 && (
+      {/* PDF 真文本 + 字段 — 第一秒立即显示 */}
+      {pdfText && (
         <div className="bg-white border border-ink-200 rounded-xl p-4 mb-5">
           <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
             <div>
               <div className="text-[12.5px] font-semibold tracking-tight">PDF 抽取真文本（前 1500 字）</div>
               <div className="text-[11px] text-ink-500 num">
-                {pdfPages > 0 ? `${pdfPages} 页 · ` : ''}共抽取 <b className="text-ink-800">{pdfText.length.toLocaleString()}</b> 字符 · 文件名：{fileName}
+                {pdfPages > 0 ? `${pdfPages} 页 · ` : ''}共 <b className="text-ink-800">{pdfText.length.toLocaleString()}</b> 字符 · {fileName}
               </div>
             </div>
-            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">pdfjs-dist 真抽</span>
+            <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-medium">pdfjs 真抽</span>
           </div>
           {pdfText.length < 100 ? (
             <div className="bg-rose-50 border border-rose-200 rounded p-3 text-[12px] text-rose-800">
-              <b>⚠️ PDF 抽取内容过少（{pdfText.length} 字符）</b>
-              <div className="mt-1 text-[11.5px]">极可能是图片型扫描件，pdfjs 无法识别 — 需要 OCR（如 PaddleOCR / Tesseract）。生产环境会自动降级到 OCR pipeline。</div>
-              <div className="mt-1 text-[11.5px]">演示版仅支持文字型 PDF（用 Word/PPT 转的 PDF）。</div>
+              <b>⚠️ PDF 抽取内容过少</b>（{pdfText.length} 字符）— 极可能是图片型扫描件，pdfjs 无法识别，需要 OCR。
             </div>
           ) : (
-            <div className="text-[11.5px] text-ink-700 bg-ink-50 rounded-md p-3 max-h-[180px] overflow-y-auto leading-relaxed font-mono whitespace-pre-wrap scrollbar-thin">
+            <div className="text-[11.5px] text-ink-700 bg-ink-50 rounded-md p-3 max-h-[150px] overflow-y-auto leading-relaxed font-mono whitespace-pre-wrap scrollbar-thin">
               {pdfText.slice(0, 1500)}{pdfText.length > 1500 ? '…' : ''}
             </div>
           )}
           {fields && (
             <div className="mt-3 pt-3 border-t border-ink-100">
-              <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-2">实时字段抽取结果（来自上面的真文本）</div>
+              <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-2">regex 抽到的字段（这只是基线，下面 10 段由 LLM 真写）</div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-1.5 text-[11.5px]">
                 <FieldKV k="公司名" v={fields.company} />
                 <FieldKV k="赛道" v={fields.sector} />
                 <FieldKV k="轮次" v={fields.round} />
                 <FieldKV k="估值" v={fields.valuation} />
                 <FieldKV k="ARR" v={fields.arr} />
-                <FieldKV k="增长率" v={fields.growthRate} />
+                <FieldKV k="增长" v={fields.growthRate} />
                 <FieldKV k="TAM" v={fields.tam} />
                 <FieldKV k="LTV/CAC" v={fields.ltvCac} />
                 <FieldKV k="客户" v={fields.customers} />
                 <FieldKV k="专利" v={fields.patentClaim} />
-                <FieldKV k="创始人" v={fields.founders.length > 0 ? fields.founders.join(' / ') : undefined} />
-                <FieldKV k="对标" v={fields.comparables.length > 0 ? fields.comparables.slice(0, 3).join(' / ') : undefined} />
+                <FieldKV k="创始人" v={fields.founders.join(' / ') || undefined} />
+                <FieldKV k="对标" v={fields.comparables.slice(0, 3).join(' / ') || undefined} />
               </div>
-              {Object.values(fields).every(v => v === undefined || (Array.isArray(v) && v.length === 0)) && (
-                <div className="mt-2 text-[11px] text-amber-800 bg-amber-50 border border-amber-200 rounded p-2">
-                  ⚠️ 字段抽取为空 — 说明 PDF 文本与 regex 模式不吻合（例如纯英文 BP 用了独特排版）。这是产品级缺陷，建议：① 把 PDF 关键页文字粘贴到右上文本框 ② 真生产环境会用 LLM 多模态做语义抽取（不依赖固定 regex）。
-                </div>
-              )}
             </div>
           )}
         </div>
       )}
 
-      {/* 进行中 / 完成时的 sticky 进度条 */}
-      {(running || completedAll) && (
-        <div ref={stickyRef} className="sticky top-2 z-30 bg-white/95 backdrop-blur-sm border border-ink-200 rounded-xl p-4 mb-5 shadow-sm">
-          <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
+      {/* LLM 调用中 loading 状态 */}
+      {(stage === 'llm-calling' || stage === 'extracting' || stage === 'reading') && (
+        <div className="bg-gradient-to-br from-brand-50 to-white border-2 border-brand-500 rounded-xl p-6 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 rounded-full bg-brand-700 animate-pulse" />
+            <div className="text-[14px] font-semibold tracking-tight text-brand-800">{progressMsg || 'LLM 分析中...'}</div>
+          </div>
+          <div className="text-[12px] text-ink-700 mt-2 leading-relaxed">
+            {stage === 'llm-calling' && '正在把 PDF 全文 + regex 字段送给 Pollinations LLM（OpenAI-compatible 免费通道），让模型生成 10 段深度报告。预计 30-60 秒。'}
+            {stage === 'extracting' && '本地 regex 抽取中（极快）...'}
+            {stage === 'reading' && 'pdfjs 浏览器端真读 PDF...'}
+          </div>
+          <div className="mt-3 h-1.5 bg-ink-100 rounded-full overflow-hidden">
+            <div className="h-full bg-brand-700 animate-pulse" style={{ width: stage === 'llm-calling' ? '60%' : stage === 'extracting' ? '25%' : '10%' }} />
+          </div>
+        </div>
+      )}
+
+      {/* sticky 完成进度 */}
+      {(stage === 'streaming' || stage === 'done' || stage === 'creating') && (
+        <div className="sticky top-2 z-30 bg-white/95 backdrop-blur-sm border border-ink-200 rounded-xl p-4 mb-5 shadow-sm">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
             <div>
-              <div className="text-[12px] font-medium">{fileName} {pdfPages ? <span className="text-ink-400 font-normal">· {pdfPages} 页 · {pdfText.length.toLocaleString()} 字符</span> : null}</div>
+              <div className="text-[12px] font-medium">{fileName}</div>
               <div className="text-[11px] text-ink-500 num">
-                {running ? `分析中 · ${doneCount} / ${ANALYSIS_STEPS.length} 阶段已完成` : `✓ 全部 ${ANALYSIS_STEPS.length} 阶段完成（约 ${(totalDuration / 1000).toFixed(0)}s）`}
+                LLM 真分析完成 · {llmDuration > 0 ? `耗时 ${(llmDuration / 1000).toFixed(1)}s` : ''} · {sections.filter(s => s.status === 'done').length} / {sections.length} 段已渲染
               </div>
             </div>
-            <div className="text-[10px] text-ink-400">总进度 {overallProgress.toFixed(0)}%</div>
-          </div>
-          <div className="h-1.5 bg-ink-100 rounded-full overflow-hidden">
-            <div className="h-full bg-brand-700 transition-all" style={{ width: `${overallProgress}%` }} />
-          </div>
-
-          {completedAll && (
-            <div className="mt-3 flex items-center gap-2 flex-wrap">
-              {matchedDealId ? (
+            <div className="flex items-center gap-2 flex-wrap">
+              {stage === 'done' && (matchedDealId ? (
                 <Link to={`/deal/${matchedDealId}`} className="px-3 py-1.5 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">
-                  匹配现有「{deals.find(d => d.id === matchedDealId)?.name}」 →
+                  匹配「{deals.find(d => d.id === matchedDealId)?.name}」 →
                 </Link>
               ) : createdDealId ? (
                 <>
                   <button onClick={() => navigate(`/deal/${createdDealId}`)} className="px-3 py-1.5 text-[12px] rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 font-medium">
-                    ✓ 进入项目「{fields?.company || fileName}」详情
+                    ✓ 进入项目「{fields?.company || fileName}」
                   </button>
-                  <Link to="/pipeline" className="px-3 py-1.5 text-[12px] rounded-lg border border-emerald-600 text-emerald-700 hover:bg-emerald-50">看 Pipeline</Link>
-                  <Link to={`/deal/${createdDealId}/memo`} className="px-3 py-1.5 text-[12px] rounded-lg border border-ink-200 hover:bg-ink-50">生成 IC Memo</Link>
-                  <Link to={`/deal/${createdDealId}/brief`} className="px-3 py-1.5 text-[12px] rounded-lg border border-ink-200 hover:bg-ink-50">一页简报</Link>
+                  <Link to={`/deal/${createdDealId}/memo`} className="px-3 py-1.5 text-[12px] rounded-lg border border-ink-200 hover:bg-ink-50">IC Memo</Link>
                 </>
-              ) : null}
-              <span className="text-[10px] text-ink-500 ml-auto">综合评分 <b className="num text-ink-900">{score}</b> / 100</span>
+              ) : null)}
+              {score !== null && <span className="text-[10px] text-ink-500">评分 <b className="num text-ink-900 text-[14px]">{score}</b>/100</span>}
             </div>
-          )}
+          </div>
         </div>
       )}
 
-      {/* 12 阶段流式展示 */}
-      {runs.length > 0 && (
+      {/* 10 段 LLM 深度分析 */}
+      {sections.length > 0 && (
         <section className="space-y-4">
-          {runs.map((r, idx) => {
-            const meta = ANALYSIS_STEPS[idx]
-            const showCard = r.status === 'done' || (r.status === 'running' && r.shownInsight.length > 0.6 * r.fullInsight.length)
-            return (
-              <article
-                key={r.id}
-                id={`step-${r.id}`}
-                className={`bg-white border-2 rounded-xl p-5 transition-all ${
-                  r.status === 'running' ? 'border-brand-600 shadow-lg' :
-                  r.status === 'done' ? 'border-ink-200' :
-                  'border-ink-200 opacity-50'
-                }`}
-              >
-                <header className="flex items-start gap-3 mb-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-[13px] font-semibold shrink-0 num ${
-                    r.status === 'running' ? 'bg-brand-700 text-white animate-pulse' :
-                    r.status === 'done' ? 'bg-emerald-600 text-white' :
-                    'bg-ink-100 text-ink-500'
-                  }`}>{r.status === 'done' ? '✓' : meta.num}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-[15px] font-semibold tracking-tight">{meta.title}</h3>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded ${r.status === 'running' ? 'bg-brand-50 text-brand-700' : r.status === 'done' ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-500'}`}>
-                        {r.status === 'running' ? '分析中…' : r.status === 'done' ? '已完成' : '待执行'}
-                      </span>
-                    </div>
-                    <div className="text-[11px] text-ink-500 mt-0.5">{meta.subtitle} · 数据源：{meta.source}</div>
+          {sections.map((s, idx) => (
+            <article key={s.key} id={`sec-${s.key}`}
+              className={`bg-white border-2 rounded-xl p-5 transition-all ${
+                s.status === 'streaming' ? 'border-brand-600 shadow-lg' :
+                s.status === 'done' ? 'border-ink-200' : 'border-ink-200 opacity-50'
+              }`}>
+              <header className="flex items-start gap-3 mb-3">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-[13px] font-semibold shrink-0 num ${
+                  s.status === 'streaming' ? 'bg-brand-700 text-white animate-pulse' :
+                  s.status === 'done' ? 'bg-emerald-600 text-white' : 'bg-ink-100 text-ink-500'
+                }`}>{s.status === 'done' ? '✓' : (idx + 1).toString().padStart(2, '0')}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-[15px] font-semibold tracking-tight">{s.label}</h3>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${s.status === 'streaming' ? 'bg-brand-50 text-brand-700' : s.status === 'done' ? 'bg-emerald-50 text-emerald-700' : 'bg-ink-100 text-ink-500'}`}>
+                      {s.status === 'streaming' ? 'LLM 流式输出中…' : s.status === 'done' ? '完成' : '等待 LLM'}
+                    </span>
                   </div>
-                  <div className="text-[10px] text-ink-400 num shrink-0">{(meta.durationMs / 1000).toFixed(1)}s</div>
-                </header>
-
-                {/* typewriter 流式 */}
-                {(r.status === 'running' || r.status === 'done') && (
-                  <div className="text-[13px] text-ink-800 leading-[1.85] whitespace-pre-wrap pl-13">
-                    {r.shownInsight.split('\n').map((line, li) => (
-                      <p key={li} className={`${line.startsWith('· ') || line.startsWith('✓') || line.startsWith('✗') || line.startsWith('🚨') || line.startsWith('⚠️') ? 'pl-2' : ''}`}>
-                        {renderRichLine(line)}
-                      </p>
-                    ))}
-                    {r.status === 'running' && r.shownInsight.length < r.fullInsight.length && (
-                      <span className="inline-block w-1.5 h-3.5 bg-brand-700 animate-pulse ml-0.5 align-middle" />
-                    )}
-                  </div>
-                )}
-
-                {/* 数据卡 */}
-                {showCard && r.card && (
-                  <div className="mt-4 bg-ink-50 border border-ink-200 rounded-lg p-3">
-                    <div className="text-[10px] uppercase tracking-wider text-ink-500 font-medium mb-2">{r.card.title}</div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
-                      {r.card.rows.map((row, i) => (
-                        <div key={i} className="flex items-center justify-between text-[12px] py-0.5">
-                          <span className="text-ink-600">{row.k}</span>
-                          <span className="text-ink-900 num font-medium ml-2 truncate max-w-[60%]">{row.v}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </article>
-            )
-          })}
+                  <div className="text-[11px] text-ink-500 mt-0.5">由 Pollinations LLM 基于你 PDF 真实内容生成</div>
+                </div>
+              </header>
+              {(s.status === 'streaming' || s.status === 'done') && (
+                <div className="text-[13.5px] text-ink-800 leading-[1.85] whitespace-pre-wrap">
+                  {renderMarkdown(s.shown)}
+                  {s.status === 'streaming' && s.shown.length < s.full.length && (
+                    <span className="inline-block w-1.5 h-3.5 bg-brand-700 animate-pulse ml-0.5 align-middle" />
+                  )}
+                </div>
+              )}
+            </article>
+          ))}
         </section>
       )}
     </div>
@@ -394,11 +343,18 @@ function FieldKV({ k, v }: { k: string; v?: string }) {
   )
 }
 
+function renderMarkdown(text: string): React.ReactNode {
+  const lines = text.split('\n')
+  return lines.map((line, li) => (
+    <p key={li} className={`${line.match(/^[-·•*]/) ? 'pl-2' : ''} ${line.match(/^#{1,3}\s/) ? 'font-semibold mt-2 text-ink-900' : ''}`}>
+      {renderRichLine(line.replace(/^#+\s*/, ''))}
+    </p>
+  ))
+}
+
 function renderRichLine(line: string): React.ReactNode {
-  // 简单 markdown bold + code
   const parts: React.ReactNode[] = []
-  let rest = line
-  let key = 0
+  let rest = line; let key = 0
   while (rest.length > 0) {
     const bold = rest.match(/\*\*([^*]+)\*\*/)
     const code = rest.match(/`([^`]+)`/)

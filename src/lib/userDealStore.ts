@@ -66,6 +66,7 @@ export function buildDealFromExtraction(
   score: number,
   fileName: string,
   pdfText: string,
+  deepAnalysisRaw?: string,
 ): Deal {
   const ts = Date.now().toString(36)
   const company = fields.company || fileName.replace(/\.(pdf|pptx?|docx?|txt)$/i, '') || `项目-${ts}`
@@ -145,5 +146,6 @@ export function buildDealFromExtraction(
     champion: '—（自动分配中）',
     source: 'BP 直接上传',
     accentColor: accent,
+    deepAnalysisRaw,
   }
 }
