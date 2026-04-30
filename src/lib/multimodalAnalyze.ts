@@ -4,9 +4,10 @@
 import type { ExtractedFields, RedFlag } from './pdfPipeline'
 
 export type Provider =
-  | 'pollinations'        // 免费文本 LLM (默认)
-  | 'openai-vision'       // OpenAI gpt-4o-mini vision (BYOK)
+  | 'pollinations'        // 免费文本 LLM (默认 · 已实测调通)
+  | 'gemini-flash'        // Google Gemini 1.5 Flash (BYOK · 真多模态 · 免费 tier 15 RPM)
   | 'moonshot-vision'     // Moonshot Kimi vision (BYOK · 中文原生)
+  | 'openai-vision'       // OpenAI gpt-4o-mini vision (BYOK)
   | 'deepseek'            // DeepSeek (BYOK · 文本)
 
 const KEY_STORAGE = 'dp:llm-key'
@@ -26,7 +27,15 @@ export const PROVIDER_META: Record<Provider, {
     model: 'openai',
     multimodal: false,
     free: true,
-    desc: '免费 · GPT-OSS 20B · 不要 key · 仅文本',
+    desc: '免费 · GPT-OSS 20B · 不要 key · 仅文本（已实测调通）',
+  },
+  'gemini-flash': {
+    label: 'Gemini 1.5 Flash (免费多模态)',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+    model: 'gemini-1.5-flash',
+    multimodal: true,
+    free: true,
+    desc: 'Google 免费 tier · 真多模态 · 中英文都行 · key 去 aistudio.google.com 免费拿',
   },
   'openai-vision': {
     label: 'OpenAI GPT-4o-mini (BYOK · 多模态)',
@@ -154,13 +163,47 @@ export async function analyzeWithProvider(
   const meta = PROVIDER_META[provider]
   const start = Date.now()
 
-  if (!meta.free && !apiKey) {
+  // Gemini Flash 也需要 key（Google AI Studio 免费拿）
+  const needsKey = provider !== 'pollinations'
+  if (needsKey && !apiKey) {
     throw new Error(`${meta.label} 需要 API key — 请在顶部"分析模式"区域填入 key`)
   }
 
   onProgress?.(`调用 ${meta.label} 分析中...`)
-
   const useImages = meta.multimodal && images.length > 0
+
+  // —— Gemini Flash 用 Google 自己的 API 格式 ——
+  if (provider === 'gemini-flash') {
+    const parts: any[] = [
+      { text: SYSTEM_PROMPT + '\n\n' + buildTextContent(text, fields, redFlags) },
+    ]
+    if (useImages) {
+      images.forEach((img) => {
+        // img is data URL like "data:image/jpeg;base64,..."
+        const m = img.match(/^data:(.+);base64,(.+)$/)
+        if (m) parts.push({ inline_data: { mime_type: m[1], data: m[2] } })
+      })
+    }
+    const url = `${meta.endpoint}?key=${encodeURIComponent(apiKey!)}`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts }],
+        generationConfig: { temperature: 0.4, maxOutputTokens: 4000 },
+      }),
+    })
+    if (!res.ok) {
+      const err = await res.text()
+      throw new Error(`${meta.label} API 失败 (${res.status})：${err.slice(0, 300)}`)
+    }
+    const data = await res.json()
+    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+    if (!raw) throw new Error(`${meta.label} 返回为空：${JSON.stringify(data).slice(0, 200)}`)
+    return { sections: parseSections(raw), raw, duration: Date.now() - start, provider, pagesAnalyzed: useImages ? images.length : 0 }
+  }
+
+  // —— OpenAI 兼容（Pollinations / Moonshot / OpenAI / DeepSeek）——
   let messages: any[]
   if (useImages) {
     messages = [
@@ -173,43 +216,21 @@ export async function analyzeWithProvider(
       { role: 'user', content: buildTextContent(text, fields, redFlags) },
     ]
   }
-
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
+  const body: any = { model: meta.model, messages, temperature: 0.4 }
+  if (provider === 'pollinations') body.private = true
+  else body.max_tokens = 4000
 
-  const body: any = {
-    model: meta.model,
-    messages,
-    temperature: 0.4,
-  }
-  if (provider === 'pollinations') {
-    body.private = true
-  } else {
-    body.max_tokens = 4000
-  }
-
-  const res = await fetch(meta.endpoint, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-  })
-
+  const res = await fetch(meta.endpoint, { method: 'POST', headers, body: JSON.stringify(body) })
   if (!res.ok) {
     const err = await res.text()
     throw new Error(`${meta.label} API 失败 (${res.status})：${err.slice(0, 300)}`)
   }
-
   const data = await res.json()
   const raw = data?.choices?.[0]?.message?.content || ''
   if (!raw) throw new Error(`${meta.label} 返回为空`)
-
-  return {
-    sections: parseSections(raw),
-    raw,
-    duration: Date.now() - start,
-    provider,
-    pagesAnalyzed: useImages ? images.length : 0,
-  }
+  return { sections: parseSections(raw), raw, duration: Date.now() - start, provider, pagesAnalyzed: useImages ? images.length : 0 }
 }
 
 function parseSections(raw: string): Record<string, string> {

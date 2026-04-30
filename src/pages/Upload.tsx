@@ -220,7 +220,8 @@ export default function Upload() {
               value={apiKey}
               onChange={(e) => setApiKeyState(e.target.value)}
               placeholder={
-                provider === 'moonshot-vision' ? '粘贴 Moonshot API key (sk-...)，去 platform.moonshot.cn 申请' :
+                provider === 'gemini-flash' ? '粘贴 Google Gemini key，去 aistudio.google.com/app/apikey 免费拿（30 秒）' :
+                provider === 'moonshot-vision' ? '粘贴 Moonshot API key (sk-...)，去 platform.moonshot.cn 申请（注册送 ¥15）' :
                 provider === 'openai-vision' ? '粘贴 OpenAI API key (sk-...)' :
                 provider === 'deepseek' ? '粘贴 DeepSeek API key' : ''
               }
