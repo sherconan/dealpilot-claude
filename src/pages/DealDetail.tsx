@@ -430,12 +430,20 @@ export default function DealDetail() {
                         </div>
                         <div className="text-[11px] text-ink-500">{c.ticker}</div>
                         {c.verified && <div className="text-[9px] text-ink-400 mt-0.5">{c.source}</div>}
-                        {c.reportUrl && (
-                          <a href={c.reportUrl} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} className="text-[9px] text-brand-700 hover:underline mt-0.5 inline-flex items-center gap-0.5">
-                            <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M3 1h4.5L9 2.5V11H3V1zm5 1.5V2H4v8h4V3.5H6.5v-1H8z"/></svg>
-                            年报 PDF
-                          </a>
-                        )}
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {c.reportUrl && (
+                            <a href={c.reportUrl} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} className="text-[9px] text-brand-700 hover:underline inline-flex items-center gap-0.5">
+                              <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M3 1h4.5L9 2.5V11H3V1zm5 1.5V2H4v8h4V3.5H6.5v-1H8z"/></svg>
+                              年报
+                            </a>
+                          )}
+                          {c.prospectusUrl && (
+                            <a href={c.prospectusUrl} target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()} className="text-[9px] text-violet-700 hover:underline inline-flex items-center gap-0.5">
+                              <svg viewBox="0 0 12 12" className="w-2.5 h-2.5" fill="currentColor"><path d="M3 1h4.5L9 2.5V11H3V1zm5 1.5V2H4v8h4V3.5H6.5v-1H8z"/></svg>
+                              招股书
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td className="py-3 px-2 text-right num">
                         <div className="text-ink-900 font-medium">{c.price || '—'}</div>
