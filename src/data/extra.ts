@@ -109,7 +109,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'governance', question: '首席科学家 / 联创 vesting cliff 是否已通过？任一离开的回购条款？', why: '股权稳定性风险', expect: '能在 60 秒内说清条款', watch: '需要回去查 → 治理颗粒度低' },
     ],
     publicComps: [
-      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；31.7% 净利率反映稀缺性溢价', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
+      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；31.7% 净利率反映稀缺性溢价', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-19/1223155683.PDF' },
       { name: '海光信息', ticker: 'SH: 688041', price: '¥278.77', reportDate: '2026-03-31', revenue: '¥40.34 亿', netIncome: '¥6.87 亿', netMargin: '17.0%', totalAssets: '¥351.85 亿', similarity: '国产 CPU/DCU 算力底座', distance: '海光 17.0% 净利率反映芯片国产化的盈利能力中位水平；NebulaAI 应用层若跑通可参考', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
       { name: '科大讯飞', ticker: 'SZ: 002230', price: '¥48.06', reportDate: '2026-03-31', revenue: '¥52.74 亿', netIncome: '¥-1.70 亿（亏损）', netMargin: '-3.2%', totalAssets: '¥456.57 亿', similarity: 'A 股 AI 应用龙头（语音/教育）', distance: '讯飞当前亏损反映 AI 应用层 GPU 投入期的现实；NebulaAI 也将面临同样毛利与 GPU 成本的张力', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30' },
     ],
@@ -208,7 +208,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'fund-use', question: '$5M 拆解：NMPA 注册费 / 数据扩充 / 团队 各多少？跑道是 18 月还是 24 月？', why: '资金颗粒度' , expect: '百分比 + 跑道与 NMPA 时间线吻合' },
     ],
     publicComps: [
-      { name: '联影医疗', ticker: 'SH: 688271', price: '¥114.98', reportDate: '2025-09-30 (Q3 累计)', revenue: '¥88.59 亿', netIncome: '¥11.20 亿', netMargin: '12.6%', totalAssets: '¥297.57 亿', similarity: '医学影像设备 + AI 国产龙头', distance: '联影 12.6% 净利率反映"硬件 + AI"混合模式的盈利水平；MetaMed 纯 AI 路径理论上毛利更高（60-70%）但商业化路径未跑通，估值需以团队 + 数据资产为锚', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '联影医疗', ticker: 'SH: 688271', price: '¥114.98', reportDate: '2025-09-30 (Q3 累计)', revenue: '¥88.59 亿', netIncome: '¥11.20 亿', netMargin: '12.6%', totalAssets: '¥297.57 亿', similarity: '医学影像设备 + AI 国产龙头', distance: '联影 12.6% 净利率反映"硬件 + AI"混合模式的盈利水平；MetaMed 纯 AI 路径理论上毛利更高（60-70%）但商业化路径未跑通，估值需以团队 + 数据资产为锚', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-29/1223362977.PDF' },
     ],
     compsTakeaway: '医疗影像 AI 直接对标稀缺：联影（688271）是国内唯一上市可比，TTM 净利率 12.6%。MetaMed 当前 $22M 投前 / $0.3M Pilot ARR 计 73x，远超联影的 8x 公允锚点；建议要求估值降到 $12M 以下，或附 NMPA 获批 ratchet 条款保护下行。',
   },
@@ -246,7 +246,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'risk', question: '路鹰冷链 2024 关停的教训是什么？你们怎么避免同样的命运？', why: '同赛道有失败先例，必须问', expect: '具体差异化 + 财务纪律' },
     ],
     publicComps: [
-      { name: '顺丰控股', ticker: 'SZ: 002352', price: '¥36.89', reportDate: '2025-12-31', revenue: '¥3,082.27 亿', netIncome: '¥111.17 亿', netMargin: '3.6%', totalAssets: '¥2,164.69 亿', similarity: '综合物流龙头 + 冷链 + 供应链数字化', distance: '顺丰 3.6% 净利率反映物流主业的薄毛利现实；任何"物流 + SaaS"混合模式估值倍数都会被主业拉低', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
+      { name: '顺丰控股', ticker: 'SZ: 002352', price: '¥36.89', reportDate: '2025-12-31', revenue: '¥3,082.27 亿', netIncome: '¥111.17 亿', netMargin: '3.6%', totalAssets: '¥2,164.69 亿', similarity: '综合物流龙头 + 冷链 + 供应链数字化', distance: '顺丰 3.6% 净利率反映物流主业的薄毛利现实；任何"物流 + SaaS"混合模式估值倍数都会被主业拉低', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-03-29/1222943385.PDF' },
       { name: '东航物流', ticker: 'SH: 601156', price: '¥16.48', reportDate: '2025-12-31', revenue: '¥242.64 亿', netIncome: '¥26.88 亿', netMargin: '11.1%', totalAssets: '¥317.56 亿', similarity: '航空货运 + 冷链供应链', distance: '专业冷链物流净利率 11.1% 是上限；GreenLogistics 当前毛利 42% 远低于此', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24' },
       { name: '京东物流', ticker: 'HK: 02618', price: 'HK$15.05', reportDate: '股价实时', revenue: '需港股财报接口', netIncome: '—', netMargin: '—', totalAssets: '—', similarity: '电商驱动型物流 SaaS', distance: '港股股价已抓取，财报接口 akshare 暂不支持港股，建议换 cninfo H 股年报', verified: true, source: 'akshare 实时（财报需 cninfo）', lastFetched: '2026-04-24' },
     ],

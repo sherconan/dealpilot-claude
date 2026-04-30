@@ -79,6 +79,7 @@ export interface PublicComp {
   verified?: boolean
   source?: string
   lastFetched?: string
+  reportUrl?: string         // cninfo 年报 PDF 直链
   // 旧字段（保留兼容，逐步弃用）
   marketCap?: string
   evRevenue?: string
