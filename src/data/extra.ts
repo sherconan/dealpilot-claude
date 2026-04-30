@@ -109,7 +109,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'governance', question: '首席科学家 / 联创 vesting cliff 是否已通过？任一离开的回购条款？', why: '股权稳定性风险', expect: '能在 60 秒内说清条款', watch: '需要回去查 → 治理颗粒度低' },
     ],
     publicComps: [
-      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；31.7% 净利率反映稀缺性溢价', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-19/1223155683.PDF' },
+      { name: '寒武纪', ticker: 'SH: 688256', price: '¥1353.20', reportDate: '2025-12-31', revenue: '¥64.97 亿', netIncome: '¥20.59 亿', netMargin: '31.7%', totalAssets: '¥134.38 亿', similarity: '中国 AI 算力国产替代龙头', distance: '寒武纪做芯片+算力底座，与 NebulaAI 应用层形成上下游互补；31.7% 净利率反映稀缺性溢价', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-19/1223155683.PDF', prospectusUrl: 'https://static.cninfo.com.cn/finalpage/2020-07-14/1208028359.PDF' },
       { name: '海光信息', ticker: 'SH: 688041', price: '¥278.77', reportDate: '2026-03-31', revenue: '¥40.34 亿', netIncome: '¥6.87 亿', netMargin: '17.0%', totalAssets: '¥351.85 亿', similarity: '国产 CPU/DCU 算力底座', distance: '海光 17.0% 净利率反映芯片国产化的盈利能力中位水平；NebulaAI 应用层若跑通可参考', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-03-01/1222675682.PDF' },
       { name: '科大讯飞', ticker: 'SZ: 002230', price: '¥48.06', reportDate: '2026-03-31', revenue: '¥52.74 亿', netIncome: '¥-1.70 亿（亏损）', netMargin: '-3.2%', totalAssets: '¥456.57 亿', similarity: 'A 股 AI 应用龙头（语音/教育）', distance: '讯飞当前亏损反映 AI 应用层 GPU 投入期的现实；NebulaAI 也将面临同样毛利与 GPU 成本的张力', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-30', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-22/1223191180.PDF' },
     ],
@@ -208,7 +208,7 @@ export const dealExtras: Record<string, DealExtra> = {
       { category: 'fund-use', question: '$5M 拆解：NMPA 注册费 / 数据扩充 / 团队 各多少？跑道是 18 月还是 24 月？', why: '资金颗粒度' , expect: '百分比 + 跑道与 NMPA 时间线吻合' },
     ],
     publicComps: [
-      { name: '联影医疗', ticker: 'SH: 688271', price: '¥114.98', reportDate: '2025-09-30 (Q3 累计)', revenue: '¥88.59 亿', netIncome: '¥11.20 亿', netMargin: '12.6%', totalAssets: '¥297.57 亿', similarity: '医学影像设备 + AI 国产龙头', distance: '联影 12.6% 净利率反映"硬件 + AI"混合模式的盈利水平；MetaMed 纯 AI 路径理论上毛利更高（60-70%）但商业化路径未跑通，估值需以团队 + 数据资产为锚', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-29/1223362977.PDF' },
+      { name: '联影医疗', ticker: 'SH: 688271', price: '¥114.98', reportDate: '2025-09-30 (Q3 累计)', revenue: '¥88.59 亿', netIncome: '¥11.20 亿', netMargin: '12.6%', totalAssets: '¥297.57 亿', similarity: '医学影像设备 + AI 国产龙头', distance: '联影 12.6% 净利率反映"硬件 + AI"混合模式的盈利水平；MetaMed 纯 AI 路径理论上毛利更高（60-70%）但商业化路径未跑通，估值需以团队 + 数据资产为锚', verified: true, source: 'akshare · 东方财富', lastFetched: '2026-04-24', reportUrl: 'https://static.cninfo.com.cn/finalpage/2025-04-29/1223362977.PDF', prospectusUrl: 'https://static.cninfo.com.cn/finalpage/2022-08-16/1214298793.PDF' },
     ],
     compsTakeaway: '医疗影像 AI 直接对标稀缺：联影（688271）是国内唯一上市可比，TTM 净利率 12.6%。MetaMed 当前 $22M 投前 / $0.3M Pilot ARR 计 73x，远超联影的 8x 公允锚点；建议要求估值降到 $12M 以下，或附 NMPA 获批 ratchet 条款保护下行。',
   },
