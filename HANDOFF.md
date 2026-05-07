@@ -1,96 +1,100 @@
 # DealPilot · 7-Hour Challenge 交接文档
 
-> 本文用于跨会话恢复时快速对齐当前状态。每次重要 Sprint 完成后更新。
+> 跨会话恢复时快速对齐当前状态。
 
 ---
 
-## 当前状态（最后更新 · 2026-04-30 · Sprint 54）
+## 当前状态（最后更新 · 2026-05-08 · Sprint 79）
 
-- **线上主站**：https://sherconan.github.io/dealpilot-claude/
-- **Vercel 镜像**：https://dealpilot-claude.vercel.app/
+- **线上主站**：https://dealpilot-claude.vercel.app/（推荐 — 含 Kimi K2.6 多模态）
+- **GH Pages 镜像**：https://sherconan.github.io/dealpilot-claude/（无 Kimi 代理 · 仅 Pollinations / Gemini BYOK）
 - **GitHub Repo**：https://github.com/sherconan/dealpilot-claude
-- **CI**：全绿 · 18 路由全部 200（新增 /unicorns）
-- **进度**：54 sprint 全闭环 · 5 真信源 live · 数据资产飞跃：
-  - 6 家真实公司风险扫描（联影/旷视/字节/拼多多/暴风/Moonshot）
-  - 7 家真实公司专利护城河（联影 3493 + 寒武 548 + 旷视 434 + 智谱 80 + MiniMax 12 + Kimi 1 + ...）
-  - 9 家真实可比公司 25 份官方 PDF（年报 18 + 招股书 7）
-  - 共计 4,568+ 条真实专利记录
+- **CI**：全绿 · 18 路由全部 200
+- **进度**：79 sprint 全闭环 · LLM 时代全面到来
 
-## 已交付清单（33 Sprints）
+## 🌟 7-Hour Challenge 第二轮（Sprint 68-79）核心成果
 
-### 基础设施
-- 1. i18n 中英双语 + Light/Dark 主题（AppContext + 字典 + localStorage）
-- 13. SEO + OG meta tags（社交分享一致）
-- 14. Cmd-K 全局命令面板（深度搜索 deals + 动作）
-- 20. Shift+? 帮助 modal + G+letter 快捷导航
-- 27. README + docs/methodology.md + 全局 footer
-- 29. Mobile drawer sidebar + 顶部 bar
-- 30. ICMemo sticky TOC + 段落 anchor
+| Sprint | 主题 |
+|---|---|
+| 60 | userDealStore + 上传 BP 真创建项目入箱 |
+| 63 | Pollinations 真 LLM 接通（10 段 ===SECTION=== 切分） |
+| 64 | 5 provider BYOK（Pollinations / OpenAI / Moonshot / DeepSeek / Gemini） |
+| 67 | **Kimi K2.6 真接通**（Vercel Edge 代理 + UA 注入绕过 coding agent 限制） |
+| 68 | **Kimi K2.6 流式 SSE** — 实时看 LLM 思考 |
+| 70 | **LLM 真打分 Sequoia 10**（替代规则引擎 + 评分依据 + PDF 原文 evidence） |
+| 71 | ICMemo 整合 LLM 完整 10 段版本 |
+| 72 | **LLM 生成 8 个针对 BP 真内容创始人访谈问题** |
+| 74 | **多轮追问对话 DealChat**（注入完整 deal context + 流式） |
+| 76 | **Markdown 完整报告导出** |
+| 77 | **LLM 竞品深度对比**（基于 9 家 akshare 真财报） |
+| 78 | Changelog + Dashboard hero 同步 LLM 时代 |
+| 79 | Sources 加 LLM 能力矩阵（10 条链路可视化） |
 
-### 核心功能页（17 路由）
-- `/` Dashboard（KPI + 月度趋势 + 转化漏斗 + 赛道饼 + 评分柱图 + 活动流 + AI 信号）
-- `/pipeline` Kanban + 列表双视图 + HTML5 拖拽 + CSV 导出
-- `/upload` BP 上传 → 解析 → 真信源核验 模拟流程
-- `/compare` 最多 3 个 BP 并排对比
-- `/risk` 5 维风险扫描（旷视干净 / CryptoVault critical / 联影干净）
-- `/portfolio` 投后 KPI（TVPI/DPI/IRR + 4 家 + 跑道告警）
-- `/signals` AI 信号雷达（LinkedIn/GitHub/媒体/监管/招聘 8 条）
-- `/briefings` 自动周报（聚合 Pipeline+Signals+Portfolio）
-- `/sources` 真信源接入凭证（7 类）
-- `/docs` 方法论白皮书
-- `/changelog` 7-Hour Challenge 实战日志
-- `/thesis` 投资论点设置
-- `/memory` 机构记忆库（搜索+筛选+CSV 导出）
-- `/deal/:id` Deal 详情（投资逻辑画布+10 要素 vs 行业基准+数据核验+访谈+真实可比）
-- `/deal/:id/memo` IC Memo（视觉 hero + TOC + 打印 PDF + 分享链接）
-- `/deal/:id/brief` 一页 IC 简报（5 分钟会前读本）
+## 🤖 LLM Provider 矩阵（6 选 1）
 
-## 真信源接入实战清单（7 类）
+| Provider | Endpoint | 多模态 | 真免费 | 状态 |
+|---|---|---|---|---|
+| **Kimi K2.6 (kimi-for-coding)** | `/api/kimi-proxy` (Vercel) | ✅ image+video | ✅ 产品已配 | 🌟 默认推荐 |
+| **Gemini 1.5 Flash** | `generativelanguage.googleapis.com` | ✅ | ✅ 免费 tier | BYOK |
+| **OpenAI GPT-4o-mini** | `api.openai.com/v1` | ✅ | 付费 | BYOK |
+| **Moonshot Vision** | `api.moonshot.cn/v1` | ✅ | 注册送 ¥15 | BYOK |
+| **DeepSeek** | `api.deepseek.com/v1` | ❌ | 注册送 ¥10 | BYOK |
+| **Pollinations** | `text.pollinations.ai` | ❌ | ✅ 无 key | 备用 |
 
-| 信源 | 状态 | 实测数据 |
-|---|---|---|
-| **akshare · 东方财富** | ✅ live | 9 家真实可比公司财报（寒武纪 / 海光 / 讯飞 / 联影 / 顺丰 / 拉卡拉 / 东航物流 / 石头 / 科沃斯 / 京东物流） |
-| **企查查 · 工商画像** | ✅ live | 旷视科技工商画像（2011 / 印奇唐文斌杨沐 / 2000+ 员工） |
-| **企查查 · 知识产权** | ✅ live | 旷视 434 条专利全量 |
-| **巨潮资讯 · 年报** | ✅ live | 9 家公司 2024 年报全部抓取（联影 / 顺丰 / 寒武纪 / 拉卡拉 / 东航 / 石头 / 科沃斯 / 海光 / 讯飞）共 18 份 PDF 直链 |
-| **企查查 · 风险与司法** | ✅ live | 旷视 + 联影 6 维实测（旷视 ¥9,000 消防小额 / 联影全 0）|
-| **AutoGLM Deep Research** | 🔵 wired | TAM 反向核查 / 多源研报 |
-| **Bocha 通用搜索** | 🔵 wired | 行业新闻 / 公开访谈 |
+## 🔌 真信源接入清单（5/7 live）
 
-## 关键文件路径
+| 信源 | 实测样例 |
+|---|---|
+| akshare · 东方财富 | 9 家可比公司真财报（寒武纪/海光/讯飞/联影/顺丰/拉卡拉/东航/石头/科沃斯） |
+| 企查查 工商画像 | 旷视 / Moonshot / 智谱 真实成立信息 |
+| 企查查 知识产权 | 6 家公司 4,568 条真实专利 |
+| 企查查 风险与司法 | 5 公司风险扫描（旷视/字节/联影/拼多多 ¥51.13 亿/暴风 79 失信） |
+| 巨潮资讯 年报+招股书 | 9 家 25 份官方 PDF 直链 |
+| AutoGLM Deep Research | wired |
+| Bocha 通用搜索 | wired |
+
+## 📁 关键文件
 
 ```
 src/
-├── App.tsx                    # 路由入口（17 routes）
-├── main.tsx                   # AppProvider 包裹
-├── contexts/AppContext.tsx    # i18n + theme
-├── i18n/dict.ts               # 50+ keys
+├── lib/
+│   ├── pdfPipeline.ts          # pdfjs 抽 PDF + 渲染 image
+│   ├── llmAnalyze.ts           # Pollinations 文本 LLM
+│   ├── multimodalAnalyze.ts    # 6 provider 统一 + 流式 SSE
+│   ├── scoringLLM.ts           # LLM 真打分 Sequoia 10
+│   ├── founderQuestions.ts     # LLM 针对 BP 生成访谈问题
+│   ├── chatLLM.ts              # 多轮追问（注入 deal context）
+│   ├── competitorLLM.ts        # 竞品深度对比 + 9 家真财报
+│   ├── exportDeal.ts           # Markdown 完整报告导出
+│   └── userDealStore.ts        # localStorage 上传项目持久化
 ├── components/
-│   ├── Layout.tsx             # 侧栏 + 顶部 bar + footer + drawer
-│   ├── CommandPalette.tsx     # Cmd-K
-│   ├── HelpModal.tsx          # Shift+? + 快捷键
-│   ├── Charts.tsx             # SVG MonthlyTrend/Donut/Bar/Sparkline/ConversionFlow
-│   ├── ThesisCanvas.tsx       # 投资逻辑 4 象限
-│   └── (DealCard/ScoreRing/StatusPill/MetricCard)
-├── pages/                     # 17 页面
-├── data/
-│   ├── deals.ts               # 6 deals 主数据
-│   ├── extra.ts               # benchmark + dimension + dataCheck + interview + comps
-│   ├── analytics.ts           # Dashboard 历史趋势
-│   └── sourceProofs.ts        # 7 信源真数据归档
-└── lib/
-    ├── scoring.ts             # Stage / Recommendation / Sequoia 标签
-    └── csv.ts                 # 通用 CSV 导出
+│   ├── DealChat.tsx            # 项目详情多轮追问聊天
+│   └── CompetitorAnalysis.tsx  # 竞品对比卡片
+├── pages/
+│   ├── Upload.tsx              # 上传 + 12 阶段长任务体验
+│   ├── DealDetail.tsx          # 项目详情（LLM 评分 / 访谈 / 竞品 / Chat）
+│   ├── ICMemo.tsx              # IC Memo（LLM 完整版 + 模板 fallback）
+│   └── Sources.tsx             # 信源 + LLM 能力矩阵
+└── api/
+    └── kimi-proxy.ts           # Vercel Edge Function · UA 注入 + 流式 pipe
 ```
 
-## 恢复后下一步建议
+## 🚀 用户访问 Vercel 镜像测试 Kimi K2.6 流程
 
-1. **Sprint 34**: 单调一次 qcc-risk 试看权限是否能通（之前 batch 5 个并发 stream closed）
-2. **Sprint 35**: 加一个 /api 文档页展示如何接入 DealPilot 自身（虚拟，作产品扩展演示）
-3. **Sprint 36**: 给 IC Memo 嵌入 ThesisCanvas（真正打通可视化）
-4. **Sprint 37+**: 视用户实际反馈优化
+1. https://dealpilot-claude.vercel.app/?/upload
+2. 顶部"分析模式"选 **Kimi K2.6 (产品已配 · 真多模态)**（无需输 key）
+3. 上传 PDF
+4. 实时看 SSE 流式输出（不再等 60s）
+5. 自动创建项目入箱
+6. 点"进入项目"看完整 LLM 报告 + 评分 + 访谈 + 竞品对比 + 多轮追问
 
-## P8 自检清单（每个 Sprint 闭环动作）
+## 📊 累计真实数据资产
 
-每次 ship 都必须 ① 写代码 ② 自查 build ③ git commit ④ git push ⑤ 等 CI 绿 ⑥ verify URL 200。
-**对结果负责的闭环 — 不是 commit 一把就完事。**
+- 真信源 live：5/7
+- LLM provider：6
+- LLM 能力链：10 条（解析/评分/Memo/访谈/追问/竞品/导出/流式...）
+- 真实公司风险扫描：6 家
+- 真实专利数据：4,568+ 条 / 6 家
+- 真实可比公司：9 家
+- 真实官方 PDF：25 份
+- 78+ Sprint 全闭环 · CI 全绿
