@@ -71,6 +71,16 @@ export default function ICMemo() {
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor"><path d="M11 1.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM5 6.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm6 5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM6.85 7.4l3.3-1.9m-3.3 4.2l3.3 1.9" stroke="currentColor" strokeWidth="1" fill="none"/></svg>
             {shareCopied ? '已复制 ✓' : '分享链接'}
           </button>
+          <button
+            onClick={async () => {
+              const { copyMarkdownToClipboard } = await import('../lib/exportDeal')
+              const ok = await copyMarkdownToClipboard(deal)
+              if (ok) alert('✓ 完整 Markdown 已复制（含 LLM 评分 / 10 段 / 访谈 / Red Flag）')
+            }}
+            className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100 inline-flex items-center gap-1.5"
+          >
+            📋 复制完整 MD
+          </button>
           <button onClick={handlePrint} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50 inline-flex items-center gap-1.5">
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="currentColor"><path d="M3 7V2h10v5h2a1 1 0 011 1v5a1 1 0 01-1 1h-2v-3H3v3H1a1 1 0 01-1-1V8a1 1 0 011-1h2zm10 0V3H4v4h9zm0 5v-3H4v3h9z"/></svg>
             打印 / 导出 PDF
