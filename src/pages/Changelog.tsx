@@ -92,6 +92,10 @@ const sprints: SprintEntry[] = [
   { num: 108, title: 'ICMemo 打印优化 + 动态时间戳', detail: 'memo 页脚页码 (counter(page)/counter(pages)) · 面包屑打印隐藏 · 200px aside 打印时 collapse · 变幸有 LLM 分析的项目顺势说明', files: ['pages/ICMemo.tsx', 'index.css'], tag: 'Polish', color: '#0f766e' },
   { num: 109, title: 'Sources 页 LLM Provider 实测矩阵', detail: '6 路 LLM 通道 endpoint / 多模态 / SSE / 成本 / 状态 全表 · 脚注 UA 注入 + BYOK localStorage key', files: ['pages/Sources.tsx'], tag: '真 LLM', color: '#7c3aed' },
   { num: 110, title: '生产端到端验证·全绿', detail: '14 路由 + unknown · GH Pages 镜像 · Sources chunk 含 LLM 矩阵 · Kimi proxy 400 期望返回 · 首屏 gzip 32 KB', files: ['生产端'], tag: 'Final', color: '#059669' },
+  { num: 113, title: 'DealDetail 创始人访谈 一键复制', detail: '复制全部 Q 按钮 · 8 题完整 Markdown（含 why/expect/watch）· 可粘贴飞书 / Notion', files: ['pages/DealDetail.tsx'], tag: 'UX', color: '#d97706' },
+  { num: 114, title: 'Compare 横向对比 Markdown 导出', detail: '4 段 Markdown：评分概览 + Sequoia 10 + Red Flag + 量化指标 · IC 前 1 分钟生成可粘贴报告', files: ['pages/Compare.tsx'], tag: '功能', color: '#0f766e' },
+  { num: 115, title: 'Briefings 周报 Markdown 导出', detail: '6 段 Markdown：提要 / 决策池 / Top 3 / 关键信号 / 观察名单 / 下周聚焦 · 周五一键发飞书群', files: ['pages/Briefings.tsx'], tag: '功能', color: '#7c3aed' },
+  { num: 116, title: 'Pipeline 看板 Markdown 快照', detail: '按阶段分组的 Markdown 快照 · 6 阶段 / 每项 score+round+valuation+RF 徽章', files: ['pages/Pipeline.tsx'], tag: '功能', color: '#0ea5e9' },
 ]
 
 const milestones = [
