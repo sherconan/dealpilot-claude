@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAllDeals } from '../lib/userDealStore'
+import { useRecentDealIds } from '../lib/recentDeals'
 import { useApp } from '../contexts/AppContext'
 import CommandPalette from './CommandPalette'
 import HelpModal from './HelpModal'
@@ -24,6 +25,12 @@ export default function Layout() {
     })
     .slice(0, 3)
   const userUploadCount = allDeals.filter((d) => d.id.startsWith('user-')).length
+  // 最近查看的 deal — 跨 session 保留，sidebar 显示前 4 个
+  const recentIds = useRecentDealIds()
+  const recentDeals = recentIds
+    .map((id) => allDeals.find((d) => d.id === id))
+    .filter((d): d is NonNullable<typeof d> => Boolean(d))
+    .slice(0, 4)
   // 估算 localStorage 占用 — 用 Blob 的 size 统计 dp:userDeals key
   const lsSizeKB = (() => {
     try {
@@ -146,6 +153,30 @@ export default function Layout() {
               <div className="text-[11px] text-ink-500 truncate mt-0.5">{d.sector} · {d.round}</div>
             </Link>
           ))}
+
+          {recentDeals.length > 0 && (
+            <>
+              <div className="text-[10px] font-medium text-ink-400 tracking-[0.14em] uppercase px-3 pt-4 pb-2">最近查看</div>
+              {recentDeals.map((d) => (
+                <Link
+                  key={`recent-${d.id}`}
+                  to={`/deal/${d.id}`}
+                  onMouseEnter={() => preloadRoute(`/deal/${d.id}`)}
+                  className={`block px-3 py-1.5 rounded-lg text-sm hover:bg-ink-100 transition ${
+                    loc.pathname.includes(d.id) ? 'bg-ink-100' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="truncate max-w-[140px] text-[12.5px] flex items-center gap-1">
+                      {d.id.startsWith('user-') && <span className="text-violet-700 text-[9px]">✨</span>}
+                      <span className="truncate">{d.name}</span>
+                    </span>
+                    <span className="num text-[10px] text-ink-500">{d.score}</span>
+                  </div>
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="p-3 border-t border-ink-200 space-y-2">

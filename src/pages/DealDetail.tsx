@@ -12,6 +12,7 @@ import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { downloadMarkdown, copyMarkdownToClipboard } from '../lib/exportDeal'
 import { removeUserDeal } from '../lib/userDealStore'
 import { toast } from '../lib/toast'
+import { trackDealView } from '../lib/recentDeals'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
 export default function DealDetail() {
@@ -27,6 +28,11 @@ export default function DealDetail() {
   useEffect(() => {
     if (deal) document.title = `${deal.name} · ${deal.score}/100 · DealPilot`
   }, [deal])
+
+  // 记录到「最近查看」列表 — Layout sidebar 实时反映
+  useEffect(() => {
+    if (deal) trackDealView(deal.id)
+  }, [deal?.id])
 
   if (!deal) {
     return (
