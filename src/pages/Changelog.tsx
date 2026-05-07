@@ -104,6 +104,7 @@ const sprints: SprintEntry[] = [
   { num: 125, title: 'JSON 备份 / 恢复 用户上传 deal', detail: 'schema dealpilot-user-deals-v1 · Memory 页 备份 JSON / 导入 JSON 按钮 · merge / replace 两模式 · 跨设备 / 团队同步', files: ['lib/userDealStore.ts', 'pages/Memory.tsx'], tag: '功能', color: '#0ea5e9' },
   { num: 127, title: 'Thesis × user-deal 对齐矩阵', detail: '6 硬门槛 × N 用户上传 deal 的 ✓/✕ 矩阵 · 静态启发式（TAM 抓字符串 / 技术壁垒查 sequoia / ARR / AI 原生 / ESG / 地缘）· 综合通过率徽章', files: ['pages/Thesis.tsx'], tag: '功能', color: '#0f766e' },
   { num: 128, title: 'DealChat system prompt 升级', detail: '区分 user-uploaded vs mock · 加 traction / founder questions / 完整 founders 背景 / TAM&SAM · 6 条规则约束（不编造 / 估值锚定 / reference check 路径建议）', files: ['lib/chatLLM.ts'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 129, title: 'HelpModal 加 重看 Onboarding 入口', detail: '清除 v2 + v3 flag 并重载 → 老用户可主动复看 5 步引导（含 4 行业示例 BP 画廊）', files: ['components/HelpModal.tsx'], tag: 'UX', color: '#0ea5e9' },
 ]
 
 const milestones = [
