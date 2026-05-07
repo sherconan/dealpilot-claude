@@ -24,10 +24,46 @@ export default function Sources() {
 
       <section className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
         <SummaryCard label="信源已实测" value={`${liveCount}/7`} accent="#059669" hint="akshare · qcc(3) · cninfo" />
-        <SummaryCard label="专利记录" value={'4,568'} accent="#0f766e" hint="6 家：联影 3493 / 寒武 548 / 旷视 434 / 智谱 80 / MiniMax 12 / Kimi 1" />
-        <SummaryCard label="官方 PDF" value={'25'} accent="#7c3aed" hint="9 家 × 年报 18 + 招股书 7" />
-        <SummaryCard label="可比公司" value={'9'} accent="#0ea5e9" hint="A 股 8 + 港股 1 全部带实时财报" />
-        <SummaryCard label="风险扫描" value={'5'} accent="#dc2626" hint="联影/旷视/字节/拼多多/暴风（暴雷）" />
+        <SummaryCard label="LLM provider" value={'6'} accent="#7c3aed" hint="Kimi K2.6 / Gemini / OpenAI / Moonshot / DeepSeek / Pollinations" />
+        <SummaryCard label="专利记录" value={'4,568'} accent="#0f766e" hint="6 家公司真实数据" />
+        <SummaryCard label="官方 PDF" value={'25'} accent="#0ea5e9" hint="9 家年报 18 + 招股书 7" />
+        <SummaryCard label="风险扫描" value={'5'} accent="#dc2626" hint="联影/旷视/字节/拼多多/暴风" />
+      </section>
+
+      {/* LLM 能力矩阵 */}
+      <section className="bg-gradient-to-br from-violet-50 via-white to-white border-2 border-violet-500/30 rounded-xl p-5 mb-6">
+        <div className="mb-4">
+          <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">LLM Capability Stack · 10 条 AI 能力链路</div>
+          <h2 className="text-[16px] font-semibold tracking-tight mt-1">从 PDF 上传到投资决策的完整 AI 流水线</h2>
+          <p className="text-[12px] text-ink-500 mt-0.5">每条都已真接通 · 用户上传 BP 后自动触发或按需调用</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {[
+            { num: '01', title: 'PDF 全文真抽取', tech: 'pdfjs-dist 浏览器端', auto: true },
+            { num: '02', title: 'PDF 多页渲染图像', tech: 'canvas → base64 JPEG', auto: true },
+            { num: '03', title: 'regex NER 字段抽取', tech: '本地多模式 12 字段', auto: true },
+            { num: '04', title: '多模态 LLM 深度分析', tech: 'Kimi K2.6 / Gemini Flash · 流式 SSE', auto: true },
+            { num: '05', title: 'Sequoia 10 LLM 真打分', tech: 'JSON 输出 + 加权 + 评分依据', auto: true },
+            { num: '06', title: '8 个针对性创始人访谈', tech: 'LLM 基于 BP 真内容', auto: true },
+            { num: '07', title: '完整 IC Memo 8 段生成', tech: 'LLM 写 + ===SECTION=== 切', auto: true },
+            { num: '08', title: '多轮追问对话 (DealChat)', tech: '注入 deal context + 流式', auto: false },
+            { num: '09', title: '竞品深度对比', tech: 'LLM + 9 家 akshare 真财报', auto: false },
+            { num: '10', title: 'Markdown 完整导出', tech: '一键复制 / 下载 .md', auto: false },
+          ].map((c) => (
+            <div key={c.num} className="bg-white border border-ink-200 rounded-lg p-3">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className="num w-7 h-7 rounded bg-violet-700 text-white text-[11px] font-semibold flex items-center justify-center">{c.num}</span>
+                  <span className="text-[13px] font-semibold tracking-tight">{c.title}</span>
+                </div>
+                <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium ${c.auto ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                  {c.auto ? '上传自动触发' : '按需触发'}
+                </span>
+              </div>
+              <div className="text-[11.5px] text-ink-600 leading-relaxed pl-9">{c.tech}</div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <div className="space-y-5">
