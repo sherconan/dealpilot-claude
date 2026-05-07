@@ -5,6 +5,7 @@ import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
+import NotePanel from '../components/NotePanel'
 // DealChat / CompetitorAnalysis 重组件懒加载 — 用户在详情页底部下拉时才下载它们的 chunk
 const DealChat = lazy(() => import('../components/DealChat'))
 const CompetitorAnalysis = lazy(() => import('../components/CompetitorAnalysis'))
@@ -387,6 +388,9 @@ export default function DealDetail() {
           </div>
         </section>
       )}
+
+      {/* ─── 个人笔记 — 自动保存到 localStorage ─── */}
+      <NotePanel dealId={deal.id} />
 
       {/* ─── LLM 竞品深度对比 ─── */}
       <Suspense fallback={<div className="bg-ink-50 border border-ink-200 rounded-xl p-5 mb-5 text-[12px] text-ink-500 animate-pulse">竞品对比模块加载中…</div>}>
