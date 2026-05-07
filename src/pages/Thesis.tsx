@@ -1,5 +1,53 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { thesisChecks } from '../lib/scoring'
+import { useAllDeals } from '../lib/userDealStore'
+import type { Deal } from '../types'
+
+// 6 个硬门槛对应一个判定函数 — 仅基于 deal 现有字段做启发式判断
+type GateCheck = (d: Deal) => boolean
+const gateChecks: { key: string; check: GateCheck }[] = [
+  {
+    key: '市场规模阈值',
+    check: (d) => {
+      // TAM 字符串里抓 "$\dB" 或 "billion" 数字 ≥ 5
+      const tam = (d.tam || '').toLowerCase()
+      const m = tam.match(/\$?\s*(\d+(?:\.\d+)?)\s*(t|trillion|b|billion|万亿|亿)/i)
+      if (!m) return false
+      const val = parseFloat(m[1])
+      const unit = m[2].toLowerCase()
+      if (unit.startsWith('t') || unit.includes('万亿')) return val >= 5
+      if (unit.startsWith('b') || unit.includes('billion')) return val >= 5
+      if (unit.includes('亿')) return val >= 350 // 350亿 RMB ≈ $5B
+      return false
+    },
+  },
+  {
+    key: '技术壁垒',
+    check: (d) =>
+      d.sequoia.solution >= 7 ||
+      d.traction.some((t) => /专利|patent|护城河/i.test(t.label + t.value)),
+  },
+  {
+    key: '收入证据',
+    check: (d) => {
+      const arr = (d.arr || '').replace(/[^\d.]/g, '')
+      return Boolean(d.arr) && d.arr !== '—' && parseFloat(arr || '0') > 0
+    },
+  },
+  {
+    key: 'AI 原生',
+    check: (d) => /AI|Agent|智能|模型|大模型|多模态|算法/i.test(d.sector + d.tagline),
+  },
+  {
+    key: 'ESG 合规',
+    check: (d) => !/碳|煤|crypto|区块链|烟|博彩|赌/i.test(d.sector + d.tagline),
+  },
+  {
+    key: '地缘合规',
+    check: (d) => !d.redFlags.some((f) => f.severity === 'hard' && /合规|地缘|出口|管制|制裁/.test(f.label)),
+  },
+]
 
 const gates = [
   { title: '市场规模阈值', value: 'SAM ≥ $5B（第三方数据源）', active: true, kind: 'hard' },
@@ -39,6 +87,19 @@ const scoringWeights = [
 
 export default function Thesis() {
   const [editing, setEditing] = useState(false)
+  const allDeals = useAllDeals()
+  const userDeals = useMemo(() => allDeals.filter((d) => d.id.startsWith('user-')), [allDeals])
+
+  // 计算每个 user-deal 通过 6 个硬门槛的状态
+  const matrix = useMemo(() => {
+    return userDeals.map((d) => ({
+      deal: d,
+      results: gateChecks.map((g) => ({ key: g.key, pass: g.check(d) })),
+    }))
+  }, [userDeals])
+  const totalChecks = userDeals.length * gateChecks.length
+  const passedChecks = matrix.reduce((s, row) => s + row.results.filter((r) => r.pass).length, 0)
+  const passRate = totalChecks > 0 ? Math.round((passedChecks / totalChecks) * 100) : 0
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1200px] mx-auto">
@@ -52,6 +113,69 @@ export default function Thesis() {
           {editing ? '保存变更' : '编辑论点'}
         </button>
       </header>
+
+      {/* Thesis × user-deal 对齐矩阵 — 把 thesis gates 落到具体上传 deal 上 */}
+      {userDeals.length > 0 && (
+        <section className="bg-gradient-to-br from-brand-50/60 via-white to-violet-50/60 border-2 border-brand-500/30 rounded-xl p-5 mb-5">
+          <div className="flex items-end justify-between mb-3 gap-2 flex-wrap">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-brand-700 font-medium">Thesis × Your Deals · 实时对齐</div>
+              <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">{userDeals.length} 个上传项目通过 6 个硬门槛的状况</h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">综合通过率 <span className="num font-semibold text-brand-700">{passRate}%</span>（{passedChecks} / {totalChecks}）— 启发式规则基于 deal 字段静态判断</p>
+            </div>
+            <Link to="/upload" className="text-[11px] px-3 py-1.5 rounded-lg border border-brand-300 text-brand-700 bg-white hover:bg-brand-50 transition">
+              上传新 BP →
+            </Link>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[12px]">
+              <thead>
+                <tr className="text-[10px] uppercase tracking-wider text-ink-500 border-b border-ink-200">
+                  <th className="text-left py-2 pr-3 sticky left-0 bg-white">项目</th>
+                  {gateChecks.map((g) => (
+                    <th key={g.key} className="text-center py-2 px-2 whitespace-nowrap">{g.key}</th>
+                  ))}
+                  <th className="text-right py-2 pl-3">通过</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100">
+                {matrix.map(({ deal, results }) => {
+                  const passed = results.filter((r) => r.pass).length
+                  const allPass = passed === results.length
+                  return (
+                    <tr key={deal.id} className="hover:bg-white transition">
+                      <td className="py-2 pr-3 min-w-[160px] sticky left-0 bg-inherit">
+                        <Link to={`/deal/${deal.id}`} className="text-[12.5px] font-medium hover:text-brand-700 truncate block">{deal.name}</Link>
+                        <div className="text-[10.5px] text-ink-500 truncate">{deal.sector} · {deal.score}/100</div>
+                      </td>
+                      {results.map((r) => (
+                        <td key={r.key} className="text-center py-2 px-2">
+                          <span
+                            className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-[12px] ${
+                              r.pass ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                            }`}
+                            title={`${r.key}: ${r.pass ? '通过' : '未通过'}`}
+                          >
+                            {r.pass ? '✓' : '✕'}
+                          </span>
+                        </td>
+                      ))}
+                      <td className="text-right py-2 pl-3 num">
+                        <span className={`text-[12px] font-medium ${allPass ? 'text-emerald-700' : passed >= 4 ? 'text-amber-700' : 'text-rose-700'}`}>
+                          {passed} / {results.length}
+                        </span>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-3 text-[10.5px] text-ink-500 leading-relaxed">
+            ⓘ 静态启发式：TAM ≥ $5B 抓字符串 / 技术壁垒查 sequoia.solution 或 traction 含 "patent" / 收入证据看 ARR 是否非空 / AI 原生匹配 sector+tagline 关键词 / ESG 排除高碳-博彩-烟-crypto / 地缘合规检查硬红线列表。规则只是参考，不替代人工判断。
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <section className="bg-white border border-ink-200 rounded-xl p-5">
