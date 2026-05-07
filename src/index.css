@@ -55,6 +55,13 @@
   .page-break-before { page-break-before: always; }
   @page { margin: 16mm; size: A4; }
   @page :first { margin-top: 20mm; }
+  @page { @bottom-right { content: "DealPilot · IC Memo · " counter(page) " / " counter(pages); font-size: 8pt; color: #64748b; } }
+  /* 面包屑导航打印时隐藏（只在 IC Memo / DealBrief 上方） */
+  .print-hide-breadcrumb { display: none !important; }
+  /* 多列网格在打印时单列堆叠避免横向裁切 */
+  .lg\:grid-cols-\[200px_1fr\] { grid-template-columns: 1fr !important; gap: 0 !important; }
+  /* 打印时隐藏聊天 / 竞品分析等运行时交互模块 */
+  .print-hide { display: none !important; }
 }
 
 /* ─── Dark mode 全局覆盖 ─── */

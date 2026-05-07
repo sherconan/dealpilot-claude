@@ -54,7 +54,7 @@ export default function ICMemo() {
         </div>
       </aside>
       <div>
-      <div className="flex items-center gap-2 text-[12px] text-ink-500 mb-3">
+      <div className="flex items-center gap-2 text-[12px] text-ink-500 mb-3 print-hide-breadcrumb">
         <Link to={`/deal/${deal.id}`} className="hover:text-brand-700">{deal.name}</Link>
         <span>/</span>
         <span className="text-ink-900">IC Memo</span>
@@ -64,7 +64,13 @@ export default function ICMemo() {
         <div>
           <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">IC Memorandum · Draft</div>
           <h1 className="text-[24px] font-semibold tracking-tight mt-1">{deal.name} · 投资委员会备忘录</h1>
-          <p className="text-[12px] text-ink-500 mt-1.5">生成于 2026-04-24 10:32 GMT+8 · 基于 AI 自动聚合 + 人工校对 · <span className="text-brand-700">信念文件（Conviction Document）</span></p>
+          <p className="text-[12px] text-ink-500 mt-1.5">
+            生成于 {new Date().toLocaleString('zh-CN', { hour12: false })} ·
+            {deal.id.startsWith('user-') && deal.deepAnalysisRaw
+              ? ' 由 LLM 真分析 BP 内容生成 ·'
+              : ' 基于 Scorecard + AI 自动聚合 ·'}
+            <span className="text-brand-700"> 信念文件（Conviction Document）</span>
+          </p>
         </div>
         <div className="flex items-center gap-2 no-print">
           <button onClick={handleShare} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50 inline-flex items-center gap-1.5">
