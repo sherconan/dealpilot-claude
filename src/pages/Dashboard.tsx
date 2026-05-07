@@ -16,8 +16,9 @@ export default function Dashboard() {
     const passed = deals.filter((d) => d.stage === 'pass').length
     const inFunnel = deals.filter((d) => !['pass', 'invested'].includes(d.stage)).length
     const avgScore = Math.round(deals.reduce((s, d) => s + d.score, 0) / deals.length)
-    return { total, priority, passed, inFunnel, avgScore }
-  }, [])
+    const llmAnalyzed = deals.filter((d) => d.id.startsWith('user-') || d.deepAnalysisRaw).length
+    return { total, priority, passed, inFunnel, avgScore, llmAnalyzed }
+  }, [deals])
 
   const top = [...deals].sort((a, b) => b.score - a.score).slice(0, 3)
   const todos = deals.filter((d) => d.stage === 'ic' || d.stage === 'dd' || d.stage === 'review')
@@ -60,12 +61,13 @@ export default function Dashboard() {
         </div>
       </header>
 
-      <section className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
+      <section className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-5">
         <MetricCard label="本月进入筛选" value={stats.total} delta="+12 QoQ" accent="#0f766e" />
         <MetricCard label="优先推进" value={stats.priority} hint="80 分以上 · 待 IC" accent="#0f766e" />
-        <MetricCard label="漏斗活跃项目" value={stats.inFunnel} hint="初筛 / 跟进 / 尽调 / IC" accent="#0ea5e9" />
+        <MetricCard label="漏斗活跃" value={stats.inFunnel} hint="初筛/跟进/尽调/IC" accent="#0ea5e9" />
         <MetricCard label="已 Pass" value={stats.passed} hint="本月 + 4" accent="#94a3b8" />
         <MetricCard label="平均评分" value={stats.avgScore} hint="Scorecard 加权" accent="#d97706" />
+        <MetricCard label="LLM 已分析" value={stats.llmAnalyzed} hint="✨ 真 LLM 报告已生成" accent="#7c3aed" />
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
