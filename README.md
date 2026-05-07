@@ -114,9 +114,22 @@ src/
 - **所有可比上市公司表格 100% 真实数据**：寒武纪 / 拉卡拉 / 联影医疗 / 顺丰 / 东航物流 / 京东物流 / 石头科技 / 科沃斯 — 全部来自 akshare 实时调用
 - **数据核验、访谈问题、风险扫描** 部分条目带「实时」徽章为真信源已抓取，其他为「演示」字样（等待真实 BP 触发）
 
-## 🏁 7 小时挑战赛
+## 🏁 双轮 7 小时挑战赛（85+ Sprint 全闭环）
 
-本产品的后半部分（10+ 页面 / 真信源 / Cmd-K / 拖拽 / CSV / IC 简报 / 周报 / 投资逻辑画布 / 中英双语 + 暗色 ...）由 27 个 Sprint、自主驱动、零中间指令完成。详见线上 [`/changelog`](https://sherconan.github.io/dealpilot-claude/?/changelog) 或本仓库 commit history。
+第一轮（Sprint 1-67）：18 个页面 / 真信源接入 / Cmd-K / 拖拽 / CSV / IC 简报 / 周报 / 投资逻辑画布 / 中英双语 + 暗色
+
+**第二轮（Sprint 68-85）· LLM 全面接通**：
+- ✨ **6 LLM Provider**（Pollinations 免费 / Kimi K2.6 多模态 / Gemini Flash / OpenAI GPT-4o / Moonshot Vision / DeepSeek）
+- ✨ **Kimi K2.6 真接通**（Vercel Edge Function 代理 + UA 注入绕过 coding agent 限制）
+- ✨ **流式 SSE** — 实时看 LLM 思考输出
+- ✨ **LLM 真打分 Sequoia 10**（替代规则引擎，每维度独立打分 + 评分依据 + PDF 原文 evidence）
+- ✨ **LLM 完整 IC Memo**（10 段映射到 8 段标准 IC Memo 结构）
+- ✨ **LLM 生成针对 BP 的 8 个创始人访谈问题**
+- ✨ **多轮追问 DealChat**（注入完整 deal context 让 LLM 持续讨论）
+- ✨ **LLM 竞品深度对比**（基于 9 家 akshare 真财报锚定估值）
+- ✨ **Markdown 完整报告导出**
+
+详见线上 [`/changelog`](https://dealpilot-claude.vercel.app/?/changelog) 或本仓库 commit history。
 
 P8 自检清单：每个 Sprint 都满足 ① 写代码 ② 自查 build ③ git commit ④ git push ⑤ 等 CI 绿 ⑥ verify URL 200。**对结果负责的闭环**，不是 commit 一把就完事。
 
