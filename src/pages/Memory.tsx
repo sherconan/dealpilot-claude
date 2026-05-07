@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
-import { useAllDeals, clearUserDeals, getUserDeals } from '../lib/userDealStore'
+import { useAllDeals, clearUserDeals, getUserDeals, downloadUserDealsJSON, importUserDealsJSON } from '../lib/userDealStore'
+import { useRef } from 'react'
 
 type SortKey = 'score' | 'recent' | 'sector'
 type RecFilter = 'all' | 'priority' | 'monitor' | 'conditional' | 'pass'
@@ -13,6 +14,26 @@ export default function Memory() {
   const [recFilter, setRecFilter] = useState<RecFilter>('all')
   const [sort, setSort] = useState<SortKey>('score')
   const [riskOnly, setRiskOnly] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function onImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const text = String(reader.result || '')
+        const merge = confirm('合并到现有 deal（确定）？还是替换全部（取消）？\n\n确定 = 合并：保留现有 deal，新增 / 覆盖同 id 项目\n取消 = 替换：清空现有用户上传，仅保留导入文件中的 deal')
+        const count = importUserDealsJSON(text, merge ? 'merge' : 'replace')
+        alert(`✓ 成功导入 ${count} 个 deal（${merge ? '合并' : '替换'}模式）`)
+      } catch (err: any) {
+        alert(`导入失败：${err.message}`)
+      } finally {
+        if (e.target) e.target.value = ''
+      }
+    }
+    reader.readAsText(f, 'utf-8')
+  }
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -93,17 +114,40 @@ export default function Memory() {
               导出 CSV
             </button>
             {getUserDeals().length > 0 && (
-              <button
-                onClick={() => {
-                  const userCount = getUserDeals().length
-                  if (confirm(`确定清空 ${userCount} 份用户上传的 BP 分析记录？\n\n· 仅清除浏览器本地的记录\n· 不影响 mock 数据中的演示项目\n· 此操作不可撤销`)) clearUserDeals()
-                }}
-                className="text-[12px] px-3 py-1.5 border border-rose-200 text-rose-700 rounded-lg hover:bg-rose-50 transition"
-                title="清除全部用户上传的 BP（不影响演示数据）"
-              >
-                清空上传
-              </button>
+              <>
+                <button
+                  onClick={downloadUserDealsJSON}
+                  className="text-[12px] px-3 py-1.5 border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition"
+                  title="导出全部用户上传 deal 为 JSON 备份（schema dealpilot-user-deals-v1）"
+                >
+                  备份 JSON
+                </button>
+                <button
+                  onClick={() => {
+                    const userCount = getUserDeals().length
+                    if (confirm(`确定清空 ${userCount} 份用户上传的 BP 分析记录？\n\n· 仅清除浏览器本地的记录\n· 不影响 mock 数据中的演示项目\n· 此操作不可撤销\n· 建议先点"备份 JSON"`)) clearUserDeals()
+                  }}
+                  className="text-[12px] px-3 py-1.5 border border-rose-200 text-rose-700 rounded-lg hover:bg-rose-50 transition"
+                  title="清除全部用户上传的 BP（不影响演示数据）"
+                >
+                  清空上传
+                </button>
+              </>
             )}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="text-[12px] px-3 py-1.5 border border-ink-300 bg-white hover:bg-ink-50 rounded-lg transition"
+              title="导入 deal JSON 备份（合并 / 替换模式）"
+            >
+              导入 JSON
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".json,application/json"
+              onChange={onImportFile}
+              className="hidden"
+            />
           </div>
         </div>
 

@@ -41,6 +41,44 @@ export function subscribe(cb: () => void): () => void {
   return () => { listeners.delete(cb) }
 }
 
+// ─── 备份 / 恢复 — 让用户可以把上传的 deal JSON 化（同步到团队 / 跨设备） ───
+
+export function exportUserDealsJSON(): string {
+  const deals = load()
+  const payload = {
+    schema: 'dealpilot-user-deals-v1',
+    exportedAt: new Date().toISOString(),
+    count: deals.length,
+    deals,
+  }
+  return JSON.stringify(payload, null, 2)
+}
+
+export function downloadUserDealsJSON() {
+  const blob = new Blob([exportUserDealsJSON()], { type: 'application/json;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `dealpilot-deals-${new Date().toISOString().slice(0, 10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// 返回 import 后的 deal 数量；失败抛 Error 让 UI 弹提示
+export function importUserDealsJSON(jsonText: string, mode: 'replace' | 'merge' = 'merge'): number {
+  let payload: any
+  try { payload = JSON.parse(jsonText) } catch { throw new Error('JSON 格式错误') }
+  if (!payload || payload.schema !== 'dealpilot-user-deals-v1' || !Array.isArray(payload.deals)) {
+    throw new Error('schema 不匹配 — 需要 dealpilot-user-deals-v1 格式')
+  }
+  const incoming: Deal[] = payload.deals
+  const existing = mode === 'replace' ? [] : load()
+  const byId = new Map<string, Deal>(existing.map((d) => [d.id, d]))
+  incoming.forEach((d) => byId.set(d.id, d))
+  save(Array.from(byId.values()))
+  return incoming.length
+}
+
 // React hook：返回 mockDeals + userDeals，自动响应变更
 import { useEffect, useState } from 'react'
 import { deals as mockDeals } from '../data/deals'
