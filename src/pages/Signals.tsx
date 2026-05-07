@@ -1,5 +1,7 @@
+import { useMemo } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { Link } from 'react-router-dom'
+import { useAllDeals } from '../lib/userDealStore'
 
 interface Signal {
   id: string
@@ -43,11 +45,67 @@ const levelMeta = {
 
 export default function Signals() {
   const { t } = useApp()
+  const allDeals = useAllDeals()
+
+  // 用户上传 BP 自动生成的合成 signal — 把"刚上传"也变成可监控事件流
+  const userSignals: Signal[] = useMemo(() => {
+    const out: Signal[] = []
+    const userDeals = allDeals.filter(d => d.id.startsWith('user-'))
+    userDeals.forEach((d, i) => {
+      // 每个上传 deal 各自一条 BP 入箱信号
+      out.push({
+        id: `user-${d.id}-upload`,
+        ts: d.lastUpdated || '刚刚',
+        company: d.name,
+        dealId: d.id,
+        channel: 'web',
+        level: 'medium',
+        title: `BP 入箱 · LLM 真分析完成（${d.score}/100）`,
+        detail: `${d.tagline.slice(0, 80)}${d.tagline.length > 80 ? '…' : ''}`,
+        source: 'DealPilot Upload Pipeline · LLM 流式生成 10 段',
+      })
+      // 硬红线 → 紧急信号
+      const hard = d.redFlags.filter(f => f.severity === 'hard')
+      if (hard.length > 0) {
+        out.push({
+          id: `user-${d.id}-rf`,
+          ts: d.lastUpdated || '刚刚',
+          company: d.name,
+          dealId: d.id,
+          channel: 'patent',
+          level: 'critical',
+          title: `硬红线触发 · ${hard.length} 项不可接受问题`,
+          detail: hard.map(f => f.label).join(' · '),
+          source: 'DealPilot Red Flag 引擎 · 本地规则',
+        })
+      }
+      // 高分项目 → 推 IC 信号
+      if (d.score >= 80) {
+        out.push({
+          id: `user-${d.id}-priority`,
+          ts: d.lastUpdated || '刚刚',
+          company: d.name,
+          dealId: d.id,
+          channel: 'media',
+          level: 'high',
+          title: `高分入 IC pre-read · 评分 ${d.score} ≥ 80`,
+          detail: d.llmOneLiner || '推荐进入 IC 表决前的合伙人晨会议程',
+          source: 'DealPilot Scorecard',
+        })
+      }
+    })
+    return out
+  }, [allDeals])
+
+  // 合并 mock signals + user signals，按 critical → high → medium → low 排序
+  const allSignals = [...userSignals, ...signals]
+
   const stats = {
-    total: signals.length,
-    critical: signals.filter(s => s.level === 'critical').length,
-    high: signals.filter(s => s.level === 'high').length,
-    last24h: signals.length,
+    total: allSignals.length,
+    critical: allSignals.filter(s => s.level === 'critical').length,
+    high: allSignals.filter(s => s.level === 'high').length,
+    last24h: allSignals.length,
+    userGenerated: userSignals.length,
   }
 
   return (
@@ -74,7 +132,7 @@ export default function Signals() {
           <div className="flex items-center gap-2">
             {(['critical', 'high', 'medium', 'low'] as const).map((lv) => {
               const m = levelMeta[lv]
-              const count = signals.filter(s => s.level === lv).length
+              const count = allSignals.filter(s => s.level === lv).length
               return (
                 <span key={lv} className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full ${m.bg}`} style={{ color: m.color }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.color }} />
@@ -85,17 +143,19 @@ export default function Signals() {
           </div>
         </div>
         <div className="divide-y divide-ink-100">
-          {signals.map((s) => {
+          {allSignals.map((s) => {
+            const isUser = s.id.startsWith('user-')
             const cm = channelMeta[s.channel]
             const lm = levelMeta[s.level]
             return (
-              <article key={s.id} className="px-5 py-4 hover:bg-ink-50 transition">
+              <article key={s.id} className={`px-5 py-4 hover:bg-ink-50 transition ${isUser ? 'border-l-4 border-l-violet-500' : ''}`}>
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-[10px] font-semibold shrink-0" style={{ background: cm.color }}>{cm.label.slice(0, 2)}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[10px] tracking-wider uppercase text-ink-400 num">{s.ts}</span>
                       <span className={`inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded`} style={{ color: lm.color, background: lm.color + '14' }}>{lm.label}</span>
+                      {isUser && <span className="text-[9px] text-violet-700 bg-violet-50 px-1 py-0.5 rounded font-medium border border-violet-200">✨ 用户上传</span>}
                       <span className="text-[12px] text-ink-700 font-medium">
                         {s.dealId ? <Link to={`/deal/${s.dealId}`} className="hover:text-brand-700">{s.company}</Link> : s.company}
                       </span>

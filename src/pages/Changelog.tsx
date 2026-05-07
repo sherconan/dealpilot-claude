@@ -99,6 +99,7 @@ const sprints: SprintEntry[] = [
   { num: 118, title: 'Onboarding 5 步加 ✨ 示例 BP 入口', detail: 'Step 1 直接展示 4 行业示例卡片 · sessionStorage 桥 → /upload 自动预填 · flag 升 v3 重弹给老用户', files: ['components/Onboarding.tsx'], tag: 'UX', color: '#0ea5e9' },
   { num: 119, title: 'Unicorns 页接 useAllDeals', detail: '检测用户上传的 AI 项目，紫色提示条引导去 Compare 页对照独角兽矩阵', files: ['pages/Unicorns.tsx'], tag: 'UX', color: '#7c3aed' },
   { num: 120, title: 'Risk 页聚合用户上传硬红线', detail: '顶部红色卡片列出所有 user-* deal 的硬 RF + 详情 · 点击直跳 DealDetail · Risk 页对用户的 BP 也负责', files: ['pages/Risk.tsx'], tag: '功能', color: '#dc2626' },
+  { num: 122, title: 'Signals 页生成 user 合成信号', detail: '每个 user-* deal 自动生成 1-3 条信号：BP 入箱 / 硬红线触发 / 高分入 IC pre-read · 紫边线和 ✨ 徽章区分', files: ['pages/Signals.tsx'], tag: '功能', color: '#7c3aed' },
 ]
 
 const milestones = [
