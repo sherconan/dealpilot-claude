@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { fundingFunnel } from '../lib/scoring'
 import { useAllDeals } from '../lib/userDealStore'
 import MetricCard from '../components/MetricCard'
@@ -7,8 +7,10 @@ import DealCard from '../components/DealCard'
 import { StagePill } from '../components/StatusPill'
 import { MonthlyTrendChart, DonutChart, BarChart, ConversionFlow, Sparkline } from '../components/Charts'
 import { monthlyInbound, sectorMix, scoreDistribution, conversionRates, avgScoreTrend } from '../data/analytics'
+import { SAMPLE_BPS } from '../data/sampleBPs'
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const deals = useAllDeals()
   const stats = useMemo(() => {
     const total = deals.length
@@ -73,6 +75,39 @@ export default function Dashboard() {
           </Link>
         </div>
       </header>
+
+      {/* 首次访问 / 零上传 — 直接给 4 行业示例入口，2 秒上手 */}
+      {stats.userUploaded === 0 && (
+        <section className="bg-gradient-to-r from-violet-50 via-white to-violet-50 border-2 border-violet-500/30 rounded-2xl p-4 mb-5">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">第一次来？</div>
+              <div className="text-[14px] font-semibold tracking-tight">点一个示例 BP — 30 秒后看 LLM 生成的 10 段深度报告</div>
+            </div>
+            <Link to="/upload" className="text-[11px] text-violet-700 hover:underline font-medium">看完整画廊 →</Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {SAMPLE_BPS.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => {
+                  // 用 sessionStorage 让 Upload 页知道要预填哪个示例
+                  try { sessionStorage.setItem('dp:prefill-sample', s.id) } catch {}
+                  navigate('/upload')
+                }}
+                className="text-left bg-white border border-ink-200 rounded-lg p-2.5 hover:border-violet-500/60 hover:shadow-pop transition group"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-[18px]">{s.emoji}</span>
+                  <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium" style={{ background: s.accent + '14', color: s.accent }}>{s.industry}</span>
+                </div>
+                <div className="text-[12px] font-semibold tracking-tight truncate group-hover:text-violet-800">{s.company}</div>
+                <div className="text-[10.5px] text-ink-500 line-clamp-1 mt-0.5">{s.tagline}</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-5">
         <MetricCard label="进入筛选" value={stats.total} hint={`含 ${stats.userUploaded} 份用户上传`} accent="#0f766e" />
