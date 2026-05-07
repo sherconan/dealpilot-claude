@@ -68,7 +68,13 @@ const sprints: SprintEntry[] = [
   { num: 74, title: '多轮追问对话 DealChat', detail: '注入完整 deal context (PDF + 评分 + 报告) → 流式 SSE 回答 + localStorage 历史 + 6 个建议问题', files: ['lib/chatLLM.ts', 'components/DealChat.tsx'], tag: '真 LLM', color: '#7c3aed' },
   { num: 76, title: 'Markdown 完整报告导出', detail: '一键导出含 LLM 评分 + 10 段 + 访谈问题 + Red Flag + 时间线 的完整 Markdown', files: ['lib/exportDeal.ts'], tag: '功能', color: '#0f766e' },
   { num: 77, title: 'LLM 竞品深度对比', detail: '基于 9 家已实测 akshare 真财报 + LLM 写 500-800 字深度对比 + 估值锚定', files: ['lib/competitorLLM.ts', 'components/CompetitorAnalysis.tsx'], tag: '真 LLM', color: '#7c3aed' },
-  { num: 54, title: 'Changelog + HANDOFF + KPI 同步 53 状态', detail: '全量更新到 53 sprint / 51 commit / 7 真实公司 IP / 6 公司风险', files: ['pages/Changelog.tsx', 'HANDOFF.md'], tag: '文档', color: '#475569' },
+  { num: 80, title: 'Pipeline/Memory LLM 徽章', detail: '用户上传项目左侧紫色边线 + ✨ LLM 真分析徽章 + score hover 显示 llmOneLiner', files: ['pages/Pipeline.tsx', 'pages/Memory.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 82, title: 'ICMemo 打印 PDF 优化', detail: 'A4 + PingFang SC 中文字体 + 章节避免分页 + 字号层级 22/16/13/10.5pt + 表格边框 + details 全展开', files: ['index.css'], tag: 'Polish', color: '#0f766e' },
+  { num: 83, title: 'Onboarding 5 步引导', detail: '首次访问延迟 1.5s 弹 modal · 欢迎 / 上传 BP / LLM 评分 / 多轮追问 / 真信源 (FLAG dp:onboarded-v2)', files: ['components/Onboarding.tsx', 'components/Layout.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 84, title: 'Upload 一键试用示例 BP', detail: '点击 "✨ 用示例 BP 试一下" 自动预填完整 NebulaAI BP 文本立即体验 LLM 真分析', files: ['pages/Upload.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 85, title: 'Dashboard LLM 已分析 KPI', detail: '5 → 6 KPI 新增"LLM 已分析"专项 (识别 user-* 或有 deepAnalysisRaw 的 deal)', files: ['pages/Dashboard.tsx', 'README.md'], tag: 'Polish', color: '#7c3aed' },
+  { num: 86, title: 'SEO meta 升级 LLM 时代', detail: 'description / keywords 同步 6 LLM Provider · Kimi K2.6 多模态 · 真信源核验', files: ['index.html'], tag: 'SEO', color: '#0ea5e9' },
+  { num: 87, title: '双轮 7-Hour Challenge 收官', detail: '87 Sprint 全闭环 · 6 LLM Provider 真接通 · 10 条 AI 能力链 · 5 真信源 · CI 全绿 · Vercel + GH Pages 双部署', files: ['HANDOFF.md', 'pages/Changelog.tsx', 'README.md'], tag: 'Final', color: '#059669' },
 ]
 
 const milestones = [
@@ -89,10 +95,10 @@ export default function Changelog() {
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 67+ 全部闭环" />
-        <Stat label="LLM provider" value={'6'} accent="#7c3aed" hint="Pollinations / Kimi K2.6 / Gemini / OpenAI / Moonshot / DeepSeek" />
+        <Stat label="Sprint 总数" value={sprints.length} accent="#0f766e" hint="双轮 7h challenge · 全部闭环" />
+        <Stat label="LLM Provider" value={'6'} accent="#7c3aed" hint="Kimi K2.6 / Gemini / OpenAI / Moonshot / DeepSeek / Pollinations" />
         <Stat label="真信源 live" value={'5/7'} accent="#059669" hint="akshare / qcc(3) / cninfo" />
-        <Stat label="LLM 能力链" value={'10'} accent="#d97706" hint="解析 / 评分 / Memo / 访谈 / 追问 / 竞品 / 流式..." />
+        <Stat label="LLM 能力链" value={'10'} accent="#d97706" hint="解析 / 评分 / Memo / 访谈 / 追问 / 竞品 / 流式 / 导出..." />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
