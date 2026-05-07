@@ -236,14 +236,20 @@ export default function Pipeline() {
                       onDragEnd={() => setDraggingId(null)}
                       className={`bg-white border border-ink-200 rounded-lg p-3 hover:shadow-pop hover:border-brand-500/50 transition cursor-grab active:cursor-grabbing ${
                         draggingId === d.id ? 'opacity-50' : ''
-                      } ${isOverridden ? 'ring-2 ring-brand-500/30' : ''}`}
+                      } ${isOverridden ? 'ring-2 ring-brand-500/30' : ''} ${d.id.startsWith('user-') ? 'border-l-4 border-l-violet-500' : ''}`}
                     >
+                      {d.id.startsWith('user-') && (
+                        <div className="text-[9px] text-violet-700 bg-violet-50 inline-flex items-center gap-1 px-1.5 py-0.5 rounded mb-1.5 border border-violet-200">
+                          ✨ LLM 真分析 · 用户上传
+                        </div>
+                      )}
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0 flex-1">
                           <Link to={`/deal/${d.id}`} className="font-semibold text-[13px] truncate hover:text-brand-700 block" onClick={(e) => e.stopPropagation()}>{d.name}</Link>
                           <div className="text-[11px] text-ink-500 mt-0.5 truncate">{d.sector} · {d.round}</div>
                         </div>
-                        <div className="num font-semibold text-[16px]" style={{ color: d.accentColor }}>{d.score}</div>
+                        <div className="num font-semibold text-[16px]" style={{ color: d.accentColor }}
+                             title={d.llmOneLiner || ''}>{d.score}</div>
                       </div>
                       <div className="mt-2 flex items-center justify-between text-[10px] text-ink-400">
                         <span className="num">{d.askAmount} · {d.valuation}</span>

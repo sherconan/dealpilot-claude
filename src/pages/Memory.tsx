@@ -102,7 +102,13 @@ export default function Memory() {
                 <RecommendationPill rec={d.recommendation} />
               </div>
               <div className="min-w-0">
-                <div className="font-medium truncate">{d.name}<span className="text-ink-500 font-normal ml-1.5">{d.cnName}</span></div>
+                <div className="font-medium truncate flex items-center gap-1.5">
+                  {d.name}
+                  <span className="text-ink-500 font-normal">{d.cnName}</span>
+                  {d.id.startsWith('user-') && (
+                    <span className="text-[9px] text-violet-700 bg-violet-50 px-1 py-0.5 rounded border border-violet-200" title={d.llmOneLiner}>✨ LLM</span>
+                  )}
+                </div>
                 <div className="text-[11px] text-ink-500 truncate">{d.tagline}</div>
               </div>
               <div><StagePill stage={d.stage} /></div>

@@ -18,16 +18,43 @@
   * { box-sizing: border-box; }
 }
 
-/* ─── Print 优化（IC Memo PDF 导出） ─── */
+/* ─── Print 优化（IC Memo PDF 导出 · A4 + 中文字体） ─── */
 @media print {
-  aside, .no-print { display: none !important; }
-  main { overflow: visible !important; }
-  body { background: white !important; }
+  aside, .no-print, footer { display: none !important; }
+  main { overflow: visible !important; padding: 0 !important; }
+  body { background: white !important; font-family: 'PingFang SC', 'Microsoft YaHei', 'Geist', system-ui, sans-serif !important; }
   .bg-amber-50, .border-amber-200 { display: none !important; }
-  article, section { break-inside: avoid; page-break-inside: avoid; }
-  h1, h2, h3 { page-break-after: avoid; }
-  .shadow-card, .shadow-pop { box-shadow: none !important; }
-  @page { margin: 18mm; size: A4; }
+  article { break-inside: auto; }
+  article section, .ic-memo-section { break-inside: avoid; page-break-inside: avoid; margin-bottom: 12pt; }
+  h1, h2, h3, h4 { page-break-after: avoid; color: #0f172a !important; }
+  h1 { font-size: 22pt !important; margin-bottom: 8pt; }
+  h2 { font-size: 16pt !important; margin: 14pt 0 6pt; padding-bottom: 4pt; border-bottom: 1pt solid #cbd5e1; }
+  h3 { font-size: 13pt !important; margin: 10pt 0 4pt; }
+  p { font-size: 10.5pt !important; line-height: 1.7 !important; orphans: 3; widows: 3; }
+  table { page-break-inside: avoid; font-size: 10pt; border-collapse: collapse; width: 100%; }
+  table th, table td { border: 0.5pt solid #94a3b8; padding: 4pt 6pt; }
+  .shadow-card, .shadow-pop, .shadow-sm, .shadow-lg { box-shadow: none !important; }
+  /* sticky 顶部条不打印 */
+  .sticky { position: static !important; }
+  /* 各种 Tailwind bg 改白底 */
+  .bg-white, .bg-ink-50, .bg-brand-50, .bg-violet-50, .bg-emerald-50, .bg-rose-50, .bg-amber-50, .bg-sky-50 {
+    background: white !important;
+  }
+  .bg-gradient-to-br { background: white !important; }
+  /* 边框 → 印刷风灰 */
+  [class*="border-"] { border-color: #cbd5e1 !important; }
+  /* code 块 */
+  code, pre { font-size: 9pt !important; background: #f1f5f9 !important; }
+  /* 让 details 默认全部展开打印 */
+  details { display: block !important; }
+  details summary { display: block; font-weight: 600; }
+  details > * { display: block !important; }
+  /* 链接显示 URL */
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #64748b; }
+  /* 强制段后分页（重要章节） */
+  .page-break-before { page-break-before: always; }
+  @page { margin: 16mm; size: A4; }
+  @page :first { margin-top: 20mm; }
 }
 
 /* ─── Dark mode 全局覆盖 ─── */
