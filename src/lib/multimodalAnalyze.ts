@@ -5,7 +5,8 @@ import type { ExtractedFields, RedFlag } from './pdfPipeline'
 
 export type Provider =
   | 'pollinations'        // 免费文本 LLM (默认 · 已实测调通)
-  | 'gemini-flash'        // Google Gemini 1.5 Flash (BYOK · 真多模态 · 免费 tier 15 RPM)
+  | 'kimi-k26'            // Kimi K2.6 (本产品已配 · 真多模态 · 256K context · 走 Vercel 代理)
+  | 'gemini-flash'        // Google Gemini 1.5 Flash (BYOK · 真多模态 · 免费 tier)
   | 'moonshot-vision'     // Moonshot Kimi vision (BYOK · 中文原生)
   | 'openai-vision'       // OpenAI gpt-4o-mini vision (BYOK)
   | 'deepseek'            // DeepSeek (BYOK · 文本)
@@ -28,6 +29,14 @@ export const PROVIDER_META: Record<Provider, {
     multimodal: false,
     free: true,
     desc: '免费 · GPT-OSS 20B · 不要 key · 仅文本（已实测调通）',
+  },
+  'kimi-k26': {
+    label: 'Kimi K2.6 (产品已配 · 真多模态)',
+    endpoint: '/api/kimi-proxy',
+    model: 'kimi-for-coding',
+    multimodal: true,
+    free: true,
+    desc: 'Kimi K2.6 · 256K context · 真看图 + 视频 · 走 Vercel 代理（仅 Vercel 镜像可用）',
   },
   'gemini-flash': {
     label: 'Gemini 1.5 Flash (免费多模态)',
@@ -163,8 +172,8 @@ export async function analyzeWithProvider(
   const meta = PROVIDER_META[provider]
   const start = Date.now()
 
-  // Gemini Flash 也需要 key（Google AI Studio 免费拿）
-  const needsKey = provider !== 'pollinations'
+  // 哪些 provider 需要前端传 key（kimi-k26 走代理，key 在 Vercel env / 前端可选传）
+  const needsKey = provider !== 'pollinations' && provider !== 'kimi-k26'
   if (needsKey && !apiKey) {
     throw new Error(`${meta.label} 需要 API key — 请在顶部"分析模式"区域填入 key`)
   }
