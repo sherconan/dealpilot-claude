@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
@@ -9,10 +9,12 @@ import DealChat from '../components/DealChat'
 import CompetitorAnalysis from '../components/CompetitorAnalysis'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { downloadMarkdown, copyMarkdownToClipboard } from '../lib/exportDeal'
+import { removeUserDeal } from '../lib/userDealStore'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
 export default function DealDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const deal = getDealById(id || '')
   const extra = getDealExtra(id || '')
   const [openDim, setOpenDim] = useState<string | null>(null)
@@ -109,6 +111,20 @@ export default function DealDetail() {
             <Link to="/upload" className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100" title="重新上传 BP 让 LLM 再分析（可换 provider）">
               ↻ 重新分析
             </Link>
+          )}
+          {deal.id.startsWith('user-') && (
+            <button
+              onClick={() => {
+                if (confirm(`确定要从机构记忆库删除「${deal.name}」吗？\n\n· 此操作仅清除浏览器本地的记录\n· 删除后无法恢复，需重新上传 BP\n· 不会影响 mock 数据中的 deals`)) {
+                  removeUserDeal(deal.id)
+                  navigate('/pipeline')
+                }
+              }}
+              className="px-3.5 py-2 text-[13px] rounded-lg border border-rose-300 text-rose-700 bg-white hover:bg-rose-50"
+              title="从机构记忆库永久删除该项目"
+            >
+              🗑 删除
+            </button>
           )}
           <button
             onClick={async () => {
