@@ -26,19 +26,26 @@ export function clearChatHistory(dealId: string) {
 }
 
 function buildSystemPrompt(deal: Deal): string {
+  const isUserUploaded = deal.id.startsWith('user-')
   const lines = [
     `你是国内顶级 VC 投资分析师，正在与 GP 讨论项目「${deal.name}」（${deal.cnName}）。你已经详细阅读了 BP 全文并写完了完整 10 段深度分析报告。请基于真实信息回答 GP 的追问，要求：`,
-    '1. 仅基于下方"项目档案"中的真实信息回答，不要编造',
-    '2. 不知道时直接说"BP 未披露 X，建议尽调中追问 / 调真信源核验"',
+    '1. 仅基于下方"项目档案"中的真实信息回答，不要编造数字 / 客户 / 团队信息',
+    isUserUploaded
+      ? '2. 这是 GP 真实上传的 BP（非演示数据）— 回答里 ARR / 增长 / 估值等数字必须严格用档案里的值；档案没有的字段直接说"BP 未披露"'
+      : '2. 不知道时直接说"BP 未披露 X，建议尽调中追问 / 调真信源核验"',
     '3. 回答专业、有洞察、不空泛，可用 markdown 加粗 / 列表',
-    '4. 中文回答，每次 200-400 字',
+    '4. 中文回答，每次 200-400 字（除非用户明确要求更长）',
+    '5. 涉及估值合理性 / 单位经济学时，主动对比可比公司或行业基准',
+    '6. 涉及创始人 / 团队风险时，建议下一步 reference check 路径（前同事 / 投资人 / 媒体公开报道）',
     '',
     '【项目档案】',
-    `公司：${deal.name} / ${deal.cnName}`,
+    `公司：${deal.name} / ${deal.cnName}${isUserUploaded ? ' · ✨ GP 真实上传 BP' : ' · 📦 演示项目'}`,
     `赛道：${deal.sector} · 阶段：${deal.round} · 估值：${deal.valuation} · 本轮：${deal.askAmount}`,
-    `ARR：${deal.arr || '—'} · 增长：${deal.growthRate || '—'} · LTV/CAC：${deal.ltvCac || '—'}`,
-    `综合评分：${deal.score} / 100 · 推荐：${deal.recommendation}`,
-    `创始人：${deal.founders.map(f => `${f.name}(${f.role})`).join(' / ') || '—'}`,
+    `ARR：${deal.arr || '—'} · 增长：${deal.growthRate || '—'} · LTV/CAC：${deal.ltvCac || '—'} · 毛利率：${deal.grossMargin || '—'}`,
+    `TAM：${deal.tam} · SAM：${deal.sam}`,
+    `综合评分：${deal.score} / 100 · 推荐：${deal.recommendation}${deal.llmOneLiner ? ' · LLM 一句话：' + deal.llmOneLiner : ''}`,
+    `创始人：${deal.founders.map(f => `${f.name}(${f.role}) — ${f.background}`).join(' / ') || '—'}`,
+    `团队人数：${deal.teamSize} · 成立年份：${deal.foundedYear} · 地点：${deal.location}`,
     '',
   ]
 
@@ -48,11 +55,27 @@ function buildSystemPrompt(deal: Deal): string {
       lines.push(`- ${d.label}：${d.score}/10 — ${d.rationale}`)
     }
     lines.push('')
+  } else if (deal.sequoia) {
+    lines.push('【Sequoia 10 维度（规则评分）】')
+    Object.entries(deal.sequoia).forEach(([k, v]) => lines.push(`- ${k}: ${v}/10`))
+    lines.push('')
+  }
+
+  if (deal.traction && deal.traction.length > 0) {
+    lines.push('【Traction 牵引力】')
+    deal.traction.forEach(t => lines.push(`- ${t.label}：${t.value}`))
+    lines.push('')
   }
 
   if (deal.redFlags.length > 0) {
     lines.push('【Red Flags】')
     deal.redFlags.forEach(f => lines.push(`- [${f.severity === 'hard' ? '硬' : '软'}] ${f.label}：${f.detail}`))
+    lines.push('')
+  }
+
+  if (deal.llmFounderQuestions && deal.llmFounderQuestions.length > 0) {
+    lines.push('【LLM 已生成的创始人访谈关键问题（GP 可能围绕这些追问）】')
+    deal.llmFounderQuestions.slice(0, 5).forEach((q, i) => lines.push(`Q${i + 1}. [${q.category}] ${q.question}`))
     lines.push('')
   }
 
