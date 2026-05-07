@@ -105,6 +105,11 @@ export default function DealDetail() {
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
           <Link to={`/deal/${deal.id}/brief`} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">一页简报</Link>
+          {deal.id.startsWith('user-') && deal.deepAnalysisRaw && (
+            <Link to="/upload" className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100" title="重新上传 BP 让 LLM 再分析（可换 provider）">
+              ↻ 重新分析
+            </Link>
+          )}
           <button
             onClick={async () => {
               const ok = await copyMarkdownToClipboard(deal)
