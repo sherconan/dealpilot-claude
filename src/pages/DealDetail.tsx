@@ -252,10 +252,28 @@ export default function DealDetail() {
       {/* ─── LLM 针对 PDF 真内容生成的创始人访谈问题 ─── */}
       {deal.llmFounderQuestions && deal.llmFounderQuestions.length > 0 && (
         <section className="bg-gradient-to-br from-amber-50/50 via-white to-white border-2 border-amber-500/30 rounded-xl p-5 mb-5">
-          <div className="mb-3">
-            <div className="text-[11px] uppercase tracking-wider text-amber-700 font-medium">LLM 真生成 · 基于 BP 真内容</div>
-            <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">创始人访谈关键问题（{deal.llmFounderQuestions.length} 题）</h2>
-            <p className="text-[12px] text-ink-500 mt-0.5">每个问题针对 BP 具体内容定制 — 创始人无法用模板话术敷衍</p>
+          <div className="flex items-end justify-between mb-3 gap-2 flex-wrap">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-amber-700 font-medium">LLM 真生成 · 基于 BP 真内容</div>
+              <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">创始人访谈关键问题（{deal.llmFounderQuestions.length} 题）</h2>
+              <p className="text-[12px] text-ink-500 mt-0.5">每个问题针对 BP 具体内容定制 — 创始人无法用模板话术敷衍</p>
+            </div>
+            <button
+              onClick={async () => {
+                const lines = deal.llmFounderQuestions!.map((q, i) =>
+                  `Q${i + 1}. [${q.category}] ${q.question}\n  · 为什么问：${q.why}\n  · 期待信号：${q.expect}${q.watch ? `\n  · ⚠️ 警惕：${q.watch}` : ''}`
+                ).join('\n\n')
+                try {
+                  await navigator.clipboard.writeText(`# ${deal.name} · 创始人访谈问题清单\n\n${lines}`)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2200)
+                } catch { alert('复制失败 — 浏览器可能限制 clipboard') }
+              }}
+              className="text-[11px] px-2.5 py-1.5 rounded-md border border-amber-300 bg-white text-amber-800 hover:bg-amber-100 inline-flex items-center gap-1 no-print"
+              title="复制完整访谈问题清单（Markdown 格式 · 可粘贴到飞书 / Notion）"
+            >
+              {copied ? '已复制 ✓' : '📋 复制全部 Q'}
+            </button>
           </div>
           <div className="space-y-3">
             {deal.llmFounderQuestions.map((q, i) => {
