@@ -11,7 +11,7 @@ import {
   type RedFlag,
 } from '../lib/pdfPipeline'
 import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
-import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
+import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, testProvider, type Provider } from '../lib/multimodalAnalyze'
 import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
 import { generateFounderQuestions } from '../lib/founderQuestions'
 import { addUserDeal, buildDealFromExtraction, getUserDeals } from '../lib/userDealStore'
@@ -293,11 +293,21 @@ export default function Upload() {
             />
             <button
               onClick={() => {
-                if (apiKey) { setApiKey(apiKey); setShowKeyInput(false) }
+                if (apiKey) { setApiKey(apiKey); setShowKeyInput(false); toast.success('Key 已保存到浏览器') }
                 else { clearApiKey(); setShowKeyInput(false) }
               }}
               className="px-3 py-1.5 text-[12px] rounded bg-brand-700 text-white hover:bg-brand-800"
             >保存</button>
+            <button
+              onClick={async () => {
+                toast.info(`正在 ping ${PROVIDER_META[provider].label.split(' (')[0]}...`)
+                const r = await testProvider(provider, apiKey || null)
+                if (r.ok) toast.success(`✓ ${PROVIDER_META[provider].label.split(' (')[0]} ${r.message}\n模型 ${r.model}`)
+                else toast.error(`✕ 连接失败 (${r.latencyMs}ms)\n${r.message}`)
+              }}
+              className="px-3 py-1.5 text-[12px] rounded border border-violet-300 text-violet-700 bg-white hover:bg-violet-50"
+              title="发一个 ping 请求验证 endpoint + key 可达"
+            >🔌 测试连接</button>
             {apiKey && (
               <button onClick={() => { setApiKeyState(''); clearApiKey() }} className="text-[11px] text-rose-700 hover:underline">清除</button>
             )}
