@@ -34,21 +34,18 @@ export default function Dashboard() {
             <span className="not-italic ml-1.5 text-ink-400">— Sequoia Capital</span>
           </p>
           <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <Link to="/upload" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-violet-700 text-white hover:bg-violet-800 transition font-medium">
+              ✨ 上传 BP · LLM 真分析
+            </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-              <span className="num font-semibold">5/7</span> 真信源 live
+              <span className="num font-semibold">5/7</span> 真信源 + Kimi K2.6 多模态
             </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-brand-50 border border-brand-500/30 text-brand-800 hover:bg-brand-50/80 transition">
-              <span className="num font-semibold">4,568</span> 专利已抓 · 6 家
-            </Link>
-            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-800 hover:bg-violet-100 transition">
-              <span className="num font-semibold">25</span> 份官方 PDF
-            </Link>
-            <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-800 hover:bg-sky-100 transition">
-              <span className="num font-semibold">9</span> 家真实可比公司
+              <span className="num font-semibold">4,568</span> 专利 · <span className="num font-semibold">25</span> PDF
             </Link>
             <Link to="/changelog" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition">
-              <span className="num font-semibold">46</span> Sprint 闭环
+              <span className="num font-semibold">77+</span> Sprint 闭环
             </Link>
           </div>
         </div>
