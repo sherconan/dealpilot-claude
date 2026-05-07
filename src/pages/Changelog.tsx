@@ -115,6 +115,7 @@ const sprints: SprintEntry[] = [
   { num: 137, title: 'Hover preload — 路由 lazy chunk 鼠标悬停预下载', detail: 'lib/preload.ts 注册 13 + 3 路由的 import() · NavItem 加 onMouseEnter/onFocus/onTouchStart 触发 preloadRoute · idle 时段（requestIdleCallback）预热 Pipeline/Upload/Memory · 点击页面 → chunk 已就绪 → 200ms 抖动消失', files: ['lib/preload.ts', 'components/Layout.tsx'], tag: 'Polish', color: '#0ea5e9' },
   { num: 138, title: '路由级 document.title — 多 tab 一眼区分', detail: 'Layout 监听 loc.pathname → 14 路由 + /deal/:id (memo/brief/详情) 映射到中文页名 · DealDetail 覆写为「{deal.name} · {score}/100 · DealPilot」 · 浏览器标签页和任务栏一眼看懂', files: ['lib/useDocumentTitle.ts', 'components/Layout.tsx', 'pages/DealDetail.tsx'], tag: 'UX', color: '#0f766e' },
   { num: 139, title: 'DealChat / CompetitorAnalysis 懒加载', detail: 'DealDetail chunk 52KB → 38KB（gzip 16 → 10，-37%）· 拆出 DealChat-*.js (10KB) + CompetitorAnalysis-*.js (6.5KB) 独立 chunk · Suspense fallback 显示加载中骨架', files: ['pages/DealDetail.tsx'], tag: 'Polish', color: '#0ea5e9' },
+  { num: 140, title: '最近查看 deal 跟踪 — sidebar 实时入口', detail: 'lib/recentDeals.ts localStorage 跨 session 保留 7 天 · DealDetail 进入即 trackDealView · Layout sidebar 加「最近查看」分区显示前 4 条 · ✨ user-* 紫色徽标 · pub-sub useRecentDealIds 实时响应', files: ['lib/recentDeals.ts', 'components/Layout.tsx', 'pages/DealDetail.tsx'], tag: 'UX', color: '#7c3aed' },
 ]
 
 const milestones = [
