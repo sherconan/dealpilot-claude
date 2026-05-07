@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
@@ -21,6 +21,11 @@ export default function DealDetail() {
   const [openDim, setOpenDim] = useState<string | null>(null)
   const [interviewFilter, setInterviewFilter] = useState<string>('all')
   const [copied, setCopied] = useState(false)
+
+  // 在 Layout 的 fallback "项目详情" 之上，覆写为真实 deal name + 评分
+  useEffect(() => {
+    if (deal) document.title = `${deal.name} · ${deal.score}/100 · DealPilot`
+  }, [deal])
 
   if (!deal) {
     return (
