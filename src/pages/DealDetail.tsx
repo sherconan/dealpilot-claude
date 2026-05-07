@@ -206,6 +206,33 @@ export default function DealDetail() {
         </div>
       </section>
 
+      {/* ─── LLM 评分依据（仅用户上传项目）─── */}
+      {deal.llmDimensions && deal.llmDimensions.length > 0 && (
+        <section className="bg-gradient-to-br from-violet-50/50 via-white to-white border-2 border-violet-500/30 rounded-xl p-5 mb-5">
+          <div className="mb-3">
+            <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">LLM Scoring · 10 要素真打分</div>
+            <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">Sequoia 10 维度 LLM 评分依据</h2>
+            {deal.llmOneLiner && <p className="text-[12.5px] text-ink-700 mt-1.5 leading-relaxed">{deal.llmOneLiner}</p>}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {deal.llmDimensions.map((d) => {
+              const color = d.score >= 8 ? '#059669' : d.score >= 6 ? '#0ea5e9' : d.score >= 4 ? '#d97706' : '#dc2626'
+              return (
+                <div key={d.key} className="bg-white border border-ink-200 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="text-[12.5px] font-semibold tracking-tight">{d.label}</div>
+                    <div className="num text-[18px] font-semibold" style={{ color }}>{d.score}<span className="text-[10px] text-ink-400 font-normal">/10</span></div>
+                  </div>
+                  <div className="text-[12px] text-ink-700 leading-relaxed">{d.rationale}</div>
+                  {d.evidence && <div className="text-[10.5px] text-ink-500 mt-1.5 italic border-l-2 border-violet-300 pl-2">原文：{d.evidence}</div>}
+                  {d.recommendation && <div className="text-[10.5px] text-emerald-700 mt-1">建议：{d.recommendation}</div>}
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {/* ─── LLM 深度分析报告（仅用户上传项目）─── */}
       {deal.deepAnalysisRaw && (
         <section className="bg-gradient-to-br from-brand-50/50 via-white to-white border-2 border-brand-500/30 rounded-xl p-5 mb-5">
