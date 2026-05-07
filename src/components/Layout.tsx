@@ -6,6 +6,7 @@ import CommandPalette from './CommandPalette'
 import HelpModal from './HelpModal'
 import Onboarding from './Onboarding'
 import ToastHost from './ToastHost'
+import { preloadRoute } from '../lib/preload'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -33,6 +34,21 @@ export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => { setMobileOpen(false) }, [loc.pathname])
+
+  // 首屏稳定后利用 idle 时间预热最常用 3 个 chunk — Pipeline / Upload / Memory
+  useEffect(() => {
+    const w = window as any
+    const idle = w.requestIdleCallback || ((cb: any) => setTimeout(cb, 800))
+    const handle = idle(() => {
+      preloadRoute('/pipeline')
+      preloadRoute('/upload')
+      preloadRoute('/memory')
+    })
+    return () => {
+      const cancel = w.cancelIdleCallback || clearTimeout
+      cancel(handle)
+    }
+  }, [])
 
   const workspace = [
     { to: '/', label: t('nav.dashboard'), hint: t('nav.dashboard.hint') },
@@ -89,6 +105,8 @@ export default function Layout() {
             <Link
               key={d.id}
               to={`/deal/${d.id}`}
+              onMouseEnter={() => preloadRoute(`/deal/${d.id}`)}
+              onFocus={() => preloadRoute(`/deal/${d.id}`)}
               className={`block px-3 py-2 rounded-lg text-sm hover:bg-ink-100 transition ${
                 loc.pathname.includes(d.id) ? 'bg-ink-100' : ''
               }`}
@@ -220,6 +238,9 @@ function NavItem({ to, label, hint }: { to: string; label: string; hint: string 
     <NavLink
       to={to}
       end={to === '/'}
+      onMouseEnter={() => preloadRoute(to)}
+      onFocus={() => preloadRoute(to)}
+      onTouchStart={() => preloadRoute(to)}
       className={({ isActive }) =>
         `flex items-center justify-between px-3 py-2 rounded-lg text-sm transition ${
           isActive ? 'bg-brand-50 text-brand-800 font-medium' : 'text-ink-700 hover:bg-ink-100'
