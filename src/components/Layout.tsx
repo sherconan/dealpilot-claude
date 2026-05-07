@@ -4,6 +4,7 @@ import { deals } from '../data/deals'
 import { useApp } from '../contexts/AppContext'
 import CommandPalette from './CommandPalette'
 import HelpModal from './HelpModal'
+import Onboarding from './Onboarding'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -178,6 +179,7 @@ export default function Layout() {
       </main>
       <CommandPalette />
       <HelpModal />
+      <Onboarding />
     </div>
   )
 }
