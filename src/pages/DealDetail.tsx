@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
-import DealChat from '../components/DealChat'
-import CompetitorAnalysis from '../components/CompetitorAnalysis'
+// DealChat / CompetitorAnalysis 重组件懒加载 — 用户在详情页底部下拉时才下载它们的 chunk
+const DealChat = lazy(() => import('../components/DealChat'))
+const CompetitorAnalysis = lazy(() => import('../components/CompetitorAnalysis'))
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { downloadMarkdown, copyMarkdownToClipboard } from '../lib/exportDeal'
 import { removeUserDeal } from '../lib/userDealStore'
@@ -382,10 +383,14 @@ export default function DealDetail() {
       )}
 
       {/* ─── LLM 竞品深度对比 ─── */}
-      <CompetitorAnalysis deal={deal} />
+      <Suspense fallback={<div className="bg-ink-50 border border-ink-200 rounded-xl p-5 mb-5 text-[12px] text-ink-500 animate-pulse">竞品对比模块加载中…</div>}>
+        <CompetitorAnalysis deal={deal} />
+      </Suspense>
 
       {/* ─── LLM 多轮追问对话 ─── */}
-      <DealChat deal={deal} />
+      <Suspense fallback={<div className="bg-ink-50 border border-ink-200 rounded-xl p-5 mb-5 text-[12px] text-ink-500 animate-pulse">追问对话模块加载中…</div>}>
+        <DealChat deal={deal} />
+      </Suspense>
 
       {/* ─── 投资逻辑画布 ─── */}
       <ThesisCanvas deal={deal} />
