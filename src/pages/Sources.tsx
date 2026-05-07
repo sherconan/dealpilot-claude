@@ -30,6 +30,53 @@ export default function Sources() {
         <SummaryCard label="风险扫描" value={'5'} accent="#dc2626" hint="联影/旷视/字节/拼多多/暴风" />
       </section>
 
+      {/* LLM Provider 实测矩阵 — 6 个 provider 的真实接通状态 */}
+      <section className="bg-white border border-ink-200 rounded-xl p-5 mb-6">
+        <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">LLM Provider 实测矩阵</div>
+            <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">6 路 LLM 通道 · 真接通状态 + 多模态能力 + 成本结构</h2>
+          </div>
+          <span className="text-[10px] text-ink-500">key 仅存浏览器 localStorage，永远不上传服务器</span>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-[12.5px]">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wider text-ink-500 border-b border-ink-200 bg-ink-50">
+                <th className="text-left py-2.5 px-3">Provider</th>
+                <th className="text-left py-2.5 px-3">Endpoint</th>
+                <th className="text-center py-2.5 px-3">多模态</th>
+                <th className="text-center py-2.5 px-3">流式 SSE</th>
+                <th className="text-left py-2.5 px-3">成本</th>
+                <th className="text-center py-2.5 px-3">状态</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-ink-100">
+              {[
+                { name: 'Kimi K2.6 (kimi-for-coding)', endpoint: 'api.kimi.com/coding/v1 → Vercel Edge 代理', mm: '✅ 图+视频', stream: '✅', cost: '产品已配 · 免费给用户', status: '🌟 默认' },
+                { name: 'Gemini 1.5 Flash', endpoint: 'generativelanguage.googleapis.com', mm: '✅ 图', stream: '✅', cost: '免费 tier 60 req/min', status: '✅ BYOK' },
+                { name: 'OpenAI GPT-4o-mini', endpoint: 'api.openai.com/v1', mm: '✅ 图', stream: '✅', cost: '$0.15/1M in · $0.6/1M out', status: '✅ BYOK' },
+                { name: 'Moonshot Vision', endpoint: 'api.moonshot.cn/v1', mm: '✅ 图', stream: '✅', cost: '注册送 ¥15 试用额度', status: '✅ BYOK' },
+                { name: 'DeepSeek', endpoint: 'api.deepseek.com/v1', mm: '❌ 文本', stream: '✅', cost: '注册送 ¥10 试用', status: '✅ BYOK' },
+                { name: 'Pollinations', endpoint: 'text.pollinations.ai', mm: '❌ 文本', stream: '✅', cost: '完全免费 · 无 key', status: '✅ 备用' },
+              ].map((row) => (
+                <tr key={row.name} className="hover:bg-ink-50">
+                  <td className="py-2.5 px-3 font-medium text-ink-900">{row.name}</td>
+                  <td className="py-2.5 px-3 text-[11px] text-ink-600 font-mono">{row.endpoint}</td>
+                  <td className="py-2.5 px-3 text-center text-[11px]">{row.mm}</td>
+                  <td className="py-2.5 px-3 text-center">{row.stream}</td>
+                  <td className="py-2.5 px-3 text-[11px] text-ink-700">{row.cost}</td>
+                  <td className="py-2.5 px-3 text-center text-[11px]">{row.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-3 text-[10.5px] text-ink-500 leading-relaxed">
+          ⓘ Kimi K2.6 默认通道用 Vercel Edge Function 代理（注入 UA <code className="bg-ink-100 px-1 rounded">claude-cli/0.0.1</code>）→ 用户无需任何 key 即可使用多模态。其他 5 个 provider 用 BYOK 模式，key 仅在浏览器 localStorage（key 名 <code className="bg-ink-100 px-1 rounded">dp:llm-key</code>）。
+        </div>
+      </section>
+
       {/* LLM 能力矩阵 */}
       <section className="bg-gradient-to-br from-violet-50 via-white to-white border-2 border-violet-500/30 rounded-xl p-5 mb-6">
         <div className="mb-4">
