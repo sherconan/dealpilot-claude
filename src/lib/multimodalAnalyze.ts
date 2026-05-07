@@ -87,6 +87,45 @@ export function getProvider(): Provider {
 }
 export function setProvider(p: Provider) { localStorage.setItem(PROVIDER_STORAGE, p) }
 
+// Provider 健康度 ping — 发一个最小请求验证 endpoint + key 可达
+// 返回 { ok, latencyMs, model, message }
+export async function testProvider(provider: Provider, apiKey: string | null): Promise<{ ok: boolean; latencyMs: number; model?: string; message: string }> {
+  const meta = PROVIDER_META[provider]
+  const needsKey = !meta.free
+  if (needsKey && !apiKey) return { ok: false, latencyMs: 0, message: '缺少 API key' }
+
+  const start = performance.now()
+  try {
+    if (provider === 'gemini-flash') {
+      const url = `${meta.endpoint}?key=${encodeURIComponent(apiKey!)}`
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'ping' }] }], generationConfig: { maxOutputTokens: 10 } }),
+      })
+      const ms = Math.round(performance.now() - start)
+      if (!res.ok) return { ok: false, latencyMs: ms, message: `${res.status} ${(await res.text()).slice(0, 100)}` }
+      return { ok: true, latencyMs: ms, model: meta.model, message: `已连通（${ms} ms）` }
+    }
+
+    // OpenAI 兼容
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+    if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
+    const body: any = { model: meta.model, messages: [{ role: 'user', content: 'ping' }], max_tokens: 10, stream: false }
+    if (provider === 'pollinations') body.private = true
+    const res = await fetch(meta.endpoint, { method: 'POST', headers, body: JSON.stringify(body) })
+    const ms = Math.round(performance.now() - start)
+    if (!res.ok) {
+      const txt = await res.text()
+      return { ok: false, latencyMs: ms, message: `${res.status} ${txt.slice(0, 100)}` }
+    }
+    return { ok: true, latencyMs: ms, model: meta.model, message: `已连通（${ms} ms）` }
+  } catch (err: any) {
+    const ms = Math.round(performance.now() - start)
+    return { ok: false, latencyMs: ms, message: err?.message || String(err) }
+  }
+}
+
 export interface MultimodalAnalysis {
   sections: Record<string, string>
   raw: string
