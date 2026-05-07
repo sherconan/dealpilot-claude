@@ -6,18 +6,27 @@ export default function DealCard({ deal, compact = false }: { deal: Deal; compac
   const scoreColor =
     deal.score >= 80 ? '#0f766e' : deal.score >= 65 ? '#2563eb' : deal.score >= 50 ? '#d97706' : '#dc2626'
 
+  const isUserUploaded = deal.id.startsWith('user-')
+
   return (
     <Link
       to={`/deal/${deal.id}`}
-      className="group block bg-white border border-ink-200 rounded-xl p-4 hover:shadow-pop hover:border-brand-500/40 transition-all"
+      className={`group block bg-white border rounded-xl p-4 hover:shadow-pop hover:border-brand-500/40 transition-all ${
+        isUserUploaded ? 'border-l-4 border-l-violet-500 border-ink-200' : 'border-ink-200'
+      }`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
+            {isUserUploaded && (
+              <span className="text-[9px] text-violet-700 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-200 font-medium" title={deal.llmOneLiner}>
+                ✨ LLM
+              </span>
+            )}
             <h3 className="font-semibold text-[15px] tracking-tight text-ink-900 truncate">{deal.name}</h3>
             <span className="text-[12px] text-ink-500">{deal.cnName}</span>
           </div>
-          <p className="text-[13px] text-ink-600 mt-1 line-clamp-2">{deal.tagline}</p>
+          <p className="text-[13px] text-ink-600 mt-1 line-clamp-2">{deal.llmOneLiner || deal.tagline}</p>
         </div>
         <div className="shrink-0 text-right">
           <div className="num text-2xl font-semibold" style={{ color: scoreColor }}>{deal.score}</div>
