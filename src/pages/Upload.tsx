@@ -12,7 +12,7 @@ import {
   type RedFlag,
 } from '../lib/pdfPipeline'
 import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
-import { analyzeWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
+import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
@@ -89,24 +89,33 @@ export default function Upload() {
         images = await renderPdfPagesAsImages(pdfFile, 8, 1.4, 0.7)
         setPageImages(images)
       }
-      setProgressMsg(`调用 ${providerMeta.label} 分析中（${providerMeta.multimodal ? `${images.length} 页图像 + 文本` : '纯文本'}，预计 30-90 秒）...`)
-      const analysis = await analyzeWithProvider(provider, apiKey || null, images, text, f, flags, (msg) => setProgressMsg(msg))
-      setLlmDuration(analysis.duration)
+      setProgressMsg(`流式调用 ${providerMeta.label}（${providerMeta.multimodal ? `${images.length} 页图像 + 文本` : '纯文本'}，实时接收 LLM 输出）...`)
 
-      // ③ 流式 typewriter 10 段
-      setStage('streaming')
-      for (const key of SECTION_ORDER) {
-        const full = analysis.sections[key]
-        if (!full) {
-          setSections((arr) => arr.map(s => s.key === key ? { ...s, full: '（LLM 未生成此段）', status: 'done', shown: '（LLM 未生成此段）' } : s))
-          continue
-        }
-        setSections((arr) => arr.map(s => s.key === key ? { ...s, full, status: 'streaming' } : s))
-        // 滚动到当前段
-        setTimeout(() => document.getElementById(`sec-${key}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80)
-        await typewriter(key, full)
-        setSections((arr) => arr.map(s => s.key === key ? { ...s, status: 'done' } : s))
-      }
+      // 真流式 — LLM 一边生成一边渲染
+      setStage('streaming')  // 直接进 streaming，不再 llm-calling
+      const analysis = await streamWithProvider(
+        provider,
+        apiKey || null,
+        images,
+        text,
+        f,
+        flags,
+        (_delta, full) => {
+          // 每个 chunk 来时，按当前已积累的 full 切 sections，并实时更新到 UI
+          const sectionsParsed = parseSectionsLive(full)
+          setSections((arr) => arr.map((sec) => {
+            const got = sectionsParsed[sec.key]
+            if (got !== undefined) {
+              return { ...sec, full: got, shown: got, status: 'streaming' }
+            }
+            return sec
+          }))
+        },
+        (msg) => setProgressMsg(msg),
+      )
+      // 完成后所有 section 标 done
+      setSections((arr) => arr.map((sec) => ({ ...sec, status: sec.full ? 'done' : 'pending' })))
+      setLlmDuration(analysis.duration)
 
       // ④ 创建项目
       setStage('creating')
@@ -446,3 +455,18 @@ function renderRichLine(line: string): React.ReactNode {
 }
 
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
+
+// 流式实时切 sections — 每个 chunk 后把已收到的 raw 重切
+function parseSectionsLive(raw: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  const KEYS = ['COMPANY_OVERVIEW', 'PROBLEM_OPPORTUNITY', 'PRODUCT_SOLUTION', 'BUSINESS_MODEL', 'MARKET_ANALYSIS', 'TEAM_EVALUATION', 'TRACTION_FINANCIALS', 'RISKS_REDFLAGS', 'INVESTMENT_THESIS', 'NEXT_STEPS']
+  const splitRegex = /===\s*SECTION\s*(\d+)\s*===/gi
+  const parts = raw.split(splitRegex)
+  for (let i = 1; i < parts.length; i += 2) {
+    const num = parseInt(parts[i], 10)
+    if (num >= 1 && num <= KEYS.length) {
+      out[KEYS[num - 1]] = (parts[i + 1] || '').trim()
+    }
+  }
+  return out
+}

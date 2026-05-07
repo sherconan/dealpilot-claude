@@ -259,6 +259,103 @@ function parseSections(raw: string): Record<string, string> {
   return out
 }
 
+// 流式版本 — 实时接收 LLM tokens，每个 chunk 触发 onChunk
+// 仅当前 provider 是 OpenAI 兼容（包括 kimi-k26 走 Vercel 代理）才能流式
+export async function streamWithProvider(
+  provider: Provider,
+  apiKey: string | null,
+  images: string[],
+  text: string,
+  fields: ExtractedFields,
+  redFlags: RedFlag[],
+  onChunk: (delta: string, full: string) => void,
+  onProgress?: (msg: string) => void,
+): Promise<MultimodalAnalysis> {
+  const meta = PROVIDER_META[provider]
+  const start = Date.now()
+
+  const needsKey = provider !== 'pollinations' && provider !== 'kimi-k26'
+  if (needsKey && !apiKey) {
+    throw new Error(`${meta.label} 需要 API key`)
+  }
+
+  // Gemini Flash 流式格式不一样 — 暂用非流式 fallback
+  if (provider === 'gemini-flash') {
+    onProgress?.('Gemini Flash 暂不支持流式，回退非流式...')
+    const r = await analyzeWithProvider(provider, apiKey, images, text, fields, redFlags, onProgress)
+    onChunk(r.raw, r.raw)
+    return r
+  }
+
+  onProgress?.(`流式调用 ${meta.label}...`)
+  const useImages = meta.multimodal && images.length > 0
+
+  let messages: any[]
+  if (useImages) {
+    messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'user', content: buildMultimodalContent(images, text, fields, redFlags) },
+    ]
+  } else {
+    messages = [
+      { role: 'system', content: SYSTEM_PROMPT_TEXT },
+      { role: 'user', content: buildTextContent(text, fields, redFlags) },
+    ]
+  }
+
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' }
+  if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
+
+  const body: any = { model: meta.model, messages, temperature: 0.4, stream: true }
+  if (provider === 'pollinations') body.private = true
+  else if (provider === 'kimi-k26') body.max_tokens = 8000
+  else body.max_tokens = 4000
+
+  const res = await fetch(meta.endpoint, { method: 'POST', headers, body: JSON.stringify(body) })
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`${meta.label} 流式 API 失败 (${res.status})：${err.slice(0, 300)}`)
+  }
+  if (!res.body) throw new Error('流式响应无 body')
+
+  const reader = res.body.getReader()
+  const decoder = new TextDecoder()
+  let raw = ''
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+
+    // SSE 格式：data: {...}\n\n  + 最后 data: [DONE]
+    const lines = buffer.split('\n')
+    buffer = lines.pop() || ''  // 留最后一个不完整行
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue
+      const payload = line.slice(5).trim()
+      if (!payload || payload === '[DONE]') continue
+      try {
+        const json = JSON.parse(payload)
+        const delta = json?.choices?.[0]?.delta
+        const piece = delta?.content || delta?.reasoning_content || ''
+        if (piece) {
+          raw += piece
+          onChunk(piece, raw)
+        }
+      } catch { /* ignore parse error on partial chunks */ }
+    }
+  }
+
+  return {
+    sections: parseSections(raw),
+    raw,
+    duration: Date.now() - start,
+    provider,
+    pagesAnalyzed: useImages ? images.length : 0,
+  }
+}
+
 // 兼容旧调用
 export async function analyzeMultimodal(
   images: string[],
