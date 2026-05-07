@@ -83,6 +83,15 @@ const sprints: SprintEntry[] = [
   { num: 96, title: '删除 / 清空用户上传', detail: 'DealDetail 加 🗑 删除按钮（仅 user-*）· Memory 加"清空上传"批量清理 · 不影响 mock 演示项目', files: ['pages/DealDetail.tsx', 'pages/Memory.tsx'], tag: '功能', color: '#dc2626' },
   { num: 97, title: 'Cmd+K 覆盖用户上传 + 6 个新导航项', detail: 'CommandPalette 改用 useAllDeals · ✨ 前缀标记 user-* · 新增 Compare/Briefings/Unicorns/Changelog 入口', files: ['components/CommandPalette.tsx'], tag: 'UX', color: '#7c3aed' },
   { num: 98, title: '续航 7-Hour 全平台数据驱动', detail: '主流页全部接入 useAllDeals · LLM 数据穿透到 Layout/Dashboard/Briefings/Compare/Memory/Pipeline · 用户上传项目"刚上传"即出现在所有视图', files: ['多个'], tag: 'Final', color: '#059669' },
+  { num: 99, title: 'Pipeline / Memory 空状态 CTA 卡片', detail: '用户清空上传后（0 deals）指向 /upload 的品牌化提示卡 + 品牌色图标 + Cmd+K 快捷入口', files: ['pages/Pipeline.tsx', 'pages/Memory.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 100, title: 'SEO meta 升级 LLM 产品语言', detail: 'title 加 「Kimi K2.6 多模态真分析」 · description 含流式 SSE / 25 KB gzip / 98 Sprint / Cmd+K', files: ['index.html'], tag: 'SEO', color: '#0ea5e9' },
+  { num: 101, title: '404 NotFound 品牌化', detail: '未知路径降级到品牌化 fallback 卡 + Cmd+K 提示。Layout 壳保留，侧栏仍可导航', files: ['App.tsx'], tag: 'Polish', color: '#475569' },
+  { num: 105, title: '示例 BP 画廊 · 4 个行业', detail: 'AI Infra / FinTech 东南亚 / BioMed 创新药 / ConsumerTech 智能厘房 · 一键预填 textarea，不需上传 PDF 也能运行 LLM 流水线', files: ['data/sampleBPs.ts', 'pages/Upload.tsx'], tag: '功能', color: '#7c3aed' },
+  { num: 106, title: 'Memory 页聚合洞察 5 卡', detail: '入库总数 / 平均评分 / 优先推进 % / 硬 Red Flag 触发率 / Top 3 赛道 · 合伙人一眼看全局', files: ['pages/Memory.tsx'], tag: 'UX', color: '#0f766e' },
+  { num: 107, title: 'Dashboard sample-BP CTA 条', detail: '首次访问/零上传时显示 4 行业卡片 · 点击 → sessionStorage 桥 → Upload 页自动预填', files: ['pages/Dashboard.tsx', 'pages/Upload.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 108, title: 'ICMemo 打印优化 + 动态时间戳', detail: 'memo 页脚页码 (counter(page)/counter(pages)) · 面包屑打印隐藏 · 200px aside 打印时 collapse · 变幸有 LLM 分析的项目顺势说明', files: ['pages/ICMemo.tsx', 'index.css'], tag: 'Polish', color: '#0f766e' },
+  { num: 109, title: 'Sources 页 LLM Provider 实测矩阵', detail: '6 路 LLM 通道 endpoint / 多模态 / SSE / 成本 / 状态 全表 · 脚注 UA 注入 + BYOK localStorage key', files: ['pages/Sources.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 110, title: '生产端到端验证·全绿', detail: '14 路由 + unknown · GH Pages 镜像 · Sources chunk 含 LLM 矩阵 · Kimi proxy 400 期望返回 · 首屏 gzip 32 KB', files: ['生产端'], tag: 'Final', color: '#059669' },
 ]
 
 const milestones = [
