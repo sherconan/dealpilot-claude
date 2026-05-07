@@ -6,7 +6,8 @@ import type { Deal } from '../types'
 import { streamChat, loadChatHistory, saveChatHistory, clearChatHistory, type ChatMessage } from '../lib/chatLLM'
 import { getProvider, getApiKey, PROVIDER_META } from '../lib/multimodalAnalyze'
 
-const SUGGESTED_QUESTIONS = [
+// 通用建议问题（mock 演示项目用）
+const GENERIC_QUESTIONS = [
   '团队最大风险是什么？',
   '估值合理吗？给出 3 个理由',
   '如果你是 GP，会问哪 3 个问题？',
@@ -14,6 +15,37 @@ const SUGGESTED_QUESTIONS = [
   '为什么不投这个项目？给我反面意见',
   '对标公司里最值得抄的是什么？',
 ]
+
+// 用户上传项目的针对性建议（基于 deal 字段动态生成）
+function buildSuggestedQuestions(deal: Deal): string[] {
+  const out: string[] = []
+  // 硬红线触发 → 引导问 risk
+  if (deal.redFlags.some(f => f.severity === 'hard')) {
+    out.push('硬红线触发了哪几条？尽调中怎么验证？')
+  }
+  // 高分 → 引导问 IC pre-read
+  if (deal.score >= 80) {
+    out.push('IC 表决前合伙人最该聚焦的 3 个问题')
+  }
+  // 没披露 ARR → 引导问 traction
+  if (!deal.arr || deal.arr === '—') {
+    out.push('BP 未披露具体 ARR — 怎么从其他字段反推商业进度？')
+  }
+  // 估值高 → 引导问 valuation
+  if (deal.valuation && /\$\s*\d{2,}M|\$\s*\d+B/.test(deal.valuation)) {
+    out.push(`估值 ${deal.valuation} 在同阶段同赛道是什么水平？`)
+  }
+  // 团队人数少 → 引导问 team
+  if (deal.teamSize > 0 && deal.teamSize <= 3) {
+    out.push(`团队仅 ${deal.teamSize} 人，能撑起 ${deal.round} 轮的执行节奏吗？`)
+  }
+  // 始终带的 4 个
+  out.push('如果你是 GP，会问创始人哪 3 个问题？')
+  out.push('对标公司里最值得抄的策略是什么？')
+  out.push('给我反面意见 — 为什么不应该投这个项目？')
+  out.push('12 个月内最关键的 3 个里程碑是什么？')
+  return out.slice(0, 6)
+}
 
 export default function DealChat({ deal }: { deal: Deal }) {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -95,12 +127,14 @@ export default function DealChat({ deal }: { deal: Deal }) {
         )}
       </header>
 
-      {/* 推荐问题（首次访问时显示）*/}
+      {/* 推荐问题（首次访问时显示）— user-* deal 显示动态生成的针对性问题 */}
       {messages.length === 0 && !streaming && (
         <div className="mb-3">
-          <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-2">建议追问 · 点击直接发送</div>
+          <div className="text-[10px] uppercase tracking-wider text-ink-500 mb-2">
+            {deal.id.startsWith('user-') ? '✨ 基于本 BP 内容的针对性建议' : '建议追问 · 点击直接发送'}
+          </div>
           <div className="flex flex-wrap gap-2">
-            {SUGGESTED_QUESTIONS.map((q) => (
+            {(deal.id.startsWith('user-') ? buildSuggestedQuestions(deal) : GENERIC_QUESTIONS).map((q) => (
               <button
                 key={q}
                 onClick={() => send(q)}

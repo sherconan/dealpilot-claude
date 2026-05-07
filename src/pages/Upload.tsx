@@ -379,7 +379,26 @@ export default function Upload() {
           <div className="flex items-start gap-3">
             <span className="w-7 h-7 rounded-full bg-rose-700 text-white text-[14px] font-semibold flex items-center justify-center shrink-0">!</span>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-[14px]">分析失败</div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-semibold text-[14px]">分析失败</span>
+                <button
+                  onClick={async () => {
+                    const debugInfo = [
+                      `时间：${new Date().toISOString()}`,
+                      `provider：${provider} (${PROVIDER_META[provider].label})`,
+                      `文件：${fileName} · ${pdfPages} 页 · ${pdfText.length} 字符`,
+                      `错误：${errorMsg}`,
+                    ].join('\n')
+                    try {
+                      await navigator.clipboard.writeText(debugInfo)
+                      toast.success('错误信息已复制（含 provider / 文件 / 时间戳）')
+                    } catch { toast.error('复制失败') }
+                  }}
+                  className="text-[10px] px-1.5 py-0.5 rounded border border-rose-300 text-rose-700 bg-white hover:bg-rose-50"
+                >
+                  📋 复制错误信息
+                </button>
+              </div>
               <div className="mt-1 text-[12px] whitespace-pre-wrap">{errorMsg}</div>
               <div className="mt-3 flex items-center gap-2 flex-wrap">
                 {pdfText && pdfText.length >= 100 && (
