@@ -3,10 +3,13 @@ import { Link, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
+import { useState } from 'react'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
 import DealChat from '../components/DealChat'
+import CompetitorAnalysis from '../components/CompetitorAnalysis'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
+import { downloadMarkdown, copyMarkdownToClipboard } from '../lib/exportDeal'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
 export default function DealDetail() {
@@ -15,6 +18,7 @@ export default function DealDetail() {
   const extra = getDealExtra(id || '')
   const [openDim, setOpenDim] = useState<string | null>(null)
   const [interviewFilter, setInterviewFilter] = useState<string>('all')
+  const [copied, setCopied] = useState(false)
 
   if (!deal) {
     return (
@@ -102,6 +106,24 @@ export default function DealDetail() {
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
           <Link to={`/deal/${deal.id}/brief`} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">一页简报</Link>
+          <button
+            onClick={async () => {
+              const ok = await copyMarkdownToClipboard(deal)
+              if (ok) { setCopied(true); setTimeout(() => setCopied(false), 2200) }
+              else alert('复制失败 — 请手动下载')
+            }}
+            className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50"
+            title="复制完整 Markdown 报告（含 LLM 评分 / 10 段 / 访谈问题 / Red Flag）"
+          >
+            {copied ? '✓ 已复制' : '📋 复制 MD'}
+          </button>
+          <button
+            onClick={() => downloadMarkdown(deal)}
+            className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50"
+            title="下载完整 Markdown 文件"
+          >
+            ⬇ 下载 MD
+          </button>
           <Link to={`/deal/${deal.id}/memo`} className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">生成 IC Memo</Link>
         </div>
       </header>
@@ -314,6 +336,9 @@ export default function DealDetail() {
           </div>
         </section>
       )}
+
+      {/* ─── LLM 竞品深度对比 ─── */}
+      <CompetitorAnalysis deal={deal} />
 
       {/* ─── LLM 多轮追问对话 ─── */}
       <DealChat deal={deal} />
