@@ -102,6 +102,7 @@ const sprints: SprintEntry[] = [
   { num: 122, title: 'Signals 页生成 user 合成信号', detail: '每个 user-* deal 自动生成 1-3 条信号：BP 入箱 / 硬红线触发 / 高分入 IC pre-read · 紫边线和 ✨ 徽章区分', files: ['pages/Signals.tsx'], tag: '功能', color: '#7c3aed' },
   { num: 123, title: 'Upload 去重逻辑同时查 mock + user-uploaded', detail: '原本只查 6 个 mock，现在 [...userDeals, ...mockDeals] 一起查，避免同 BP 重复入箱', files: ['pages/Upload.tsx'], tag: 'Polish', color: '#0f766e' },
   { num: 125, title: 'JSON 备份 / 恢复 用户上传 deal', detail: 'schema dealpilot-user-deals-v1 · Memory 页 备份 JSON / 导入 JSON 按钮 · merge / replace 两模式 · 跨设备 / 团队同步', files: ['lib/userDealStore.ts', 'pages/Memory.tsx'], tag: '功能', color: '#0ea5e9' },
+  { num: 127, title: 'Thesis × user-deal 对齐矩阵', detail: '6 硬门槛 × N 用户上传 deal 的 ✓/✕ 矩阵 · 静态启发式（TAM 抓字符串 / 技术壁垒查 sequoia / ARR / AI 原生 / ESG / 地缘）· 综合通过率徽章', files: ['pages/Thesis.tsx'], tag: '功能', color: '#0f766e' },
 ]
 
 const milestones = [
