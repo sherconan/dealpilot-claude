@@ -96,6 +96,9 @@ const sprints: SprintEntry[] = [
   { num: 114, title: 'Compare 横向对比 Markdown 导出', detail: '4 段 Markdown：评分概览 + Sequoia 10 + Red Flag + 量化指标 · IC 前 1 分钟生成可粘贴报告', files: ['pages/Compare.tsx'], tag: '功能', color: '#0f766e' },
   { num: 115, title: 'Briefings 周报 Markdown 导出', detail: '6 段 Markdown：提要 / 决策池 / Top 3 / 关键信号 / 观察名单 / 下周聚焦 · 周五一键发飞书群', files: ['pages/Briefings.tsx'], tag: '功能', color: '#7c3aed' },
   { num: 116, title: 'Pipeline 看板 Markdown 快照', detail: '按阶段分组的 Markdown 快照 · 6 阶段 / 每项 score+round+valuation+RF 徽章', files: ['pages/Pipeline.tsx'], tag: '功能', color: '#0ea5e9' },
+  { num: 118, title: 'Onboarding 5 步加 ✨ 示例 BP 入口', detail: 'Step 1 直接展示 4 行业示例卡片 · sessionStorage 桥 → /upload 自动预填 · flag 升 v3 重弹给老用户', files: ['components/Onboarding.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 119, title: 'Unicorns 页接 useAllDeals', detail: '检测用户上传的 AI 项目，紫色提示条引导去 Compare 页对照独角兽矩阵', files: ['pages/Unicorns.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 120, title: 'Risk 页聚合用户上传硬红线', detail: '顶部红色卡片列出所有 user-* deal 的硬 RF + 详情 · 点击直跳 DealDetail · Risk 页对用户的 BP 也负责', files: ['pages/Risk.tsx'], tag: '功能', color: '#dc2626' },
 ]
 
 const milestones = [
