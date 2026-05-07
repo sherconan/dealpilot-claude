@@ -100,8 +100,20 @@ export default function HelpModal() {
             </div>
           ))}
         </div>
-        <div className="px-5 py-3 border-t border-ink-200 text-[11px] text-ink-500 text-center">
-          按 <kbd className="bg-ink-100 border border-ink-200 px-1.5 rounded num">Shift + ?</kbd> 随时再次打开本帮助
+        <div className="px-5 py-3 border-t border-ink-200 text-[11px] text-ink-500 flex items-center justify-between gap-2 flex-wrap">
+          <span>按 <kbd className="bg-ink-100 border border-ink-200 px-1.5 rounded num">Shift + ?</kbd> 随时再次打开本帮助</span>
+          <button
+            onClick={() => {
+              localStorage.removeItem('dp:onboarded-v3')
+              localStorage.removeItem('dp:onboarded-v2')
+              setOpen(false)
+              location.reload()
+            }}
+            className="text-[11px] text-brand-700 hover:underline font-medium"
+            title="清除 onboarding 完成标记并重新展示 5 步引导"
+          >
+            重看 Onboarding 引导 →
+          </button>
         </div>
       </div>
     </div>
