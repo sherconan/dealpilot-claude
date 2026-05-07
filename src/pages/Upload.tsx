@@ -313,7 +313,7 @@ export default function Upload() {
               </button>
             </div>
             <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={5}
-              placeholder="粘贴 BP 内容…（点右上角"试一下"用示例 BP）"
+              placeholder={'粘贴 BP 内容…（点右上角"试一下"用示例 BP）'}
               className="w-full text-[12px] bg-ink-50 border border-ink-200 rounded-lg px-2.5 py-2 leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             <button onClick={onPasteSubmit} disabled={pasted.trim().length < 30}
               className="mt-2 w-full px-3 py-2 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 disabled:bg-ink-300 disabled:cursor-not-allowed transition">
