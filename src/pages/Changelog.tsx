@@ -111,6 +111,7 @@ const sprints: SprintEntry[] = [
   { num: 133, title: 'DealChat 针对性建议问题 + Upload 错误信息一键复制', detail: 'user-* deal 显示基于本 BP 字段动态生成的 6 个建议问题（hard RF / 高分 / 缺 ARR / 估值 / 团队人数 → 不同模板）· Upload 错误页 📋 按钮把 provider+文件+时间戳+错误打包到 clipboard', files: ['components/DealChat.tsx', 'pages/Upload.tsx'], tag: 'UX', color: '#7c3aed' },
   { num: 134, title: 'Upload 顶部 最近上传 3 项快捷入口', detail: '有上传记录时 idle 状态顶部直接显示最近 3 个 deal 卡片 · 评分 / 赛道 / 阶段 / 更新时间 · 点击直达 DealDetail · 看全部跳 Memory', files: ['pages/Upload.tsx'], tag: 'UX', color: '#0f766e' },
   { num: 135, title: 'Provider 测试连接 — BYOK 上传前预验证', detail: 'lib/multimodalAnalyze 加 testProvider({ ok, latencyMs, model, message }) · Upload key 输入框旁加 🔌 测试连接 按钮 · 一个 ping 请求验证 endpoint+key 可达 · 不上传 PDF 也能验证 key', files: ['lib/multimodalAnalyze.ts', 'pages/Upload.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 136, title: 'Upload 错误页 切换免费通道重试', detail: '当前 provider 不是 pollinations 时，错误页加 ⤴ 切换免费通道重试 按钮 · 一键切到 Pollinations + 用 cached pdfText 立即重跑 · 不要 key 不浪费 BP', files: ['pages/Upload.tsx'], tag: 'UX', color: '#059669' },
 ]
 
 const milestones = [

@@ -441,17 +441,34 @@ export default function Upload() {
               <div className="mt-1 text-[12px] whitespace-pre-wrap">{errorMsg}</div>
               <div className="mt-3 flex items-center gap-2 flex-wrap">
                 {pdfText && pdfText.length >= 100 && (
-                  <button
-                    onClick={() => {
-                      // 直接用 cached pdfText / fileName / pdfPages 重跑 LLM 流水线，不需要重新读 PDF
-                      toast.info('用缓存的 PDF 全文重试...')
-                      run(pdfText, pdfPages, fileName)
-                    }}
-                    className="px-3 py-1.5 text-[12px] rounded bg-rose-700 text-white hover:bg-rose-800 inline-flex items-center gap-1"
-                    title="用浏览器里已抽取的 PDF 全文直接重跑 LLM，不重新读文件"
-                  >
-                    ↻ 重试 LLM 分析（用缓存）
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        // 直接用 cached pdfText / fileName / pdfPages 重跑 LLM 流水线，不需要重新读 PDF
+                        toast.info('用缓存的 PDF 全文重试...')
+                        run(pdfText, pdfPages, fileName)
+                      }}
+                      className="px-3 py-1.5 text-[12px] rounded bg-rose-700 text-white hover:bg-rose-800 inline-flex items-center gap-1"
+                      title="用浏览器里已抽取的 PDF 全文直接重跑 LLM，不重新读文件"
+                    >
+                      ↻ 重试当前 provider
+                    </button>
+                    {provider !== 'pollinations' && (
+                      <button
+                        onClick={() => {
+                          setProvider('pollinations')
+                          setProviderState('pollinations')
+                          toast.info('已切换到 Pollinations（免费），重试中...')
+                          // 等 state flush 后再 run（用 setTimeout 让 React 完成 re-render）
+                          setTimeout(() => run(pdfText, pdfPages, fileName), 50)
+                        }}
+                        className="px-3 py-1.5 text-[12px] rounded bg-emerald-700 text-white hover:bg-emerald-800 inline-flex items-center gap-1"
+                        title="切换到免费 Pollinations 通道并立即重试（不需要 key）"
+                      >
+                        ⤴ 切换免费通道重试
+                      </button>
+                    )}
+                  </>
                 )}
                 <button
                   onClick={() => {
