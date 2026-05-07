@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import { useAllDeals } from '../lib/userDealStore'
+
 interface Unicorn {
   name: string
   cn: string
@@ -123,9 +126,14 @@ const statusMeta = {
 }
 
 export default function Unicorns() {
+  const allDeals = useAllDeals()
   const totalPatents = unicorns.reduce((s, u) => s + u.ipCount, 0)
   const sortedByIP = [...unicorns].sort((a, b) => b.ipCount - a.ipCount)
   const maxIP = sortedByIP[0].ipCount
+
+  // 找出用户上传的 AI 相关项目（赛道含 AI / Agent / 智能 / 模型 等）
+  const aiKeywords = /AI|Agent|智能|模型|Infra|Tech|算法|大模型|多模态/i
+  const userAiDeals = allDeals.filter(d => d.id.startsWith('user-') && aiKeywords.test(d.sector + d.tagline))
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
@@ -137,6 +145,18 @@ export default function Unicorns() {
           BP 上传时，自动匹配对应 segment 真实独角兽 / 上市公司，量化 IP 储备 vs 估值差距。
         </p>
       </header>
+
+      {/* 用户上传 AI 项目对照入口 — 把独角兽矩阵和实际 deal 拉通 */}
+      {userAiDeals.length > 0 && (
+        <div className="mb-5 bg-violet-50 border border-violet-300 rounded-xl px-4 py-3 flex items-start gap-3 flex-wrap">
+          <span className="text-[20px]">✨</span>
+          <div className="flex-1 min-w-0">
+            <div className="text-[12.5px] font-semibold tracking-tight text-violet-900">你已上传 {userAiDeals.length} 个 AI 相关项目</div>
+            <div className="text-[11px] text-violet-700 mt-0.5">把它们和下面 7 家真实独角兽 / 上市标杆对比专利护城河和估值差距</div>
+          </div>
+          <Link to="/compare" className="text-[11px] px-3 py-1.5 rounded-lg bg-violet-700 text-white hover:bg-violet-800 transition font-medium">去对比 →</Link>
+        </div>
+      )}
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <Stat label="实测公司" value={unicorns.length} hint="4 独角兽 + 3 上市" accent="#0f766e" />

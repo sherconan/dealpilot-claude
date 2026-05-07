@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
+import { useAllDeals } from '../lib/userDealStore'
 
 interface ScanResult {
   category: string
@@ -131,6 +133,14 @@ export default function Risk() {
   const c = cases[selected]
   const m = overallMeta[c.overall]
 
+  // 把用户上传项目里的 hard flag 聚合显示，做"我的 deal 风险扫描"二级入口
+  const allDeals = useAllDeals()
+  const userDealsWithHardFlags = useMemo(() => {
+    return allDeals
+      .filter(d => d.id.startsWith('user-') && d.redFlags.some(f => f.severity === 'hard'))
+      .map(d => ({ deal: d, flags: d.redFlags.filter(f => f.severity === 'hard') }))
+  }, [allDeals])
+
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-5">
@@ -140,6 +150,40 @@ export default function Risk() {
           一键并行调用 <code className="text-[11px] bg-ink-100 px-1 rounded">qcc-risk</code> 五个工具：行政处罚 / 失信被执行 / 被执行人 / 经营异常 / 严重违法 → 任一命中触发硬红线 → 自动建议 Pass + 标记创始人风险
         </p>
       </header>
+
+      {/* 用户上传项目硬红线聚合 — 把 BP 抽取出来的 RF 拉通到 Risk 页 */}
+      {userDealsWithHardFlags.length > 0 && (
+        <section className="mb-5 bg-rose-50 border-2 border-rose-300 rounded-xl p-4">
+          <div className="flex items-end justify-between mb-3 gap-2 flex-wrap">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-rose-700 font-medium">你的 BP 上传项目 · 硬红线聚合</div>
+              <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">{userDealsWithHardFlags.length} 个项目触发硬红线 · 进入尽调前需 qcc-risk 实测</h2>
+            </div>
+            <span className="text-[10px] text-rose-700 bg-white border border-rose-200 px-2 py-0.5 rounded font-medium">来自上传 BP 的本地 Red Flag 引擎抽取</span>
+          </div>
+          <div className="space-y-2">
+            {userDealsWithHardFlags.map(({ deal, flags }) => (
+              <Link key={deal.id} to={`/deal/${deal.id}`} className="block bg-white border border-rose-200 rounded-lg p-3 hover:bg-rose-50 transition">
+                <div className="flex items-start justify-between gap-3 flex-wrap">
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[13px] font-semibold tracking-tight text-rose-900">{deal.name} <span className="text-rose-700 font-normal">· {deal.cnName}</span></div>
+                    <div className="text-[11px] text-rose-700 mt-0.5">{deal.sector} · {deal.round} · 评分 {deal.score}/100</div>
+                  </div>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-rose-700 text-white">{flags.length} 项硬红线</span>
+                </div>
+                <ul className="mt-2 space-y-1">
+                  {flags.map((f, i) => (
+                    <li key={i} className="text-[11.5px] text-rose-800 leading-relaxed pl-3 border-l-2 border-rose-400">
+                      <b>[硬]</b> {f.label}
+                      {f.detail && <span className="block text-[10.5px] text-rose-600 mt-0.5">{f.detail}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <aside className="lg:col-span-4 space-y-3">
