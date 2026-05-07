@@ -107,6 +107,7 @@ const sprints: SprintEntry[] = [
   { num: 129, title: 'HelpModal 加 重看 Onboarding 入口', detail: '清除 v2 + v3 flag 并重载 → 老用户可主动复看 5 步引导（含 4 行业示例 BP 画廊）', files: ['components/HelpModal.tsx'], tag: 'UX', color: '#0ea5e9' },
   { num: 130, title: 'Toast 通知系统 · 替换全部 13 个 alert()', detail: 'lib/toast.ts CustomEvent 单例总线 + ToastHost 渲染容器（success/error/info 三色 + 自动消失 + 点击关闭 + 同时最多 5 条 + fadeInUp 动画）· 全平台 Briefings/ICMemo/Memory/Pipeline/DealDetail/Compare 13 处 alert 全替换', files: ['lib/toast.ts', 'components/ToastHost.tsx', 'components/Layout.tsx', 'index.css', '6 个页面'], tag: 'UX', color: '#0f766e' },
   { num: 131, title: 'Upload 失败降级事件 toast 可见化', detail: 'LLM 评分 / 访谈问题失败原本静默 console.warn → 现在 toast.info 提示原因（80 char）· 入箱成功 toast.success 显示评分+推荐 · 重复匹配 toast.info 说明未创建新 deal', files: ['pages/Upload.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 132, title: 'Upload 错误页 智能重试 + Layout footer 存储指示', detail: 'error 状态加 ↻ 重试 LLM 分析（用缓存）按钮 — pdfText 还在 state，不必重读 PDF · BYOK 付费 provider 失败时提示换免费通道 · Layout footer 加 ✨N 用户上传 · X KB 跳转 Memory', files: ['pages/Upload.tsx', 'components/Layout.tsx'], tag: 'UX', color: '#0f766e' },
 ]
 
 const milestones = [

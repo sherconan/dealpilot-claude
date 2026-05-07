@@ -376,9 +376,41 @@ export default function Upload() {
       {/* 错误 */}
       {stage === 'error' && (
         <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 mb-5 text-[13px] text-rose-800">
-          <b>分析失败</b>
-          <div className="mt-1 text-[12px]">{errorMsg}</div>
-          <button onClick={() => setStage('idle')} className="mt-2 px-3 py-1 text-[12px] rounded bg-rose-700 text-white">重新上传</button>
+          <div className="flex items-start gap-3">
+            <span className="w-7 h-7 rounded-full bg-rose-700 text-white text-[14px] font-semibold flex items-center justify-center shrink-0">!</span>
+            <div className="flex-1 min-w-0">
+              <div className="font-semibold text-[14px]">分析失败</div>
+              <div className="mt-1 text-[12px] whitespace-pre-wrap">{errorMsg}</div>
+              <div className="mt-3 flex items-center gap-2 flex-wrap">
+                {pdfText && pdfText.length >= 100 && (
+                  <button
+                    onClick={() => {
+                      // 直接用 cached pdfText / fileName / pdfPages 重跑 LLM 流水线，不需要重新读 PDF
+                      toast.info('用缓存的 PDF 全文重试...')
+                      run(pdfText, pdfPages, fileName)
+                    }}
+                    className="px-3 py-1.5 text-[12px] rounded bg-rose-700 text-white hover:bg-rose-800 inline-flex items-center gap-1"
+                    title="用浏览器里已抽取的 PDF 全文直接重跑 LLM，不重新读文件"
+                  >
+                    ↻ 重试 LLM 分析（用缓存）
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    setStage('idle')
+                    setPdfText(''); setFileName(''); setPdfPages(0)
+                    setSections([]); setFields(null); setRedFlags([]); setScore(null)
+                  }}
+                  className="px-3 py-1.5 text-[12px] rounded border border-rose-300 text-rose-700 bg-white hover:bg-rose-100"
+                >
+                  重新上传
+                </button>
+                {!PROVIDER_META[provider].free && (
+                  <span className="text-[11px] text-rose-600">提示：当前 provider 是付费 BYOK，可换免费 Pollinations / Gemini Flash 重试</span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
