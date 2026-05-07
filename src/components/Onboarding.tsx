@@ -1,34 +1,44 @@
 // 首次访问引导 — 5 步快速带过产品核心能力
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { SAMPLE_BPS } from '../data/sampleBPs'
 
-const FLAG_KEY = 'dp:onboarded-v2'
+const FLAG_KEY = 'dp:onboarded-v3'
 
-const STEPS = [
+interface StepDef {
+  title: string
+  body: string
+  icon: string
+  cta?: { text: string; path: string; sampleId?: string }
+  showSampleGallery?: boolean
+}
+
+const STEPS: StepDef[] = [
   {
     title: '欢迎使用 DealPilot',
     body: 'VC BP 智能筛选驾驶舱 — 上传 BP，AI 真分析，自动入箱机构记忆。',
     icon: '🚀',
   },
   {
-    title: 'Step 1 · 上传 BP',
+    title: 'Step 1 · 一键试用示例 BP',
+    body: '4 个不同行业的示例 BP — 不用上传 PDF 也能完整体验 LLM 流水线。点一个立刻看 30 秒内生成的 10 段深度报告：',
+    icon: '✨',
+    showSampleGallery: true,
+  },
+  {
+    title: 'Step 2 · 上传你自己的 BP',
     body: 'pdfjs 真读 PDF 全文 → 选择 LLM provider（Kimi K2.6 / Gemini Flash / OpenAI 等）→ 60-90 秒流式生成 10 段深度分析。',
     icon: '📄',
     cta: { text: '去上传 BP', path: '/upload' },
   },
   {
-    title: 'Step 2 · LLM 真打分',
-    body: 'Sequoia 10 维度由 LLM 独立打分，每个维度有评分依据 + PDF 原文 evidence。100 分 Scorecard + 推荐分级（优先 / 观察 / 跟进 / Pass）。',
+    title: 'Step 3 · LLM 真打分 + 多轮追问',
+    body: 'Sequoia 10 维度由 LLM 独立打分（评分依据 + PDF 原文 evidence）。项目详情页可和 LLM 对话 — 已注入完整 BP context，可问团队风险 / 估值合理性 / 12 月里程碑。',
     icon: '🎯',
   },
   {
-    title: 'Step 3 · 多轮追问 + 竞品对比',
-    body: '项目详情页和 LLM 对话 — 已注入完整 BP context，可问"团队风险 / 估值合理性 / 12 月里程碑"等。竞品基于 9 家 akshare 真财报锚定。',
-    icon: '💬',
-  },
-  {
-    title: 'Step 4 · 真信源 + 完整导出',
-    body: '5 真信源已 live（akshare / 企查查 / 巨潮）+ 6 LLM Provider + 一键导出 Markdown 完整报告 + 浏览器打印 PDF。',
+    title: 'Step 4 · 真信源 + 一键导出',
+    body: '5 真信源已 live（akshare / 企查查 / 巨潮）+ 6 LLM Provider + 5 个 surface 一键 Markdown 导出（DealDetail / Compare / Briefings / Pipeline / Founder Q）。',
     icon: '🔌',
     cta: { text: '看完整功能列表', path: '/sources' },
   },
@@ -70,6 +80,28 @@ export default function Onboarding() {
         </div>
         <div className="p-5 text-[13.5px] text-ink-700 leading-[1.85]">
           {cur.body}
+          {cur.showSampleGallery && (
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              {SAMPLE_BPS.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    try { sessionStorage.setItem('dp:prefill-sample', s.id) } catch {}
+                    localStorage.setItem(FLAG_KEY, '1')
+                    setOpen(false)
+                    navigate('/upload')
+                  }}
+                  className="text-left bg-white border border-ink-200 rounded-lg p-2.5 hover:border-violet-500/60 hover:shadow-pop transition group"
+                >
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span className="text-[16px]">{s.emoji}</span>
+                    <span className="text-[9px] uppercase tracking-wider px-1 rounded font-medium" style={{ background: s.accent + '14', color: s.accent }}>{s.industry}</span>
+                  </div>
+                  <div className="text-[11.5px] font-semibold tracking-tight truncate group-hover:text-violet-800">{s.company}</div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="px-5 pb-5">
           <div className="flex items-center justify-center gap-1.5 mb-4">
