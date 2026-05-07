@@ -14,6 +14,7 @@ import {
 import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
 import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
 import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
+import { generateFounderQuestions } from '../lib/founderQuestions'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
@@ -126,7 +127,15 @@ export default function Upload() {
         setScore(llmScoring.totalScore)
       } catch (scoreErr: any) {
         console.warn('LLM 评分失败，回退规则引擎', scoreErr)
-        // sc 已经是规则引擎评分，保留
+      }
+
+      // ⑤ LLM 生成针对性访谈问题（基于 PDF 真内容）
+      let founderQs: any[] = []
+      try {
+        setProgressMsg('LLM 生成 8 个针对 BP 真内容的创始人访谈问题（10-15 秒）...')
+        founderQs = await generateFounderQuestions(provider, apiKey || null, text, f, flags)
+      } catch (qErr) {
+        console.warn('访谈问题生成失败', qErr)
       }
 
       // ④ 创建项目
@@ -149,6 +158,9 @@ export default function Upload() {
           newDeal.recommendation = llmScoring.recommendation
           ;(newDeal as any).llmDimensions = llmScoring.dimensions  // 完整评分依据
           ;(newDeal as any).llmOneLiner = llmScoring.oneLiner
+        }
+        if (founderQs.length > 0) {
+          ;(newDeal as any).llmFounderQuestions = founderQs
         }
         addUserDeal(newDeal)
         setCreatedDealId(newDeal.id)

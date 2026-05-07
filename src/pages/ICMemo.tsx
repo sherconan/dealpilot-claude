@@ -85,6 +85,65 @@ export default function ICMemo() {
       </header>
 
       <article className="bg-white border border-ink-200 rounded-xl p-10 shadow-card prose-sm">
+        {/* LLM 真撰版本 — 用户上传 BP 经 LLM 生成的完整 10 段报告 */}
+        {deal.deepAnalysisRaw && (
+          <section className="mb-8 pb-6 border-b border-violet-200 bg-violet-50/30 -m-10 mb-8 p-10 rounded-t-xl">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <div>
+                <div className="text-[11px] tracking-wider uppercase text-violet-700 font-medium">LLM 完整版 IC Memo · {deal.llmDimensions ? 'Sequoia 10 真打分' : 'Kimi K2.6 真撰'}</div>
+                <h2 className="text-[18px] font-semibold tracking-tight mt-1">{deal.name} 投委会备忘录（LLM 真写）</h2>
+                {deal.llmOneLiner && <p className="text-[12.5px] text-ink-700 mt-2 leading-relaxed">{deal.llmOneLiner}</p>}
+              </div>
+            </div>
+            {(() => {
+              const sectionLabels = ['公司画像与定位', '问题与机会判断', '产品与解决方案', '商业模式', '市场规模与竞争', '团队评估', '牵引与财务', '风险与红线', '投资论点', '尽调建议与关键问题']
+              const sections = deal.deepAnalysisRaw.split(/===\s*SECTION\s*\d+\s*===/i).slice(1)
+              return sections.map((sec, i) => {
+                const trimmed = sec.trim()
+                if (!trimmed) return null
+                return (
+                  <div key={i} className="mb-5 pb-4 border-b border-violet-100 last:border-0">
+                    <h3 className="text-[14.5px] font-semibold tracking-tight mb-2 flex items-center gap-2">
+                      <span className="num w-6 h-6 rounded bg-violet-700 text-white text-[11px] flex items-center justify-center">{(i + 1).toString().padStart(2, '0')}</span>
+                      <span>{sectionLabels[i] || `第 ${i + 1} 段`}</span>
+                    </h3>
+                    <div className="text-[12.5px] text-ink-800 leading-[1.85] whitespace-pre-wrap pl-8">
+                      {trimmed.split('\n').map((line, li) => (
+                        <p key={li} className={line.match(/^[-·•*]/) ? 'pl-2' : ''}>
+                          {line.split(/(\*\*[^*]+\*\*)/g).map((part, pi) =>
+                            part.startsWith('**') && part.endsWith('**')
+                              ? <b key={pi} className="text-ink-900">{part.slice(2, -2)}</b>
+                              : part
+                          )}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })
+            })()}
+            {deal.llmDimensions && deal.llmDimensions.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-violet-200">
+                <h3 className="text-[14.5px] font-semibold tracking-tight mb-3">附录 · Sequoia 10 维度 LLM 评分</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {deal.llmDimensions.map((d) => {
+                    const color = d.score >= 8 ? '#059669' : d.score >= 6 ? '#0ea5e9' : d.score >= 4 ? '#d97706' : '#dc2626'
+                    return (
+                      <div key={d.key} className="flex items-center justify-between bg-white border border-ink-200 rounded px-2.5 py-1.5">
+                        <span className="text-[11.5px] text-ink-700">{d.label.replace(/\s*\(.+\)/, '')}</span>
+                        <span className="num font-semibold text-[14px]" style={{ color }}>{d.score}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+            <div className="mt-4 text-[10px] text-ink-500 italic">
+              本段由 LLM（{deal.id.startsWith('user-') ? 'Kimi K2.6 / 用户选择 provider' : '产品规则引擎'}）基于上传的 BP PDF 真实内容生成。下方"模板版本"为 fallback。
+            </div>
+          </section>
+        )}
+
         {/* Visual Hero — 评分 + 推荐 + 真实可比锚定 */}
         <div className="flex items-center gap-6 mb-8 pb-6 border-b border-ink-100">
           <ScoreRing score={deal.score} color={deal.accentColor} size={120} label="Scorecard" />

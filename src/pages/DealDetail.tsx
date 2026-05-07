@@ -206,6 +206,48 @@ export default function DealDetail() {
         </div>
       </section>
 
+      {/* ─── LLM 针对 PDF 真内容生成的创始人访谈问题 ─── */}
+      {deal.llmFounderQuestions && deal.llmFounderQuestions.length > 0 && (
+        <section className="bg-gradient-to-br from-amber-50/50 via-white to-white border-2 border-amber-500/30 rounded-xl p-5 mb-5">
+          <div className="mb-3">
+            <div className="text-[11px] uppercase tracking-wider text-amber-700 font-medium">LLM 真生成 · 基于 BP 真内容</div>
+            <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">创始人访谈关键问题（{deal.llmFounderQuestions.length} 题）</h2>
+            <p className="text-[12px] text-ink-500 mt-0.5">每个问题针对 BP 具体内容定制 — 创始人无法用模板话术敷衍</p>
+          </div>
+          <div className="space-y-3">
+            {deal.llmFounderQuestions.map((q, i) => {
+              const catLabel = { financial: '财务', business: '业务', team: '团队', competition: '竞争', risk: '风险', 'fund-use': '资金用途', governance: '治理' }[q.category] || q.category
+              return (
+                <div key={i} className="bg-white border border-ink-200 rounded-lg p-4 hover:border-amber-500/50 transition">
+                  <div className="flex items-start gap-3">
+                    <div className="num w-7 h-7 rounded-full bg-amber-700 text-white text-[12px] font-medium flex items-center justify-center shrink-0">Q{i + 1}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                        <span className="text-[10px] tracking-wider uppercase font-medium text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">{catLabel}</span>
+                      </div>
+                      <div className="text-[13.5px] text-ink-900 font-medium leading-relaxed">{q.question}</div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2.5 text-[12px]">
+                        <div>
+                          <div className="text-[10px] uppercase tracking-wider text-ink-500">为什么问</div>
+                          <div className="text-ink-700 mt-0.5 leading-relaxed">{q.why}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] uppercase tracking-wider text-emerald-700">期待 / 警惕信号</div>
+                          <div className="text-ink-700 mt-0.5 leading-relaxed">
+                            {q.expect}
+                            {q.watch && <span className="block text-rose-700 mt-0.5 italic">⚠️ {q.watch}</span>}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {/* ─── LLM 评分依据（仅用户上传项目）─── */}
       {deal.llmDimensions && deal.llmDimensions.length > 0 && (
         <section className="bg-gradient-to-br from-violet-50/50 via-white to-white border-2 border-violet-500/30 rounded-xl p-5 mb-5">
