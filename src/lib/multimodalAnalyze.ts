@@ -229,6 +229,7 @@ export async function analyzeWithProvider(
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
   const body: any = { model: meta.model, messages, temperature: 0.4 }
   if (provider === 'pollinations') body.private = true
+  else if (provider === 'kimi-k26') body.max_tokens = 8000  // K2.6 是 reasoning model，给充足 budget
   else body.max_tokens = 4000
 
   const res = await fetch(meta.endpoint, { method: 'POST', headers, body: JSON.stringify(body) })
@@ -237,8 +238,10 @@ export async function analyzeWithProvider(
     throw new Error(`${meta.label} API 失败 (${res.status})：${err.slice(0, 300)}`)
   }
   const data = await res.json()
-  const raw = data?.choices?.[0]?.message?.content || ''
-  if (!raw) throw new Error(`${meta.label} 返回为空`)
+  const msg = data?.choices?.[0]?.message
+  // Kimi K2.6 / DeepSeek-R1 等 reasoning model 可能把内容放在 reasoning_content
+  const raw = msg?.content || msg?.reasoning_content || ''
+  if (!raw) throw new Error(`${meta.label} 返回为空：${JSON.stringify(data).slice(0, 200)}`)
   return { sections: parseSections(raw), raw, duration: Date.now() - start, provider, pagesAnalyzed: useImages ? images.length : 0 }
 }
 
