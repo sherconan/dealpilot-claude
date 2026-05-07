@@ -33,6 +33,18 @@ function PageLoader() {
   )
 }
 
+function NotFound() {
+  return (
+    <div className="px-4 md:px-8 py-12 max-w-[700px] mx-auto text-center">
+      <div className="bg-white border border-ink-200 rounded-2xl p-10">
+        <div className="num text-[48px] font-semibold tracking-tight text-ink-300">404</div>
+        <h1 className="text-[18px] font-semibold tracking-tight mt-2">页面未找到</h1>
+        <p className="text-[13px] text-ink-600 mt-2">该路径不存在。返回 <a href="/" className="text-brand-700 underline">驾驶舱</a> 或按 <kbd className="bg-ink-100 border border-ink-200 px-1 rounded num text-[11px]">⌘ K</kbd> 唤起命令面板。</p>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   return (
     <Routes>
@@ -54,6 +66,7 @@ export default function App() {
         <Route path="/deal/:id/memo" element={<Suspense fallback={<PageLoader />}><ICMemo /></Suspense>} />
         <Route path="/deal/:id/brief" element={<Suspense fallback={<PageLoader />}><DealBrief /></Suspense>} />
         <Route path="/unicorns" element={<Suspense fallback={<PageLoader />}><Unicorns /></Suspense>} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   )
