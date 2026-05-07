@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { deals } from '../data/deals'
+import { useAllDeals } from '../lib/userDealStore'
 import { useApp } from '../contexts/AppContext'
 
 interface Cmd {
@@ -19,6 +19,7 @@ export default function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { toggleLang, toggleTheme, lang, theme } = useApp()
+  const deals = useAllDeals()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -48,18 +49,22 @@ export default function CommandPalette() {
     const nav: Cmd[] = [
       { id: 'go-home', label: '驾驶舱 Dashboard', hint: 'g d', group: '导航', action: () => navigate('/'), keywords: 'home dashboard 驾驶舱' },
       { id: 'go-pipe', label: '漏斗看板 Pipeline', hint: 'g p', group: '导航', action: () => navigate('/pipeline'), keywords: 'pipeline kanban 看板' },
-      { id: 'go-upload', label: '上传 BP', group: '导航', action: () => navigate('/upload'), keywords: 'upload bp 上传' },
-      { id: 'go-risk', label: '风险扫描', group: '导航', action: () => navigate('/risk'), keywords: 'risk 风险 合规' },
-      { id: 'go-portfolio', label: '投后组合', group: '导航', action: () => navigate('/portfolio'), keywords: 'portfolio 投后' },
-      { id: 'go-signals', label: 'AI 信号雷达', group: '导航', action: () => navigate('/signals'), keywords: 'signals 信号 雷达' },
-      { id: 'go-thesis', label: '投资论点', group: '导航', action: () => navigate('/thesis'), keywords: 'thesis 论点' },
-      { id: 'go-memory', label: '机构记忆', group: '导航', action: () => navigate('/memory'), keywords: 'memory 记忆' },
-      { id: 'go-sources', label: '真信源', group: '导航', action: () => navigate('/sources'), keywords: 'sources 信源' },
-      { id: 'go-docs', label: '方法论文档', group: '导航', action: () => navigate('/docs'), keywords: 'docs methodology 方法论' },
+      { id: 'go-upload', label: '上传 BP · LLM 真分析', group: '导航', action: () => navigate('/upload'), keywords: 'upload bp 上传 llm 分析' },
+      { id: 'go-compare', label: '横向对比 Compare', group: '导航', action: () => navigate('/compare'), keywords: 'compare 对比 side-by-side' },
+      { id: 'go-briefings', label: '基金周报 Briefings', group: '导航', action: () => navigate('/briefings'), keywords: 'briefings 周报 weekly' },
+      { id: 'go-risk', label: '风险扫描 Risk', group: '导航', action: () => navigate('/risk'), keywords: 'risk 风险 合规' },
+      { id: 'go-portfolio', label: '投后组合 Portfolio', group: '导航', action: () => navigate('/portfolio'), keywords: 'portfolio 投后' },
+      { id: 'go-signals', label: 'AI 信号雷达 Signals', group: '导航', action: () => navigate('/signals'), keywords: 'signals 信号 雷达' },
+      { id: 'go-thesis', label: '投资论点 Thesis', group: '导航', action: () => navigate('/thesis'), keywords: 'thesis 论点' },
+      { id: 'go-memory', label: '机构记忆 Memory', group: '导航', action: () => navigate('/memory'), keywords: 'memory 记忆' },
+      { id: 'go-sources', label: '真信源 Sources', group: '导航', action: () => navigate('/sources'), keywords: 'sources 信源' },
+      { id: 'go-unicorns', label: '独角兽参考 Unicorns', group: '导航', action: () => navigate('/unicorns'), keywords: 'unicorns 独角兽' },
+      { id: 'go-changelog', label: 'Sprint Changelog', group: '导航', action: () => navigate('/changelog'), keywords: 'changelog sprint 进度' },
+      { id: 'go-docs', label: '方法论文档 Docs', group: '导航', action: () => navigate('/docs'), keywords: 'docs methodology 方法论' },
     ]
     const dealCmds: Cmd[] = deals.map((d) => ({
       id: `deal-${d.id}`,
-      label: `${d.name} · ${d.cnName}`,
+      label: `${d.id.startsWith('user-') ? '✨ ' : ''}${d.name} · ${d.cnName}`,
       hint: `${d.score} 分`,
       group: '项目',
       action: () => navigate(`/deal/${d.id}`),
@@ -68,6 +73,7 @@ export default function CommandPalette() {
         d.founders.map((f) => `${f.name} ${f.role} ${f.background}`).join(' '),
         d.wins.join(' '), d.concerns.join(' '),
         d.redFlags.map((f) => f.label).join(' '),
+        d.id.startsWith('user-') ? 'llm user uploaded 上传' : '',
       ].filter(Boolean).join(' '),
     }))
     const acts: Cmd[] = [
@@ -75,7 +81,7 @@ export default function CommandPalette() {
       { id: 'theme', label: `切换主题 → ${theme === 'light' ? '深色 Dark' : '浅色 Light'}`, hint: 'cmd+J', group: '动作', action: toggleTheme, keywords: 'theme dark light 主题 暗色' },
     ]
     return [...nav, ...dealCmds, ...acts]
-  }, [navigate, toggleLang, toggleTheme, lang, theme])
+  }, [navigate, toggleLang, toggleTheme, lang, theme, deals])
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
