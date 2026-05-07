@@ -17,6 +17,7 @@ import { generateFounderQuestions } from '../lib/founderQuestions'
 import { addUserDeal, buildDealFromExtraction, getUserDeals } from '../lib/userDealStore'
 import { SAMPLE_BPS } from '../data/sampleBPs'
 import { deals as mockDeals } from '../data/deals'
+import { toast } from '../lib/toast'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
 
@@ -140,6 +141,7 @@ export default function Upload() {
         setScore(llmScoring.totalScore)
       } catch (scoreErr: any) {
         console.warn('LLM 评分失败，回退规则引擎', scoreErr)
+        toast.info(`LLM 评分失败，已降级到规则引擎\n${(scoreErr?.message || scoreErr).toString().slice(0, 80)}`, 5000)
       }
 
       // ⑤ LLM 生成针对性访谈问题（基于 PDF 真内容）
@@ -147,8 +149,9 @@ export default function Upload() {
       try {
         setProgressMsg('LLM 生成 8 个针对 BP 真内容的创始人访谈问题（10-15 秒）...')
         founderQs = await generateFounderQuestions(provider, apiKey || null, text, f, flags)
-      } catch (qErr) {
+      } catch (qErr: any) {
         console.warn('访谈问题生成失败', qErr)
+        toast.info(`访谈问题生成失败，已跳过\n${(qErr?.message || qErr).toString().slice(0, 80)}`, 5000)
       }
 
       // ④ 创建项目
@@ -179,6 +182,9 @@ export default function Upload() {
         }
         addUserDeal(newDeal)
         setCreatedDealId(newDeal.id)
+        toast.success(`✨ ${newDeal.name} 已入箱\n评分 ${newDeal.score}/100 · 推荐 ${newDeal.recommendation}`, 5000)
+      } else {
+        toast.info(`匹配到已有项目「${m.name}」\n未创建新 deal`)
       }
 
       setStage('done')
