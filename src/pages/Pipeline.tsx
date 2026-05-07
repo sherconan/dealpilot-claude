@@ -154,6 +154,34 @@ export default function Pipeline() {
             >
               CSV
             </button>
+            <button
+              onClick={async () => {
+                const lines: string[] = []
+                lines.push(`# DealPilot Pipeline 看板 · ${new Date().toLocaleString('zh-CN', { hour12: false })}\n`)
+                lines.push(`共 ${total} 个项目\n`)
+                columns.forEach((c) => {
+                  const list = grouped[c.stage]
+                  if (list.length === 0) return
+                  const sm = stageMeta[c.stage]
+                  lines.push(`## ${sm.label}（${list.length}）· ${c.description}`)
+                  list.forEach((d) => {
+                    const hard = d.redFlags.filter(f => f.severity === 'hard').length
+                    const flagBadge = hard > 0 ? ` 🔴 硬 ${hard}` : (d.redFlags.length > 0 ? ' 🟡' : '')
+                    lines.push(`- **${d.name}** (${d.cnName}) · ${d.sector} · ${d.round} · ${d.score}/100 · ${d.askAmount}/${d.valuation}${flagBadge}`)
+                  })
+                  lines.push('')
+                })
+                lines.push('---\nDealPilot · 看板快照')
+                try {
+                  await navigator.clipboard.writeText(lines.join('\n'))
+                  alert('✓ Pipeline 看板已复制为 Markdown')
+                } catch { alert('复制失败') }
+              }}
+              className="text-[11px] px-2.5 py-1.5 border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition inline-flex items-center gap-1"
+              title="复制看板快照为 Markdown（按阶段分组）"
+            >
+              📋 MD
+            </button>
           </div>
         </div>
         <div className="mt-3 flex items-center gap-1 flex-wrap">
