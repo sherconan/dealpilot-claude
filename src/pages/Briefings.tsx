@@ -62,7 +62,7 @@ export default function Briefings() {
   }
 
   return (
-    <div className="px-8 py-6 max-w-[1100px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1100px] mx-auto">
       <header className="flex items-end justify-between mb-6 gap-4 flex-wrap">
         <div>
           <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Weekly Brief · {year} W{week}</div>

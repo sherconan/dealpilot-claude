@@ -213,7 +213,7 @@ export default function Upload() {
   const isRunning = stage !== 'idle' && stage !== 'done' && stage !== 'error'
 
   return (
-    <div className="px-8 py-6 max-w-[1280px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1280px] mx-auto">
       <header className="mb-5">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">BP Deep Analysis · Real LLM Pipeline</div>
         <h1 className="text-[26px] font-semibold tracking-tight mt-1">真 LLM 深度分析你的 BP</h1>

@@ -16,7 +16,7 @@ export default function DealBrief() {
   const topComp = extra?.publicComps[0]
 
   return (
-    <div className="px-8 py-6 max-w-[900px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[900px] mx-auto">
       <div className="flex items-center gap-2 text-[12px] text-ink-500 mb-3 no-print">
         <Link to={`/deal/${deal.id}`} className="hover:text-brand-700">{deal.name}</Link>
         <span>/</span>

@@ -54,7 +54,7 @@ export default function DealDetail() {
     : { color: '#64748b', bg: 'bg-ink-100', border: 'border-ink-300', label: '待核实' }
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <div className="flex items-center gap-2 text-[12px] text-ink-500 mb-3">
         <Link to="/pipeline" className="hover:text-brand-700">看板</Link>
         <span>/</span>
