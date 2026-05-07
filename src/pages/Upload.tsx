@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
 import { deals } from '../data/deals'
@@ -50,6 +50,18 @@ export default function Upload() {
   const [showKeyInput, setShowKeyInput] = useState(false)
   const [pageImages, setPageImages] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // 如果从 Dashboard 点了示例 BP，自动预填到 textarea
+  useEffect(() => {
+    try {
+      const sampleId = sessionStorage.getItem('dp:prefill-sample')
+      if (sampleId) {
+        const s = SAMPLE_BPS.find((x) => x.id === sampleId)
+        if (s) setPasted(s.text)
+        sessionStorage.removeItem('dp:prefill-sample')
+      }
+    } catch {}
+  }, [])
 
   function typewriter(key: SectionKey, full: string, speed = 14): Promise<void> {
     return new Promise((resolve) => {
