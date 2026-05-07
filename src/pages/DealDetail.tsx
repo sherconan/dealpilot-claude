@@ -10,6 +10,7 @@ import CompetitorAnalysis from '../components/CompetitorAnalysis'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { downloadMarkdown, copyMarkdownToClipboard } from '../lib/exportDeal'
 import { removeUserDeal } from '../lib/userDealStore'
+import { toast } from '../lib/toast'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
 export default function DealDetail() {
@@ -91,7 +92,7 @@ export default function DealDetail() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => alert(`已安排合伙人会议\n\n项目：${deal.name}\n创始人：${deal.founders[0]?.name}\n邀请将通过邮件发送（演示版未实际发送）`)}
+            onClick={() => toast.success(`已安排合伙人会议\n项目：${deal.name}\n创始人：${deal.founders[0]?.name}\n邀请将通过邮件发送（演示版未实际发送）`, 6000)}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">安排会议</button>
           <button
             onClick={() => {
@@ -101,8 +102,8 @@ export default function DealDetail() {
                   const cur = JSON.parse(localStorage.getItem('dp:stageOverride') || '{}')
                   cur[deal.id] = 'dd'
                   localStorage.setItem('dp:stageOverride', JSON.stringify(cur))
-                  alert(`✓ ${deal.name} 已进入尽调阶段\n（看板已自动更新，前往 Pipeline 查看）`)
-                } catch (e) { alert('✓ 已记录（演示版）') }
+                  toast.success(`${deal.name} 已进入尽调阶段\n看板已自动更新，前往 Pipeline 查看`)
+                } catch (e) { toast.info('已记录（演示版）') }
               }
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
@@ -130,7 +131,7 @@ export default function DealDetail() {
             onClick={async () => {
               const ok = await copyMarkdownToClipboard(deal)
               if (ok) { setCopied(true); setTimeout(() => setCopied(false), 2200) }
-              else alert('复制失败 — 请手动下载')
+              else toast.error('复制失败 — 请手动下载')
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50"
             title="复制完整 Markdown 报告（含 LLM 评分 / 10 段 / 访谈问题 / Red Flag）"
@@ -267,7 +268,7 @@ export default function DealDetail() {
                   await navigator.clipboard.writeText(`# ${deal.name} · 创始人访谈问题清单\n\n${lines}`)
                   setCopied(true)
                   setTimeout(() => setCopied(false), 2200)
-                } catch { alert('复制失败 — 浏览器可能限制 clipboard') }
+                } catch { toast.error('复制失败 — 浏览器可能限制 clipboard') }
               }}
               className="text-[11px] px-2.5 py-1.5 rounded-md border border-amber-300 bg-white text-amber-800 hover:bg-amber-100 inline-flex items-center gap-1 no-print"
               title="复制完整访谈问题清单（Markdown 格式 · 可粘贴到飞书 / Notion）"

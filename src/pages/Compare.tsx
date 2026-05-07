@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAllDeals } from '../lib/userDealStore'
 import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
+import { toast } from '../lib/toast'
 import type { Deal, Sequoia10 } from '../types'
 
 export default function Compare() {
@@ -85,7 +86,7 @@ export default function Compare() {
       await navigator.clipboard.writeText(md)
       setCopied(true)
       setTimeout(() => setCopied(false), 2200)
-    } catch { alert('复制失败') }
+    } catch { toast.error('复制失败') }
   }
 
   if (deals.length === 0) {

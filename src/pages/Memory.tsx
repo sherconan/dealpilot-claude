@@ -4,6 +4,7 @@ import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
 import { useAllDeals, clearUserDeals, getUserDeals, downloadUserDealsJSON, importUserDealsJSON } from '../lib/userDealStore'
 import { useRef } from 'react'
+import { toast } from '../lib/toast'
 
 type SortKey = 'score' | 'recent' | 'sector'
 type RecFilter = 'all' | 'priority' | 'monitor' | 'conditional' | 'pass'
@@ -25,9 +26,9 @@ export default function Memory() {
         const text = String(reader.result || '')
         const merge = confirm('合并到现有 deal（确定）？还是替换全部（取消）？\n\n确定 = 合并：保留现有 deal，新增 / 覆盖同 id 项目\n取消 = 替换：清空现有用户上传，仅保留导入文件中的 deal')
         const count = importUserDealsJSON(text, merge ? 'merge' : 'replace')
-        alert(`✓ 成功导入 ${count} 个 deal（${merge ? '合并' : '替换'}模式）`)
+        toast.success(`成功导入 ${count} 个 deal（${merge ? '合并' : '替换'}模式）`)
       } catch (err: any) {
-        alert(`导入失败：${err.message}`)
+        toast.error(`导入失败：${err.message}`)
       } finally {
         if (e.target) e.target.value = ''
       }

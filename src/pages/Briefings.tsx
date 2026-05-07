@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAllDeals } from '../lib/userDealStore'
 import { recommendationMeta } from '../lib/scoring'
+import { toast } from '../lib/toast'
 
 function getISOWeek(d = new Date()) {
   const date = new Date(d.getTime())
@@ -105,7 +106,7 @@ export default function Briefings() {
       await navigator.clipboard.writeText(buildBriefingMarkdown())
       setMdCopied(true)
       setTimeout(() => setMdCopied(false), 2200)
-    } catch { alert('复制失败') }
+    } catch { toast.error('复制失败 — 浏览器可能限制 clipboard') }
   }
 
   function summary() {

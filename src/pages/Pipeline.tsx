@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { stageMeta } from '../lib/scoring'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
 import { useAllDeals } from '../lib/userDealStore'
+import { toast } from '../lib/toast'
 import type { Stage } from '../types'
 
 const LS_OVERRIDE = 'dp:stageOverride'
@@ -174,8 +175,8 @@ export default function Pipeline() {
                 lines.push('---\nDealPilot · 看板快照')
                 try {
                   await navigator.clipboard.writeText(lines.join('\n'))
-                  alert('✓ Pipeline 看板已复制为 Markdown')
-                } catch { alert('复制失败') }
+                  toast.success('Pipeline 看板已复制为 Markdown')
+                } catch { toast.error('复制失败') }
               }}
               className="text-[11px] px-2.5 py-1.5 border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100 rounded-lg transition inline-flex items-center gap-1"
               title="复制看板快照为 Markdown（按阶段分组）"
