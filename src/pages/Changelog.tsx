@@ -116,6 +116,7 @@ const sprints: SprintEntry[] = [
   { num: 138, title: '路由级 document.title — 多 tab 一眼区分', detail: 'Layout 监听 loc.pathname → 14 路由 + /deal/:id (memo/brief/详情) 映射到中文页名 · DealDetail 覆写为「{deal.name} · {score}/100 · DealPilot」 · 浏览器标签页和任务栏一眼看懂', files: ['lib/useDocumentTitle.ts', 'components/Layout.tsx', 'pages/DealDetail.tsx'], tag: 'UX', color: '#0f766e' },
   { num: 139, title: 'DealChat / CompetitorAnalysis 懒加载', detail: 'DealDetail chunk 52KB → 38KB（gzip 16 → 10，-37%）· 拆出 DealChat-*.js (10KB) + CompetitorAnalysis-*.js (6.5KB) 独立 chunk · Suspense fallback 显示加载中骨架', files: ['pages/DealDetail.tsx'], tag: 'Polish', color: '#0ea5e9' },
   { num: 140, title: '最近查看 deal 跟踪 — sidebar 实时入口', detail: 'lib/recentDeals.ts localStorage 跨 session 保留 7 天 · DealDetail 进入即 trackDealView · Layout sidebar 加「最近查看」分区显示前 4 条 · ✨ user-* 紫色徽标 · pub-sub useRecentDealIds 实时响应', files: ['lib/recentDeals.ts', 'components/Layout.tsx', 'pages/DealDetail.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 141, title: 'pdfjs 真懒加载 — 458 KB 仅拖 PDF 时下载', detail: 'pdfPipeline.ts 把 import * as pdfjsLib 改成 await import (pdfjs-dist) 缓存模式 · 文本粘贴 / 示例 BP / 不上传 PDF 永不触发 458 KB pdfjs-vendor 下载 · Upload chunk 0 静态依赖 / 1 动态 import 实测验证', files: ['lib/pdfPipeline.ts'], tag: 'Polish', color: '#0ea5e9' },
 ]
 
 const milestones = [

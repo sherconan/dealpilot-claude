@@ -1,15 +1,24 @@
 // 完整 BP 处理 7 步流水线
-// ① 抽文本（pdfjs 真做）② 章节切分 ③ 字段抽取 ④ Red Flag 触发
+// ① 抽文本（pdfjs 真做，懒加载）② 章节切分 ③ 字段抽取 ④ Red Flag 触发
 // ⑤ Scorecard 评分 ⑥ 真信源调用路由 ⑦ Memo 模板填充
 
-import * as pdfjsLib from 'pdfjs-dist'
-// Vite 通过 ?url 把 worker 当成 asset 注入
-// @ts-ignore
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+// pdfjs-dist 是 457KB（gzip 135KB）的大块头 — 仅在用户真上传 PDF 时按需 import
+// 文本粘贴 / 示例 BP 不会触发 pdfjs 下载
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl
+let pdfjsCache: typeof import('pdfjs-dist') | null = null
+
+async function loadPdfjs(): Promise<typeof import('pdfjs-dist')> {
+  if (pdfjsCache) return pdfjsCache
+  const pdfjs = await import('pdfjs-dist')
+  // @ts-ignore — Vite ?url asset import
+  const workerUrl = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default
+  pdfjs.GlobalWorkerOptions.workerSrc = workerUrl
+  pdfjsCache = pdfjs
+  return pdfjs
+}
 
 export async function extractPdfText(file: File): Promise<{ text: string; pages: number }> {
+  const pdfjsLib = await loadPdfjs()
   const buf = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise
   let text = ''
@@ -28,6 +37,7 @@ export async function renderPdfPagesAsImages(
   scale = 1.4,
   quality = 0.7,
 ): Promise<string[]> {
+  const pdfjsLib = await loadPdfjs()
   const buf = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise
   const images: string[] = []
