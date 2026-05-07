@@ -75,6 +75,14 @@ const sprints: SprintEntry[] = [
   { num: 85, title: 'Dashboard LLM 已分析 KPI', detail: '5 → 6 KPI 新增"LLM 已分析"专项 (识别 user-* 或有 deepAnalysisRaw 的 deal)', files: ['pages/Dashboard.tsx', 'README.md'], tag: 'Polish', color: '#7c3aed' },
   { num: 86, title: 'SEO meta 升级 LLM 时代', detail: 'description / keywords 同步 6 LLM Provider · Kimi K2.6 多模态 · 真信源核验', files: ['index.html'], tag: 'SEO', color: '#0ea5e9' },
   { num: 87, title: '双轮 7-Hour Challenge 收官', detail: '87 Sprint 全闭环 · 6 LLM Provider 真接通 · 10 条 AI 能力链 · 5 真信源 · CI 全绿 · Vercel + GH Pages 双部署', files: ['HANDOFF.md', 'pages/Changelog.tsx', 'README.md'], tag: 'Final', color: '#059669' },
+  { num: 90, title: 'Compare 接 useAllDeals · 用户上传可对比', detail: '换掉静态 import → 动态 hook，三选 deals · 空态 CTA → Upload，新上传立即出现在选项里', files: ['pages/Compare.tsx'], tag: '功能', color: '#0f766e' },
+  { num: 91, title: 'Briefings 周报全实时', detail: 'ISO week 计算 + Top3 / 观察 / 硬红线 deals 全部 derived from useAllDeals · 不再硬编', files: ['pages/Briefings.tsx'], tag: '功能', color: '#d97706' },
+  { num: 92, title: '代码分割 · 首屏 925KB → 68KB', detail: 'React.lazy + Suspense 16 个页面级分包 + manualChunks 分 react-vendor / pdfjs-vendor，首屏 gzip 25KB（-92%）', files: ['App.tsx', 'vite.config.ts'], tag: 'Polish', color: '#0ea5e9' },
+  { num: 93, title: '移动端 px-4/8 + Layout sidebar 实时', detail: '17 页统一 px-4 md:px-8（手机不再被 32px padding 挤压）+ Layout 优先项目改用 useAllDeals · 用户上传项目优先', files: ['src/pages/*.tsx', 'components/Layout.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 95, title: 'Dashboard 日期/标题动态化', detail: '"今天有 N 个项目等你决策" 真接 todos 计数 · 周一-周日动态 · 标题副本根据 IC/DD/empty 三态切换', files: ['pages/Dashboard.tsx'], tag: 'UX', color: '#0f766e' },
+  { num: 96, title: '删除 / 清空用户上传', detail: 'DealDetail 加 🗑 删除按钮（仅 user-*）· Memory 加"清空上传"批量清理 · 不影响 mock 演示项目', files: ['pages/DealDetail.tsx', 'pages/Memory.tsx'], tag: '功能', color: '#dc2626' },
+  { num: 97, title: 'Cmd+K 覆盖用户上传 + 6 个新导航项', detail: 'CommandPalette 改用 useAllDeals · ✨ 前缀标记 user-* · 新增 Compare/Briefings/Unicorns/Changelog 入口', files: ['components/CommandPalette.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 98, title: '续航 7-Hour 全平台数据驱动', detail: '主流页全部接入 useAllDeals · LLM 数据穿透到 Layout/Dashboard/Briefings/Compare/Memory/Pipeline · 用户上传项目"刚上传"即出现在所有视图', files: ['多个'], tag: 'Final', color: '#059669' },
 ]
 
 const milestones = [
@@ -86,19 +94,20 @@ export default function Changelog() {
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1100px] mx-auto">
       <header className="mb-6">
-        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">7-Hour Self-Driven Build Challenge · Recap</div>
-        <h1 className="text-[28px] font-semibold tracking-tight mt-1">7 小时挑战赛 · 实战日志</h1>
+        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">3 轮 7-Hour Self-Driven Challenge · Recap</div>
+        <h1 className="text-[28px] font-semibold tracking-tight mt-1">三轮 7 小时挑战赛 · 实战日志</h1>
         <p className="text-[13.5px] text-ink-700 mt-2 max-w-3xl leading-relaxed">
-          自主驱动 · 不停 ship · 用户中间不给任何指令。从产品基线（7 页）到 7 小时后的最终形态（15 页 + i18n + dark mode + 拖拽 + 命令面板 + 真信源核验 + 周报 + 文档）。
-          每个 Sprint 完成即 commit 部署，全程 18 次 push，CI 全绿。
+          自主驱动 · 不停 ship · 用户中间不给任何指令。三轮挑战累计 {sprints.length}+ Sprint，
+          从产品基线到全平台 LLM 接通 / 代码分割（首屏 -92%）/ 移动端响应 / Cmd+K 全局搜索 / 用户上传完整生命周期管理。
+          每个 Sprint 完成即 commit + Vercel 部署 + GH Pages 同步，CI 全绿。
         </p>
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Stat label="Sprint 总数" value={sprints.length} accent="#0f766e" hint="双轮 7h challenge · 全部闭环" />
+        <Stat label="Sprint 总数" value={sprints.length} accent="#0f766e" hint="三轮 7h challenge · 全部闭环" />
         <Stat label="LLM Provider" value={'6'} accent="#7c3aed" hint="Kimi K2.6 / Gemini / OpenAI / Moonshot / DeepSeek / Pollinations" />
         <Stat label="真信源 live" value={'5/7'} accent="#059669" hint="akshare / qcc(3) / cninfo" />
-        <Stat label="LLM 能力链" value={'10'} accent="#d97706" hint="解析 / 评分 / Memo / 访谈 / 追问 / 竞品 / 流式 / 导出..." />
+        <Stat label="首屏 gzip" value={'25KB'} accent="#0ea5e9" hint="代码分割后 -92% · React lazy + manualChunks" />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
