@@ -22,6 +22,14 @@ export default function Layout() {
       return b.score - a.score
     })
     .slice(0, 3)
+  const userUploadCount = allDeals.filter((d) => d.id.startsWith('user-')).length
+  // 估算 localStorage 占用 — 用 Blob 的 size 统计 dp:userDeals key
+  const lsSizeKB = (() => {
+    try {
+      const raw = localStorage.getItem('dp:userDeals') || '[]'
+      return Math.round(new Blob([raw]).size / 1024)
+    } catch { return 0 }
+  })()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => { setMobileOpen(false) }, [loc.pathname])
@@ -183,9 +191,19 @@ export default function Layout() {
             <Link to="/changelog" className="hover:text-brand-700">35-Sprint Challenge</Link>
             <a href="https://github.com/sherconan/dealpilot-claude/blob/main/HANDOFF.md" target="_blank" className="hover:text-brand-700">HANDOFF</a>
           </div>
-          <div className="flex items-center gap-2">
-            <kbd className="bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded num">⌘ K</kbd>
-            <span>唤起命令面板</span>
+          <div className="flex items-center gap-3 flex-wrap">
+            {userUploadCount > 0 && (
+              <Link to="/memory" className="inline-flex items-center gap-1.5 text-[11px] text-violet-700 hover:underline" title="点击进入 Memory 管理用户上传">
+                <span>✨</span>
+                <span className="num font-medium">{userUploadCount}</span>
+                <span>用户上传</span>
+                <span className="text-ink-400 num">· {lsSizeKB} KB</span>
+              </Link>
+            )}
+            <span className="flex items-center gap-2">
+              <kbd className="bg-ink-100 border border-ink-200 px-1.5 py-0.5 rounded num">⌘ K</kbd>
+              <span>唤起命令面板</span>
+            </span>
           </div>
         </footer>
       </main>
