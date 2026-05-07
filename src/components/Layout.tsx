@@ -35,6 +35,34 @@ export default function Layout() {
 
   useEffect(() => { setMobileOpen(false) }, [loc.pathname])
 
+  // 路由级 document.title — 多 tab 时一眼区分（含基线品牌）
+  useEffect(() => {
+    const TITLES: Record<string, string> = {
+      '/': 'Dashboard',
+      '/pipeline': '漏斗看板',
+      '/upload': '上传 BP',
+      '/compare': '横向对比',
+      '/briefings': '基金周报',
+      '/memory': '机构记忆',
+      '/sources': '真信源',
+      '/risk': '风险扫描',
+      '/portfolio': '投后组合',
+      '/signals': '信号雷达',
+      '/thesis': '投资论点',
+      '/docs': '方法论',
+      '/unicorns': 'AI 独角兽',
+      '/changelog': 'Sprint Log',
+    }
+    const path = loc.pathname
+    let pageName = TITLES[path]
+    if (!pageName && path.startsWith('/deal/')) {
+      if (path.endsWith('/memo')) pageName = 'IC Memo'
+      else if (path.endsWith('/brief')) pageName = '一页简报'
+      else pageName = '项目详情'
+    }
+    document.title = pageName ? `${pageName} · DealPilot` : 'DealPilot · VC 智能筛选驾驶舱'
+  }, [loc.pathname])
+
   // 首屏稳定后利用 idle 时间预热最常用 3 个 chunk — Pipeline / Upload / Memory
   useEffect(() => {
     const w = window as any
