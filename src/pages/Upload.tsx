@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
-import { deals } from '../data/deals'
 import {
   extractPdfText,
   extractFields,
@@ -15,8 +14,9 @@ import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnaly
 import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
 import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
 import { generateFounderQuestions } from '../lib/founderQuestions'
-import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
+import { addUserDeal, buildDealFromExtraction, getUserDeals } from '../lib/userDealStore'
 import { SAMPLE_BPS } from '../data/sampleBPs'
+import { deals as mockDeals } from '../data/deals'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
 
@@ -155,7 +155,9 @@ export default function Upload() {
       setStage('creating')
       setProgressMsg('创建项目并入箱机构记忆...')
       const lower = (name + ' ' + text.slice(0, 2000)).toLowerCase()
-      const m = deals.find((d) =>
+      // 同时查 mock 演示数据 + 用户已上传的项目，避免重复入箱
+      const allKnown = [...getUserDeals(), ...mockDeals]
+      const m = allKnown.find((d) =>
         lower.includes(d.name.toLowerCase()) || lower.includes(d.cnName) ||
         (f.company && (d.name.toLowerCase().includes(f.company.toLowerCase()) || d.cnName.includes(f.company))),
       )
@@ -448,7 +450,7 @@ export default function Upload() {
             <div className="flex items-center gap-2 flex-wrap">
               {stage === 'done' && (matchedDealId ? (
                 <Link to={`/deal/${matchedDealId}`} className="px-3 py-1.5 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">
-                  匹配「{deals.find(d => d.id === matchedDealId)?.name}」 →
+                  匹配「{[...getUserDeals(), ...mockDeals].find(d => d.id === matchedDealId)?.name}」 →
                 </Link>
               ) : createdDealId ? (
                 <>

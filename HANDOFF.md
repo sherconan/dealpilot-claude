@@ -10,7 +10,7 @@
 - **GH Pages 镜像**：https://sherconan.github.io/dealpilot-claude/（无 Kimi 代理 · 仅 Pollinations / Gemini BYOK）
 - **GitHub Repo**：https://github.com/sherconan/dealpilot-claude
 - **CI**：全绿 · 14 路由 + unknown 全部 200
-- **进度**：111 sprint 全闭环 · 4 行业示例 BP 画廊 · 全平台数据驱动 · 首屏 -92% · ICMemo 打印 PDF 优化
+- **进度**：123 sprint 全闭环 · 4 行业示例 BP 画廊 · 5 个 Markdown 一键导出 · 跨 6 页 useAllDeals 拉通 · 首屏 -92%
 
 ## 🚀 7-Hour Challenge 第三轮（Sprint 88-111）核心成果
 
@@ -32,6 +32,9 @@
 | **108** | **ICMemo 打印优化** — counter(page)/counter(pages) 页码 + 动态时间戳 + 面包屑打印隐藏 |
 | **109** | **Sources LLM Provider 实测矩阵** — 6 通道 endpoint/多模态/SSE/成本/状态全表 |
 | 110 | 生产端到端验证 · 14 路由 + unknown 全绿 · GH Pages 同步 |
+| **113-116** | **5 surfaces 一键 Markdown 导出**（DealDetail/Founder Q/Compare/Briefings/Pipeline） |
+| **118-122** | **跨页 useAllDeals 拉通**（Onboarding/Unicorns/Risk/Signals 全部对齐用户上传 deal） |
+| **123** | Upload 去重逻辑同时查 mock + user-uploaded 防止重复入箱 |
 
 ## 🌟 7-Hour Challenge 第二轮（Sprint 68-79）核心成果
 
