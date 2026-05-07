@@ -7,6 +7,7 @@ import type { Deal, Sequoia10 } from '../types'
 export default function Compare() {
   const deals = useAllDeals()
   const [selected, setSelected] = useState<string[]>(() => deals.slice(0, 3).map((d) => d.id))
+  const [copied, setCopied] = useState(false)
 
   function toggle(id: string) {
     setSelected((s) => {
@@ -21,6 +22,72 @@ export default function Compare() {
     [selected, deals]
   )
 
+  // 把当前选中的对比生成 Markdown — IC 会前 1 分钟生成可粘贴的对比报告
+  function buildCompareMarkdown(): string {
+    if (list.length === 0) return ''
+    const lines: string[] = []
+    lines.push(`# DealPilot 横向对比报告 · ${list.map(d => d.name).join(' vs ')}`)
+    lines.push(`生成于 ${new Date().toLocaleString('zh-CN', { hour12: false })}\n`)
+    // 顶部对比卡
+    lines.push('## 评分概览\n')
+    lines.push(`| 项目 | 评分 | 推荐 | 估值 | 本轮 | ARR | 增速 | 硬 RF | 软 RF |`)
+    lines.push(`|---|---|---|---|---|---|---|---|---|`)
+    list.forEach(d => {
+      const hard = d.redFlags.filter(f => f.severity === 'hard').length
+      const soft = d.redFlags.filter(f => f.severity === 'soft').length
+      lines.push(`| **${d.name}** (${d.cnName}) | ${d.score} | ${recommendationMeta[d.recommendation].label} | ${d.valuation} | ${d.askAmount} | ${d.arr || '—'} | ${d.growthRate || '—'} | ${hard} | ${soft} |`)
+    })
+    // Sequoia 10
+    lines.push('\n## Sequoia 10 要素\n')
+    lines.push(`| 要素 | ${list.map(d => d.name).join(' | ')} |`)
+    lines.push(`|---|${list.map(() => '---').join('|')}|`)
+    sequoiaLabels.forEach(s => {
+      lines.push(`| ${s.label} | ${list.map(d => `${d.sequoia[s.key as keyof Sequoia10]}/10`).join(' | ')} |`)
+    })
+    // Red Flags
+    lines.push('\n## Red Flag 列表\n')
+    list.forEach(d => {
+      lines.push(`### ${d.name}`)
+      if (d.redFlags.length === 0) lines.push('- ✅ 未发现 Red Flag\n')
+      else {
+        d.redFlags.forEach(f => lines.push(`- [${f.severity === 'hard' ? '硬' : '软'}] ${f.label}`))
+        lines.push('')
+      }
+    })
+    // Quantitative
+    lines.push('\n## 量化指标\n')
+    lines.push(`| 指标 | ${list.map(d => d.name).join(' | ')} |`)
+    lines.push(`|---|${list.map(() => '---').join('|')}|`)
+    const rows: [string, (d: Deal) => string][] = [
+      ['ARR', d => d.arr || '—'],
+      ['增长率', d => d.growthRate || '—'],
+      ['LTV/CAC', d => d.ltvCac ? `${d.ltvCac}x` : '—'],
+      ['CAC 回收期', d => d.cacPayback || '—'],
+      ['毛利率', d => d.grossMargin || '—'],
+      ['团队人数', d => `${d.teamSize}`],
+      ['成立年份', d => `${d.foundedYear}`],
+      ['TAM', d => d.tam],
+      ['SAM', d => d.sam],
+      ['冠军合伙人', d => d.champion || '—'],
+      ['来源', d => d.source],
+    ]
+    rows.forEach(([label, fn]) => {
+      lines.push(`| ${label} | ${list.map(fn).join(' | ')} |`)
+    })
+    lines.push('\n---\nDealPilot · 横向对比 · 仅供 IC 决策参考')
+    return lines.join('\n')
+  }
+
+  async function copyCompareMarkdown() {
+    const md = buildCompareMarkdown()
+    if (!md) return
+    try {
+      await navigator.clipboard.writeText(md)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2200)
+    } catch { alert('复制失败') }
+  }
+
   if (deals.length === 0) {
     return (
       <div className="px-4 md:px-8 py-12 max-w-[1400px] mx-auto text-center">
@@ -31,12 +98,23 @@ export default function Compare() {
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
-      <header className="mb-5">
-        <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Compare · Side-by-Side</div>
-        <h1 className="text-[26px] font-semibold tracking-tight mt-1">项目横向对比</h1>
-        <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
-          最多选 3 个 BP 并排比较：综合评分 + Sequoia 10 要素 + Red Flag + Traction + 估值 — IC 前快速锁定决策颗粒度
-        </p>
+      <header className="mb-5 flex items-end justify-between gap-3 flex-wrap">
+        <div>
+          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Compare · Side-by-Side</div>
+          <h1 className="text-[26px] font-semibold tracking-tight mt-1">项目横向对比</h1>
+          <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
+            最多选 3 个 BP 并排比较：综合评分 + Sequoia 10 要素 + Red Flag + Traction + 估值 — IC 前快速锁定决策颗粒度
+          </p>
+        </div>
+        {list.length > 0 && (
+          <button
+            onClick={copyCompareMarkdown}
+            className="px-3 py-1.5 text-[12px] rounded-lg border border-brand-300 bg-white text-brand-800 hover:bg-brand-50 inline-flex items-center gap-1.5"
+            title="复制完整 Markdown 对比报告（含评分 / Sequoia 10 / RF / 量化）"
+          >
+            {copied ? '✓ 已复制' : '📋 复制对比 MD'}
+          </button>
+        )}
       </header>
 
       <section className="bg-white border border-ink-200 rounded-xl p-4 mb-5">
