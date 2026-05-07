@@ -15,21 +15,34 @@ export default function Dashboard() {
     const priority = deals.filter((d) => d.recommendation === 'priority').length
     const passed = deals.filter((d) => d.stage === 'pass').length
     const inFunnel = deals.filter((d) => !['pass', 'invested'].includes(d.stage)).length
-    const avgScore = Math.round(deals.reduce((s, d) => s + d.score, 0) / deals.length)
+    const avgScore = total > 0 ? Math.round(deals.reduce((s, d) => s + d.score, 0) / total) : 0
     const llmAnalyzed = deals.filter((d) => d.id.startsWith('user-') || d.deepAnalysisRaw).length
-    return { total, priority, passed, inFunnel, avgScore, llmAnalyzed }
+    const userUploaded = deals.filter((d) => d.id.startsWith('user-')).length
+    return { total, priority, passed, inFunnel, avgScore, llmAnalyzed, userUploaded }
   }, [deals])
 
   const top = [...deals].sort((a, b) => b.score - a.score).slice(0, 3)
   const todos = deals.filter((d) => d.stage === 'ic' || d.stage === 'dd' || d.stage === 'review')
 
+  // 动态日期 + 实时决策提醒
+  const today = new Date()
+  const wkLabel = ['日', '一', '二', '三', '四', '五', '六'][today.getDay()]
+  const todayStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${today.getDate()} 日 · 周${wkLabel}`
+  const icDeals = deals.filter((d) => d.stage === 'ic').slice(0, 3)
+  const decisionCount = todos.length
+  const headlineHint = icDeals.length > 0
+    ? icDeals.map((d) => `${d.name} · ${d.stage === 'ic' ? '已进入 IC' : 'DD 中'}`).join(' · ')
+    : todos.length > 0
+    ? `${todos.length} 个项目处于 Review/DD/IC 阶段，等待跟进`
+    : '当前无待决项目 — 上传新 BP 触发 LLM 真分析'
+
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="flex items-end justify-between flex-wrap gap-4 mb-6">
         <div>
-          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · 2026 年 4 月 30 日 · 周三</div>
-          <h1 className="text-[28px] font-semibold tracking-tight mt-1">今天有 <span className="text-brand-700">3 个项目</span> 等你决策</h1>
-          <p className="text-[13px] text-ink-600 mt-1.5">NebulaAI 已进入 IC，4/30 周三表决 · MetaMed 合伙人会议 5/3 · GreenLogistics 客户集中度红线待确认</p>
+          <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · {todayStr}</div>
+          <h1 className="text-[28px] font-semibold tracking-tight mt-1">今天有 <span className="text-brand-700">{decisionCount} 个项目</span> 等你决策</h1>
+          <p className="text-[13px] text-ink-600 mt-1.5">{headlineHint}</p>
           <p className="text-[12px] text-ink-500 mt-2 max-w-2xl leading-relaxed italic border-l-2 border-brand-500/30 pl-3">
             "VC 的核心赌注始终是「人」 — BP 只是敲门砖，真正的决策在「人」。"
             <span className="not-italic ml-1.5 text-ink-400">— Sequoia Capital</span>
@@ -62,12 +75,12 @@ export default function Dashboard() {
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-5">
-        <MetricCard label="本月进入筛选" value={stats.total} delta="+12 QoQ" accent="#0f766e" />
+        <MetricCard label="进入筛选" value={stats.total} hint={`含 ${stats.userUploaded} 份用户上传`} accent="#0f766e" />
         <MetricCard label="优先推进" value={stats.priority} hint="80 分以上 · 待 IC" accent="#0f766e" />
         <MetricCard label="漏斗活跃" value={stats.inFunnel} hint="初筛/跟进/尽调/IC" accent="#0ea5e9" />
-        <MetricCard label="已 Pass" value={stats.passed} hint="本月 + 4" accent="#94a3b8" />
+        <MetricCard label="已 Pass" value={stats.passed} hint="标准化存档" accent="#94a3b8" />
         <MetricCard label="平均评分" value={stats.avgScore} hint="Scorecard 加权" accent="#d97706" />
-        <MetricCard label="LLM 已分析" value={stats.llmAnalyzed} hint="✨ 真 LLM 报告已生成" accent="#7c3aed" />
+        <MetricCard label="LLM 已分析" value={stats.llmAnalyzed} hint="✨ 真 LLM 报告" accent="#7c3aed" />
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 mb-5">
