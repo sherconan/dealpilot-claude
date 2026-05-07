@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
-import { useAllDeals } from '../lib/userDealStore'
+import { useAllDeals, clearUserDeals, getUserDeals } from '../lib/userDealStore'
 
 type SortKey = 'score' | 'recent' | 'sector'
 type RecFilter = 'all' | 'priority' | 'monitor' | 'conditional' | 'pass'
@@ -60,6 +60,18 @@ export default function Memory() {
               <svg viewBox="0 0 16 16" className="w-3 h-3" fill="currentColor"><path d="M8 1a.75.75 0 01.75.75v8.69l2.72-2.72a.75.75 0 011.06 1.06l-4 4a.75.75 0 01-1.06 0l-4-4a.75.75 0 011.06-1.06l2.72 2.72V1.75A.75.75 0 018 1zM2 13.75a.75.75 0 011.5 0V14h9v-.25a.75.75 0 011.5 0V14a1.5 1.5 0 01-1.5 1.5h-9A1.5 1.5 0 012 14v-.25z"/></svg>
               导出 CSV
             </button>
+            {getUserDeals().length > 0 && (
+              <button
+                onClick={() => {
+                  const userCount = getUserDeals().length
+                  if (confirm(`确定清空 ${userCount} 份用户上传的 BP 分析记录？\n\n· 仅清除浏览器本地的记录\n· 不影响 mock 数据中的演示项目\n· 此操作不可撤销`)) clearUserDeals()
+                }}
+                className="text-[12px] px-3 py-1.5 border border-rose-200 text-rose-700 rounded-lg hover:bg-rose-50 transition"
+                title="清除全部用户上传的 BP（不影响演示数据）"
+              >
+                清空上传
+              </button>
+            )}
           </div>
         </div>
 
