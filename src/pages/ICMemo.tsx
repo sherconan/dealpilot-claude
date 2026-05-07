@@ -5,6 +5,7 @@ import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
+import { toast } from '../lib/toast'
 
 export default function ICMemo() {
   const { id } = useParams()
@@ -81,7 +82,8 @@ export default function ICMemo() {
             onClick={async () => {
               const { copyMarkdownToClipboard } = await import('../lib/exportDeal')
               const ok = await copyMarkdownToClipboard(deal)
-              if (ok) alert('✓ 完整 Markdown 已复制（含 LLM 评分 / 10 段 / 访谈 / Red Flag）')
+              if (ok) toast.success('完整 Markdown 已复制\n（含 LLM 评分 / 10 段 / 访谈 / Red Flag）')
+              else toast.error('复制失败')
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100 inline-flex items-center gap-1.5"
           >
@@ -94,7 +96,8 @@ export default function ICMemo() {
           <button
             onClick={() => {
               const ok = confirm(`将「${deal.name}」IC Memo 提交投委会？\n\n· 触发投委会成员投票（5 票）\n· 锁定 Term Sheet 起草任务\n· 冠军合伙人：${deal.champion}\n\n演示版不会真实发送，仅做流程演示`)
-              if (ok) alert(`✓ 已提交投委会\n\n下一步：等待 IC 投票（72h 内）\n投票通过后自动进入 TS 起草阶段`)
+              if (ok) toast.success(`已提交投委会\n等待 IC 投票（72h 内）— 通过后自动进入 TS 起草阶段`, 6000)
+              else toast.error('提交失败')
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">提交投委会</button>
         </div>

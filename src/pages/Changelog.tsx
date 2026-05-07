@@ -105,6 +105,7 @@ const sprints: SprintEntry[] = [
   { num: 127, title: 'Thesis × user-deal 对齐矩阵', detail: '6 硬门槛 × N 用户上传 deal 的 ✓/✕ 矩阵 · 静态启发式（TAM 抓字符串 / 技术壁垒查 sequoia / ARR / AI 原生 / ESG / 地缘）· 综合通过率徽章', files: ['pages/Thesis.tsx'], tag: '功能', color: '#0f766e' },
   { num: 128, title: 'DealChat system prompt 升级', detail: '区分 user-uploaded vs mock · 加 traction / founder questions / 完整 founders 背景 / TAM&SAM · 6 条规则约束（不编造 / 估值锚定 / reference check 路径建议）', files: ['lib/chatLLM.ts'], tag: '真 LLM', color: '#7c3aed' },
   { num: 129, title: 'HelpModal 加 重看 Onboarding 入口', detail: '清除 v2 + v3 flag 并重载 → 老用户可主动复看 5 步引导（含 4 行业示例 BP 画廊）', files: ['components/HelpModal.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 130, title: 'Toast 通知系统 · 替换全部 13 个 alert()', detail: 'lib/toast.ts CustomEvent 单例总线 + ToastHost 渲染容器（success/error/info 三色 + 自动消失 + 点击关闭 + 同时最多 5 条 + fadeInUp 动画）· 全平台 Briefings/ICMemo/Memory/Pipeline/DealDetail/Compare 13 处 alert 全替换', files: ['lib/toast.ts', 'components/ToastHost.tsx', 'components/Layout.tsx', 'index.css', '6 个页面'], tag: 'UX', color: '#0f766e' },
 ]
 
 const milestones = [

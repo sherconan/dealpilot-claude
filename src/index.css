@@ -19,6 +19,12 @@
 }
 
 /* ─── Print 优化（IC Memo PDF 导出 · A4 + 中文字体） ─── */
+/* Toast 进入动画 */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media print {
   aside, .no-print, footer { display: none !important; }
   main { overflow: visible !important; padding: 0 !important; }

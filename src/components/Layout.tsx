@@ -5,6 +5,7 @@ import { useApp } from '../contexts/AppContext'
 import CommandPalette from './CommandPalette'
 import HelpModal from './HelpModal'
 import Onboarding from './Onboarding'
+import ToastHost from './ToastHost'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -191,6 +192,7 @@ export default function Layout() {
       <CommandPalette />
       <HelpModal />
       <Onboarding />
+      <ToastHost />
     </div>
   )
 }
