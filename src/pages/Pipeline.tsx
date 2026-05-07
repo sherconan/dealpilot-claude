@@ -90,6 +90,24 @@ export default function Pipeline() {
   const sectors = Array.from(new Set(deals.map((d) => d.sector)))
   const total = Object.values(grouped).reduce((s, list) => s + list.length, 0)
 
+  if (deals.length === 0) {
+    return (
+      <div className="px-4 md:px-8 py-12 max-w-[900px] mx-auto text-center">
+        <div className="bg-white border border-ink-200 rounded-2xl p-10">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-brand-50 border border-brand-500/30 flex items-center justify-center mb-4">
+            <svg viewBox="0 0 24 24" className="w-8 h-8 text-brand-700" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 19l4-4 3 3 7-8" strokeLinecap="round" strokeLinejoin="round"/><circle cx="19" cy="10" r="1.5" fill="currentColor"/></svg>
+          </div>
+          <h1 className="text-[20px] font-semibold tracking-tight">漏斗看板还是空的</h1>
+          <p className="text-[13px] text-ink-600 mt-2 leading-relaxed">先去 <Link to="/upload" className="text-brand-700 underline font-medium">上传 BP</Link> 触发真 LLM 分析，项目会自动入箱并按 Scorecard 分级展示在 6 阶段漏斗中</p>
+          <Link to="/upload" className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium rounded-lg bg-brand-700 text-white hover:bg-brand-800">
+            <svg viewBox="0 0 20 20" className="w-4 h-4" fill="currentColor"><path d="M10 2a1 1 0 011 1v6h6a1 1 0 110 2h-6v6a1 1 0 11-2 0v-6H3a1 1 0 110-2h6V3a1 1 0 011-1z"/></svg>
+            上传 BP · 真 LLM 分析
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1800px] mx-auto">
       <header className="mb-5">

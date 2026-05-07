@@ -28,6 +28,18 @@ export default function Memory() {
     })
   }, [search, recFilter, sort, riskOnly])
 
+  if (deals.length === 0) {
+    return (
+      <div className="px-4 md:px-8 py-12 max-w-[900px] mx-auto text-center">
+        <div className="bg-white border border-ink-200 rounded-2xl p-10">
+          <h1 className="text-[20px] font-semibold tracking-tight">机构记忆库为空</h1>
+          <p className="text-[13px] text-ink-600 mt-2 leading-relaxed">所有评估过的项目结构化存档，创始人再次出现自动召回。先去 <Link to="/upload" className="text-brand-700 underline font-medium">上传 BP</Link> 触发分析，记忆将自动写入。</p>
+          <Link to="/upload" className="mt-4 inline-flex items-center gap-2 px-4 py-2 text-[13px] font-medium rounded-lg bg-brand-700 text-white hover:bg-brand-800">上传 BP</Link>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-5">
