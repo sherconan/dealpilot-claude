@@ -335,6 +335,35 @@ export default function Upload() {
         </section>
       )}
 
+      {/* 最近上传过的项目 — 一键跳详情 */}
+      {stage === 'idle' && getUserDeals().length > 0 && (
+        <section className="bg-white border border-ink-200 rounded-2xl p-4 mb-5">
+          <div className="flex items-end justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-ink-500">最近上传 · 你已分析</div>
+              <h2 className="text-[14px] font-semibold tracking-tight mt-0.5">{getUserDeals().length} 个项目（最近 3 个直达）</h2>
+            </div>
+            <Link to="/memory" className="text-[11px] text-brand-700 hover:underline">看全部 / 备份 →</Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {getUserDeals().slice(0, 3).map((d) => (
+              <Link
+                key={d.id}
+                to={`/deal/${d.id}`}
+                className="bg-ink-50 hover:bg-brand-50 border border-ink-200 hover:border-brand-500/40 rounded-lg p-3 transition group"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[11px] tracking-wider uppercase text-violet-700 font-medium">✨ LLM 已分析</span>
+                  <span className="num text-[14px] font-semibold" style={{ color: d.accentColor }}>{d.score}</span>
+                </div>
+                <div className="text-[13px] font-semibold tracking-tight text-ink-900 truncate group-hover:text-brand-800">{d.name}</div>
+                <div className="text-[10.5px] text-ink-500 truncate mt-0.5">{d.sector} · {d.round} · {d.lastUpdated}</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* 示例 BP 画廊 — 4 个不同行业，一键预填触发完整 LLM 流水线 */}
       {stage === 'idle' && (
         <section className="bg-gradient-to-br from-violet-50 via-white to-white border-2 border-violet-500/30 rounded-2xl p-5 mb-5">
