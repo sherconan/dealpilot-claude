@@ -53,6 +53,61 @@ export default function Briefings() {
     setTimeout(() => setShared(false), 2200)
   }
 
+  const [mdCopied, setMdCopied] = useState(false)
+  function buildBriefingMarkdown(): string {
+    const lines: string[] = []
+    lines.push(`# DealPilot 基金周报 · ${year} W${week}`)
+    lines.push(`${fmtDate(weekStart)} 至 ${fmtDate(new Date())}\n`)
+    lines.push('## 1. 一句话提要')
+    lines.push(summary() + '\n')
+    lines.push('## 2. 本周决策池')
+    lines.push(`- 新入箱：${stats.inbox}（含用户上传 ${stats.userUploaded}）`)
+    lines.push(`- 进入跟进：${stats.review + stats.dd}（Review ${stats.review} · DD ${stats.dd}）`)
+    lines.push(`- 进入 IC：${stats.ic}（优先 ${stats.priority}）`)
+    lines.push(`- 已 Pass：${stats.passed}\n`)
+    lines.push('## 3. Top 3 优先项目')
+    if (top3.length === 0) lines.push('- _（暂无）_\n')
+    else {
+      top3.forEach((d, i) => {
+        lines.push(`${i + 1}. **${d.name}** (${d.cnName}) · ${d.sector} · ${d.round} · ${d.score}/100 · ${recommendationMeta[d.recommendation].label}`)
+        lines.push(`   ${d.llmOneLiner || d.tagline}`)
+      })
+      lines.push('')
+    }
+    lines.push('## 4. 本周关键信号')
+    if (hardFlagDeals.length > 0) {
+      hardFlagDeals.forEach(d => {
+        const hf = d.redFlags.find(f => f.severity === 'hard')!
+        lines.push(`- 🔴 [紧急] **${d.name}** · ${hf.label}`)
+      })
+    } else {
+      lines.push('- ✅ [OK] 本周组合无硬红线触发')
+    }
+    if (stats.softFlags > 0) lines.push(`- 🟡 [关注] 共 ${stats.softFlags} 项软扣分项`)
+    if (stats.userUploaded > 0) lines.push(`- ✨ [新] 本周新上传 ${stats.userUploaded} 份 BP 经 LLM 真分析`)
+    lines.push('')
+    lines.push('## 5. 观察名单')
+    if (watchlist.length === 0) lines.push('- _（暂无）_\n')
+    else {
+      watchlist.forEach(d => lines.push(`- **${d.name}** · ${d.sector} · ${d.score}/100 · ${d.tagline.slice(0, 60)}`))
+      lines.push('')
+    }
+    lines.push('## 6. 下周聚焦')
+    if (stats.priority > 0) lines.push(`1. ${stats.priority} 个 priority 项目排入合伙人晨会议程，准备 IC pre-read`)
+    if (stats.hardFlags > 0) lines.push(`2. 对 ${stats.hardFlags} 项硬红线触发项目执行 qcc-risk 全维背调`)
+    if (stats.userUploaded > 0) lines.push(`3. 对本周上传的 ${stats.userUploaded} 份 BP 做 founder reference check`)
+    lines.push(`${stats.priority + (stats.hardFlags > 0 ? 1 : 0) + (stats.userUploaded > 0 ? 1 : 0) + 1}. 对 watchlist ${watchlist.length} 个项目补 1 次创始人深度访谈`)
+    lines.push(`\n---\nDealPilot · 实时生成 · ${new Date().toLocaleString('zh-CN', { hour12: false })}`)
+    return lines.join('\n')
+  }
+  async function copyMarkdown() {
+    try {
+      await navigator.clipboard.writeText(buildBriefingMarkdown())
+      setMdCopied(true)
+      setTimeout(() => setMdCopied(false), 2200)
+    } catch { alert('复制失败') }
+  }
+
   function summary() {
     const lead = top3[0]
     if (!lead) return '本周无新增 BP — 建议在 Upload 上传 1-2 份 BP 触发自动评分'
@@ -71,9 +126,12 @@ export default function Briefings() {
             {fmtDate(weekStart)} 至 {fmtDate(new Date())} · 实时聚合 Pipeline + 用户上传 BP + Scorecard
           </p>
         </div>
-        <div className="flex items-center gap-2 no-print">
+        <div className="flex items-center gap-2 no-print flex-wrap">
           <button onClick={copyLink} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">
             {shared ? '已复制 ✓' : '分享链接'}
+          </button>
+          <button onClick={copyMarkdown} className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100" title="复制完整 Markdown 周报（可粘贴到飞书 / Notion / 邮件）">
+            {mdCopied ? '✓ 已复制 MD' : '📋 复制 MD'}
           </button>
           <button onClick={() => window.print()} className="px-3.5 py-2 text-[13px] rounded-lg bg-brand-700 text-white hover:bg-brand-800">导出 PDF</button>
         </div>
