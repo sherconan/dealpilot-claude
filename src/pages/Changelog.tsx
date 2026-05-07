@@ -57,6 +57,17 @@ const sprints: SprintEntry[] = [
   { num: 51, title: 'Moonshot/Kimi 真实独角兽画像', detail: 'qcc 三工具实测：杨植麟 / 注册资本 ¥100 万 / 1 条专利 CN118052282B', files: ['pages/Risk.tsx', 'data/sourceProofs.ts'], tag: '真信源', color: '#059669' },
   { num: 52, title: '智谱 + MiniMax 专利实测', detail: '智谱 80 条 + MiniMax 12 条 → 6 家 4,568 条专利矩阵', files: ['data/sourceProofs.ts', 'pages/Dashboard.tsx', 'pages/Sources.tsx'], tag: '真信源', color: '#059669' },
   { num: 53, title: '/unicorns AI 独角兽对照矩阵页', detail: '7 家真实公司（4 独角兽 + 3 上市）IP 储备横向对比 + 合规画像网格', files: ['pages/Unicorns.tsx', 'App.tsx', 'i18n/dict.ts'], tag: '功能', color: '#0f766e' },
+  { num: 60, title: '上传 BP 真创建项目入箱', detail: 'userDealStore + buildDealFromExtraction 自动写 deal 到 localStorage，Pipeline/Memory/Dashboard 自动同步', files: ['lib/userDealStore.ts', 'pages/Upload.tsx', 'data/deals.ts'], tag: '功能', color: '#0f766e' },
+  { num: 63, title: '接真 LLM (Pollinations) — 不再 regex 模板', detail: '按 ===SECTION N=== 切分输出 10 段深度报告，由 LLM 真基于 PDF 全文撰写', files: ['lib/llmAnalyze.ts', 'pages/Upload.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 64, title: '5 provider BYOK 多模态接入', detail: 'Pollinations 免费文本 / Kimi K2.6 / OpenAI GPT-4o-mini / Moonshot Vision / DeepSeek / Gemini Flash', files: ['lib/multimodalAnalyze.ts'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 67, title: 'Kimi K2.6 (kimi-for-coding) 真接通', detail: 'api.kimi.com/coding/v1 + Vercel Edge 代理转发 + UA 注入绕过 coding agent 限制', files: ['api/kimi-proxy.ts', 'lib/multimodalAnalyze.ts'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 68, title: 'Kimi K2.6 流式 SSE — 实时看 LLM 思考', detail: 'Vercel Edge 直接 pipe upstream body to client + 前端 ReadableStream 解析 chunks', files: ['api/kimi-proxy.ts', 'lib/multimodalAnalyze.ts', 'pages/Upload.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 70, title: 'LLM 真打分 Sequoia 10', detail: '替代规则引擎 — LLM 给 10 维度独立 0-10 分 + 30-80 字依据 + PDF 原文 evidence + 加权计算总分', files: ['lib/scoringLLM.ts', 'pages/DealDetail.tsx', 'types/index.ts'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 71, title: 'ICMemo 整合 LLM 完整版', detail: '用 LLM 写的 10 段直接渲染到 IC Memo + Sequoia 10 评分附录', files: ['pages/ICMemo.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 72, title: 'LLM 生成 8 个针对 BP 真内容创始人访谈问题', detail: '替代模板 — 每个问题基于 BP 具体细节定制，含 why/expect/watch 信号', files: ['lib/founderQuestions.ts', 'pages/DealDetail.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 74, title: '多轮追问对话 DealChat', detail: '注入完整 deal context (PDF + 评分 + 报告) → 流式 SSE 回答 + localStorage 历史 + 6 个建议问题', files: ['lib/chatLLM.ts', 'components/DealChat.tsx'], tag: '真 LLM', color: '#7c3aed' },
+  { num: 76, title: 'Markdown 完整报告导出', detail: '一键导出含 LLM 评分 + 10 段 + 访谈问题 + Red Flag + 时间线 的完整 Markdown', files: ['lib/exportDeal.ts'], tag: '功能', color: '#0f766e' },
+  { num: 77, title: 'LLM 竞品深度对比', detail: '基于 9 家已实测 akshare 真财报 + LLM 写 500-800 字深度对比 + 估值锚定', files: ['lib/competitorLLM.ts', 'components/CompetitorAnalysis.tsx'], tag: '真 LLM', color: '#7c3aed' },
   { num: 54, title: 'Changelog + HANDOFF + KPI 同步 53 状态', detail: '全量更新到 53 sprint / 51 commit / 7 真实公司 IP / 6 公司风险', files: ['pages/Changelog.tsx', 'HANDOFF.md'], tag: '文档', color: '#475569' },
 ]
 
@@ -78,10 +89,10 @@ export default function Changelog() {
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 全部闭环" />
-        <Stat label="累计页面" value={18} accent="#0ea5e9" hint="全部 200 OK" />
-        <Stat label="真信源已 live" value={'5/7'} accent="#059669" hint="akshare / qcc(3) / cninfo" />
-        <Stat label="实测公司画像" value={'10+'} accent="#d97706" hint="6 风险 · 7 IP · 9 财报" />
+        <Stat label="Sprint 数" value={sprints.length} accent="#0f766e" hint="自主规划 · 67+ 全部闭环" />
+        <Stat label="LLM provider" value={'6'} accent="#7c3aed" hint="Pollinations / Kimi K2.6 / Gemini / OpenAI / Moonshot / DeepSeek" />
+        <Stat label="真信源 live" value={'5/7'} accent="#059669" hint="akshare / qcc(3) / cninfo" />
+        <Stat label="LLM 能力链" value={'10'} accent="#d97706" hint="解析 / 评分 / Memo / 访谈 / 追问 / 竞品 / 流式..." />
       </section>
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-3">
