@@ -114,7 +114,7 @@ src/
 - **所有可比上市公司表格 100% 真实数据**：寒武纪 / 拉卡拉 / 联影医疗 / 顺丰 / 东航物流 / 京东物流 / 石头科技 / 科沃斯 — 全部来自 akshare 实时调用
 - **数据核验、访谈问题、风险扫描** 部分条目带「实时」徽章为真信源已抓取，其他为「演示」字样（等待真实 BP 触发）
 
-## 🏁 双轮 7 小时挑战赛（85+ Sprint 全闭环）
+## 🏁 三轮 7 小时挑战赛（98+ Sprint 全闭环）
 
 第一轮（Sprint 1-67）：18 个页面 / 真信源接入 / Cmd-K / 拖拽 / CSV / IC 简报 / 周报 / 投资逻辑画布 / 中英双语 + 暗色
 
@@ -129,7 +129,16 @@ src/
 - ✨ **LLM 竞品深度对比**（基于 9 家 akshare 真财报锚定估值）
 - ✨ **Markdown 完整报告导出**
 
-详见线上 [`/changelog`](https://dealpilot-claude.vercel.app/?/changelog) 或本仓库 commit history。
+**第三轮（Sprint 88-101）· 全平台数据驱动 + 性能 + 移动**：
+- 🚀 **代码分割 · 首屏 925 KB → 68 KB**（gzip 25 KB，-92%）— React.lazy 16 页 + manualChunks
+- 📱 **移动端响应式**（17 页 px-4 md:px-8 + Layout drawer + 顶部 mobile bar）
+- 🔁 **全平台 useAllDeals**：Compare / Briefings / Layout sidebar / Cmd+K / Memory / Pipeline / Dashboard 全实时反映用户上传
+- 🗑 **完整生命周期管理**：DealDetail 删除按钮 + Memory 批量清空（仅清 user 上传，不影响 mock）
+- 🎯 **空状态 CTA**：Pipeline / Memory / Compare 在 0 项目时显示引导卡片
+- 🚧 **404 NotFound**：未知路径降级到品牌化 fallback + Cmd+K 提示
+- 📅 **Dashboard 动态化**：今天日期 + 真 todos 计数 + IC/DD/empty 三态副本
+
+详见线上 [`/changelog`](https://dealpilot-claude.vercel.app/changelog) 或本仓库 commit history。
 
 P8 自检清单：每个 Sprint 都满足 ① 写代码 ② 自查 build ③ git commit ④ git push ⑤ 等 CI 绿 ⑥ verify URL 200。**对结果负责的闭环**，不是 commit 一把就完事。
 
