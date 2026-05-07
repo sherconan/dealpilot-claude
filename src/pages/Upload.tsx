@@ -16,6 +16,7 @@ import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApi
 import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
 import { generateFounderQuestions } from '../lib/founderQuestions'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
+import { SAMPLE_BPS } from '../data/sampleBPs'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
 
@@ -302,23 +303,52 @@ export default function Upload() {
             <div className="text-[12px] text-ink-500 mt-1">pdfjs 真读 PDF + Pollinations LLM 真写 10 段报告 · 约 30-60 秒</div>
           </div>
           <div className="bg-white border border-ink-200 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-[11px] uppercase tracking-wider text-ink-500">或粘贴 BP 文本</div>
-              <button
-                onClick={() => setPasted(SAMPLE_BP_TEXT)}
-                className="text-[10px] text-violet-700 hover:underline font-medium"
-                title="预填一份示例 BP 让你立刻试用 LLM 真分析"
-              >
-                ✨ 用示例 BP 试一下
-              </button>
-            </div>
+            <div className="text-[11px] uppercase tracking-wider text-ink-500 mb-2">或粘贴 BP 文本</div>
             <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={5}
-              placeholder={'粘贴 BP 内容…（点右上角"试一下"用示例 BP）'}
+              placeholder={'粘贴 BP 内容…（或选择下方示例 BP 一键试用）'}
               className="w-full text-[12px] bg-ink-50 border border-ink-200 rounded-lg px-2.5 py-2 leading-relaxed focus:outline-none focus:ring-2 focus:ring-brand-500/30" />
             <button onClick={onPasteSubmit} disabled={pasted.trim().length < 30}
               className="mt-2 w-full px-3 py-2 text-[12px] rounded-lg bg-brand-700 text-white hover:bg-brand-800 disabled:bg-ink-300 disabled:cursor-not-allowed transition">
               开始深度分析
             </button>
+          </div>
+        </section>
+      )}
+
+      {/* 示例 BP 画廊 — 4 个不同行业，一键预填触发完整 LLM 流水线 */}
+      {stage === 'idle' && (
+        <section className="bg-gradient-to-br from-violet-50 via-white to-white border-2 border-violet-500/30 rounded-2xl p-5 mb-5">
+          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+            <div>
+              <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">示例 BP 画廊 · 一键试用 LLM 真分析</div>
+              <h2 className="text-[15px] font-semibold tracking-tight mt-0.5">4 个不同行业 BP — 不用上传 PDF 也能完整体验 10 段深度报告 + Sequoia 评分</h2>
+            </div>
+            <span className="text-[10px] text-violet-700 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded font-medium">点卡片自动预填 → 滚到上面点"开始深度分析"</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {SAMPLE_BPS.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => {
+                  setPasted(s.text)
+                  // 滚动到 textarea 位置
+                  document.querySelector('textarea')?.focus({ preventScroll: false })
+                  document.querySelector('textarea')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                }}
+                className="text-left bg-white border border-ink-200 rounded-xl p-3 hover:border-violet-500/60 hover:shadow-pop transition group"
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[20px]" aria-hidden>{s.emoji}</span>
+                  <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium" style={{ background: s.accent + '14', color: s.accent }}>{s.industry}</span>
+                </div>
+                <div className="text-[13px] font-semibold tracking-tight text-ink-900 truncate group-hover:text-violet-800">{s.company}</div>
+                <div className="text-[11px] text-ink-600 mt-1 leading-snug line-clamp-2">{s.tagline}</div>
+                <div className="text-[10.5px] num text-ink-500 mt-2 pt-2 border-t border-ink-100 line-clamp-2">{s.highlight}</div>
+              </button>
+            ))}
+          </div>
+          <div className="mt-3 text-[10.5px] text-ink-500 leading-relaxed">
+            ⓘ 4 份 BP 都是为产品演示精心编写的「真实风格」内容（含创始团队 / TAM / 牵引力 / Red Flag），LLM 会真基于其中文字生成 10 段报告 — 这不是 mock 数据，是真 LLM 调用。
           </div>
         </section>
       )}
@@ -499,51 +529,7 @@ function renderRichLine(line: string): React.ReactNode {
 
 function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
-const SAMPLE_BP_TEXT = `星云智能 (NebulaAI) Series A 融资计划书
-
-公司名称：星云智能科技（上海）有限公司
-赛道：AI Infra · 多智能体协同平台
-阶段：Series A
-投前估值：$120M
-本轮融资：$15M
-
-【一句话定位】
-为企业知识工作者打造的多智能体协同平台 — 让 AI 不只会聊天，而是能像团队一样协作完成复杂任务。
-
-【创始团队】
-- 林穆（CEO / 联合创始人）：前 Anthropic Applied Research Lead，Stanford CS PhD，多智能体 Planner 原作者
-- 陈昊（CTO / 联合创始人）：前阿里云 PaaS 负责人，主导过百万级 Agent 调度系统
-- Sophia Wang（COO）：前 Salesforce 大中华区客户成功总监
-
-【市场机会】
-TAM 全球 AI Agent 市场 2028 预计 $47B（Gartner 2025），中国企业 Agent SaaS $6.2B SAM。
-为什么是现在：① 大模型基础能力跨过推理拐点 ② 企业从 POC 进入生产级部署窗口 ③ 国内国资云 2025-Q4 同步开放企业 Agent PaaS 接口
-
-【关键数据】
-- ARR：$4.8M（Q1 2026）
-- 增长率：38% MoM 连续 6 个月
-- 客户：47 家企业客户（包括 8 家 Fortune 500）
-- NRR：143%
-- LTV/CAC：5.2x，CAC 回收期 8 个月
-- 毛利率：78%
-- Daily Active Agents：8,400
-
-【产品差异化】
-- 多智能体编排为行业第一个生产级方案
-- 8 项核心专利已授权（覆盖 Planner / Memory / Tool-Routing）
-- 客户实测：100 Agent 并发任务成功率 91.4%（vs LangChain 78.2%）
-- 已开源 agent-kernel 形成开发者社区（GitHub 2.4k stars / 4 月内）
-
-【对标公司】
-对标 Palantir（企业 AI 平台）、Snowflake（云原生数据底座）、UiPath（企业自动化）。
-
-【风险与挑战】
-- 客户集中度：Top 3 客户贡献 48% ARR，单点风险
-- 美元 / 人民币双币种架构仍在设计中
-- 国内大模型 API 价格战对长期毛利的影响
-
-【融资用途】
-$15M 拆分：60% 团队扩张（GPU 工程师 + GTM）、25% 自建推理基础设施、15% 国际化拓展。`
+// 旧的单一 SAMPLE_BP_TEXT 已迁移到 src/data/sampleBPs.ts，由 SAMPLE_BPS 数组替代（4 个行业一键试用）
 
 // 流式实时切 sections — 每个 chunk 后把已收到的 raw 重切
 function parseSectionsLive(raw: string): Record<string, string> {
