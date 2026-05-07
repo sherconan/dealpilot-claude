@@ -13,6 +13,7 @@ import {
 } from '../lib/pdfPipeline'
 import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
 import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, type Provider } from '../lib/multimodalAnalyze'
+import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
 import { addUserDeal, buildDealFromExtraction } from '../lib/userDealStore'
 
 type Stage = 'idle' | 'reading' | 'extracting' | 'llm-calling' | 'streaming' | 'creating' | 'done' | 'error'
@@ -117,6 +118,17 @@ export default function Upload() {
       setSections((arr) => arr.map((sec) => ({ ...sec, status: sec.full ? 'done' : 'pending' })))
       setLlmDuration(analysis.duration)
 
+      // ④ LLM 真评分（不再用规则引擎写死）
+      let llmScoring: LLMScoring | null = null
+      try {
+        setProgressMsg('LLM 真评分 Sequoia 10 维度（5-10 秒）...')
+        llmScoring = await scoreWithLLM(provider, apiKey || null, text, f, flags)
+        setScore(llmScoring.totalScore)
+      } catch (scoreErr: any) {
+        console.warn('LLM 评分失败，回退规则引擎', scoreErr)
+        // sc 已经是规则引擎评分，保留
+      }
+
       // ④ 创建项目
       setStage('creating')
       setProgressMsg('创建项目并入箱机构记忆...')
@@ -127,7 +139,17 @@ export default function Upload() {
       )
       setMatchedDealId(m?.id || null)
       if (!m) {
-        const newDeal = buildDealFromExtraction(f, flags, sc, name, text, analysis.raw)
+        const finalScore = llmScoring?.totalScore ?? sc
+        const newDeal = buildDealFromExtraction(f, flags, finalScore, name, text, analysis.raw)
+        // 用 LLM 评分覆盖 sequoia 字段
+        if (llmScoring) {
+          for (const d of llmScoring.dimensions) {
+            if (d.key in newDeal.sequoia) (newDeal.sequoia as any)[d.key] = d.score
+          }
+          newDeal.recommendation = llmScoring.recommendation
+          ;(newDeal as any).llmDimensions = llmScoring.dimensions  // 完整评分依据
+          ;(newDeal as any).llmOneLiner = llmScoring.oneLiner
+        }
         addUserDeal(newDeal)
         setCreatedDealId(newDeal.id)
       }

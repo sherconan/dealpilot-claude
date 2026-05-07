@@ -135,4 +135,13 @@ export interface Deal {
   source: string
   accentColor: string
   deepAnalysisRaw?: string  // LLM 真分析返回的 10 段完整报告（含 ===SECTION 1=== 等分隔符）
+  llmDimensions?: Array<{   // LLM 评分依据（每个维度独立打分 + rationale + evidence）
+    key: string
+    label: string
+    score: number
+    rationale: string
+    evidence?: string
+    recommendation?: string
+  }>
+  llmOneLiner?: string
 }
