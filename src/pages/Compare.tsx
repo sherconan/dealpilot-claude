@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { deals } from '../data/deals'
+import { useAllDeals } from '../lib/userDealStore'
 import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
 import type { Deal, Sequoia10 } from '../types'
 
 export default function Compare() {
-  const [selected, setSelected] = useState<string[]>([deals[0].id, deals[1].id, deals[2].id])
+  const deals = useAllDeals()
+  const [selected, setSelected] = useState<string[]>(() => deals.slice(0, 3).map((d) => d.id))
 
   function toggle(id: string) {
     setSelected((s) => {
@@ -15,7 +16,18 @@ export default function Compare() {
     })
   }
 
-  const list: Deal[] = useMemo(() => selected.map((id) => deals.find((d) => d.id === id)!).filter(Boolean), [selected])
+  const list: Deal[] = useMemo(
+    () => selected.map((id) => deals.find((d) => d.id === id)!).filter(Boolean),
+    [selected, deals]
+  )
+
+  if (deals.length === 0) {
+    return (
+      <div className="px-8 py-12 max-w-[1400px] mx-auto text-center">
+        <div className="text-[14px] text-ink-500">暂无项目可对比，先去 <Link to="/upload" className="text-brand-700 underline">上传 BP</Link> 或 <Link to="/" className="text-brand-700 underline">查看 Pipeline</Link></div>
+      </div>
+    )
+  }
 
   return (
     <div className="px-8 py-6 max-w-[1400px] mx-auto">
