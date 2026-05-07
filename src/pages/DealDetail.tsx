@@ -5,6 +5,7 @@ import { getDealExtra } from '../data/extra'
 import { sequoiaLabels, recommendationMeta, thesisChecks } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
+import DealChat from '../components/DealChat'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import type { Sequoia10, DataCheck, InterviewQuestion } from '../types'
 
@@ -313,6 +314,9 @@ export default function DealDetail() {
           </div>
         </section>
       )}
+
+      {/* ─── LLM 多轮追问对话 ─── */}
+      <DealChat deal={deal} />
 
       {/* ─── 投资逻辑画布 ─── */}
       <ThesisCanvas deal={deal} />
