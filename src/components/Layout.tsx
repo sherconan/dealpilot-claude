@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { deals } from '../data/deals'
+import { useAllDeals } from '../lib/userDealStore'
 import { useApp } from '../contexts/AppContext'
 import CommandPalette from './CommandPalette'
 import HelpModal from './HelpModal'
@@ -9,7 +9,18 @@ import Onboarding from './Onboarding'
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
   const loc = useLocation()
-  const priorityDeals = deals.filter((d) => d.recommendation === 'priority').slice(0, 3)
+  const allDeals = useAllDeals()
+  // 优先展示用户上传的高分项目，其次是 mock priority — 让 sidebar 实时反映用户分析结果
+  const priorityDeals = [...allDeals]
+    .filter((d) => d.recommendation === 'priority')
+    .sort((a, b) => {
+      // user-uploaded 优先
+      const ua = a.id.startsWith('user-') ? 0 : 1
+      const ub = b.id.startsWith('user-') ? 0 : 1
+      if (ua !== ub) return ua - ub
+      return b.score - a.score
+    })
+    .slice(0, 3)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => { setMobileOpen(false) }, [loc.pathname])

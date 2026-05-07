@@ -29,7 +29,7 @@ export default function Memory() {
   }, [search, recFilter, sort, riskOnly])
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-5">
         <div className="flex items-end justify-between flex-wrap gap-3">
           <div>

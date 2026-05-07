@@ -24,7 +24,7 @@ export default function Dashboard() {
   const todos = deals.filter((d) => d.stage === 'ic' || d.stage === 'dd' || d.stage === 'review')
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="flex items-end justify-between flex-wrap gap-4 mb-6">
         <div>
           <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · 2026 年 4 月 30 日 · 周三</div>

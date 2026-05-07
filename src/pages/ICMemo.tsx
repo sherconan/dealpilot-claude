@@ -36,7 +36,7 @@ export default function ICMemo() {
   }
 
   return (
-    <div className="px-8 py-6 max-w-[1280px] mx-auto grid lg:grid-cols-[200px_1fr] gap-8">
+    <div className="px-4 md:px-8 py-6 max-w-[1280px] mx-auto grid lg:grid-cols-[200px_1fr] gap-8">
       <aside className="hidden lg:block sticky top-6 self-start no-print">
         <div className="text-[10px] tracking-wider uppercase text-ink-500 font-medium mb-2">本页目录</div>
         <ol className="space-y-1.5 border-l border-ink-200 pl-3">

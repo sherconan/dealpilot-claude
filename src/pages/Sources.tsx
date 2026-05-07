@@ -11,7 +11,7 @@ export default function Sources() {
   const wiredCount = sources.filter(s => s.status === 'wired').length
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-6">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Data Sources · Verification Layer</div>
         <h1 className="text-[26px] font-semibold tracking-tight mt-1">真信源接入与实测</h1>

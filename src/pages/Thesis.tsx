@@ -41,7 +41,7 @@ export default function Thesis() {
   const [editing, setEditing] = useState(false)
 
   return (
-    <div className="px-8 py-6 max-w-[1200px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1200px] mx-auto">
       <header className="flex items-end justify-between mb-5 gap-4 flex-wrap">
         <div>
           <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Investment Thesis · Alignment Engine</div>

@@ -125,7 +125,7 @@ export default function Portfolio() {
   const irr = '38.4%'
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-5">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Portfolio · Post-Investment</div>
         <h1 className="text-[26px] font-semibold tracking-tight mt-1">{t('nav.portfolio')}</h1>

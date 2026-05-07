@@ -84,7 +84,7 @@ const milestones = [
 
 export default function Changelog() {
   return (
-    <div className="px-8 py-6 max-w-[1100px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1100px] mx-auto">
       <header className="mb-6">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">7-Hour Self-Driven Build Challenge · Recap</div>
         <h1 className="text-[28px] font-semibold tracking-tight mt-1">7 小时挑战赛 · 实战日志</h1>

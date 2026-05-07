@@ -23,14 +23,14 @@ export default function Compare() {
 
   if (deals.length === 0) {
     return (
-      <div className="px-8 py-12 max-w-[1400px] mx-auto text-center">
+      <div className="px-4 md:px-8 py-12 max-w-[1400px] mx-auto text-center">
         <div className="text-[14px] text-ink-500">暂无项目可对比，先去 <Link to="/upload" className="text-brand-700 underline">上传 BP</Link> 或 <Link to="/" className="text-brand-700 underline">查看 Pipeline</Link></div>
       </div>
     )
   }
 
   return (
-    <div className="px-8 py-6 max-w-[1400px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
       <header className="mb-5">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Compare · Side-by-Side</div>
         <h1 className="text-[26px] font-semibold tracking-tight mt-1">项目横向对比</h1>

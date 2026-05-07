@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 
 export default function Docs() {
   return (
-    <div className="px-8 py-6 max-w-[1100px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1100px] mx-auto">
       <header className="mb-6">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Methodology · Product Foundation</div>
         <h1 className="text-[28px] font-semibold tracking-tight mt-1">产品方法论白皮书</h1>

@@ -91,7 +91,7 @@ export default function Pipeline() {
   const total = Object.values(grouped).reduce((s, list) => s + list.length, 0)
 
   return (
-    <div className="px-8 py-6 max-w-[1800px] mx-auto">
+    <div className="px-4 md:px-8 py-6 max-w-[1800px] mx-auto">
       <header className="mb-5">
         <div className="flex items-end justify-between gap-4 flex-wrap">
           <div>
