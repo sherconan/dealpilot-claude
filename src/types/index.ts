@@ -144,4 +144,11 @@ export interface Deal {
     recommendation?: string
   }>
   llmOneLiner?: string
+  llmFounderQuestions?: Array<{   // LLM 针对 BP 真实内容生成的访谈问题
+    category: string
+    question: string
+    why: string
+    expect: string
+    watch?: string
+  }>
 }
