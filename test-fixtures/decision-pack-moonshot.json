@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "company": "Moonshot AI",
+    "runAt": "2026-05-08T10:07:49.224Z",
+    "bpLength": 3537,
+    "pollinationsTotalMs": 2463
+  },
+  "fields": {
+    "founders": [
+      "*杨植麟(创始人)",
+      "*周昕宇(联合创始人)",
+      "*吴育昕(联合创始人)"
+    ],
+    "comparables": [
+      "科大讯飞 002230.SZ",
+      "昆仑万维 300418.SZ",
+      "寒武纪 688256.SH",
+      "OpenAI",
+      "Anthropic"
+    ],
+    "company": "Moonshot AI",
+    "sector": "",
+    "round": "",
+    "valuation": "",
+    "arr": "**：突破 100 亿 token / 月",
+    "tam": "中国 AGI 应用层（C+B+API）→ 5-10 年内潜在万亿级",
+    "growthRate": "35%",
+    "customers": "",
+    "patentClaim": "30"
+  },
+  "redFlags": [
+    {
+      "severity": "soft",
+      "label": "行业价格战风险",
+      "detail": "国内大模型 API 价格战，可能压制毛利"
+    },
+    {
+      "severity": "hard",
+      "label": "算力供应链卡脖子",
+      "detail": "高端 GPU 受美国出口管制"
+    },
+    {
+      "severity": "soft",
+      "label": "C 端变现率偏低",
+      "detail": "付费转化率 1.2% 显著低于 SaaS 平均"
+    },
+    {
+      "severity": "soft",
+      "label": "创始人精力分散",
+      "detail": "CEO 同时承担算法 leader，关键人风险"
+    }
+  ],
+  "totalScore": null,
+  "recommendation": "pass",
+  "sequoia10": [],
+  "founderQuestions": [],
+  "deepAnalysisSections": {},
+  "rawDebug": {
+    "deepLen": 0,
+    "scoreLen": 1196,
+    "qsLen": 884,
+    "deepRaw": "",
+    "scoreRaw": "[{\"key\":\"mission\",\"score\":7,\"rationale\":\"使命聚焦普惠与长文本技术，前瞻性强但缺乏可量化指标，整体清晰但略显宏大。\",\"evidence\":\"使命：让通用人工智能普惠每一个人；用长上下文 Transformer 实现人机协同的下一个十年。\"},{\"key\":\"problem\",\"score\":8,\"rationale\":\"中文长文本需求未被满足，国内模型同质化严重，痛点明显且市场规模大，问题定义精准。\",\"evidence\":\"中文长文本场景未被国外模型有效服务；国内大模型同质化严重，多数集中在 32K-128K 上下文。\"},{\"key\":\"solution\",\"score\":8,\"rationale\":\"技术方案具备差异化长文本能力，产品线完整，能满足多场景需求，方案具备可落地性。\",\"evidence\":\"Kimi智能助手支持200万字超长上下文，Moonshot API 四档上下文窗口。\"},{\"key\":\"whyNow\",\"score\":7,\"rationale\":\"2024是国产大模型从能力比拼向应用场景独占的关键年，时机与行业转型契合。\",\"evidence\":\"2024 是国产大模型从“模型能力比拼”向“应用场景独占”切换的关键年。\"},{\"key\":\"market\",\"score\":8,\"rationale\":\"市场规模巨大，复合增长率高，TAM潜力万亿级，行业前景乐观。\",\"evidence\":\"中国生成式 AI 市场 2025 预计 1,500 亿元，复合增长率 87%。\"},{\"key\":\"competition\",\"score\":7,\"rationale\":\"竞争激烈，但长文本技术壁垒与团队背景提供差异化优势，仍需持续创新。\",\"evidence\":\"月之暗面差异化：长上下文专精 + C 端用户增长最快 + 顶级科研背景三驾马车。\"},{\"key\":\"businessModel\",\"score\":7,\"rationale\":\"商业模式多元，API 价格优势明显，但付费转化率偏低，需提升变现效率。\",\"evidence\":\"C 端 freemium + B 端 API 按 token 计费，价格相比 GPT-4 在中文场景有 30-50% 价格优势。\"},{\"key\":\"team\",\"score\":9,\"rationale\":\"核心团队成员均为顶尖科研背景，算法/工程师比例高，团队实力强劲。\",\"evidence\":\"杨植麟清华本科 CMU 博士，曾任 Google Brain / Meta AI 研究员。\"},{\"key\":\"financials\",\"score\":8,\"rationale\":\"融资规模大、估值高、用户规模显著，收入潜力高，财务表现稳健。\",\"evidence\":\"C ",
+    "qsRaw": "[\n  {\n    \"category\":\"financial\",\n    \"question\":\"截至 2024 Q3，Moonshot AI 的月度 API 调用量已突破 100 亿 token，按当前 ¥12/百万 token 计费，预计月收入约为多少？与 GPT‑4 在同等中文场景下的成本相比，您如何评估这笔收入对整体毛利率的提升？\",\n    \"why\":\"验证收入规模与毛利率提升的可行性，了解定价与成本结构。\",\n    \"expect\":\"给出月收入估算（≈¥1.2亿元）并说明毛利率提升幅度及与 GPT‑4 的对比。\",\n    \"watch\":\"核对定价、token 计费方式与成本假设是否合理。\"\n  },\n  {\n    \"category\":\"financial\",\n    \"question\":\"本轮融资后，您计划将 70% 资金用于算力采购。考虑到 NVIDIA H100 的单机成本约为 ¥200 万，您预计需要采购多少台 H100 以支持月度 100 亿 token 负载？请说明预算分配与算力需求的匹配度。\",\n    \"why\":\"评估算力投入与业务需求的匹配，检查资金使用效率。\",\n    \"expect\":\"给出所需 H100 台数（≈50 台）与对应成本（≈¥1亿元），并说明与 70% 预算的对应关系。\",\n    \"watch\":\"核查 H100 计算能力与 token 负载的对应关系及是否存在过度或不足。\"\n  },\n  {\n    \"category\":\"business\",\n    \"question\":\"Kimi 智能助手的 MAU 为 3,000 万，付费转化率 1.2%，ARPPU ¥99。请问您预计在 12 个月内将付费转化率提升至 3%，并保持 MAU 成长率 35%/月的情况下，Kimi+ 的年度营收将达到多少？\",\n    \"why\":\"验证增长假设的可行性与营收预期。\",\n    \"expect\":\"提供年度营收估算（≈¥2.4亿元）并说明增长路径。\",\n    \"watch\":\""
+  }
+}

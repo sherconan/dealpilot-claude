@@ -121,6 +121,11 @@ export default function DealDetail() {
             }}
             className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">进入尽调</button>
           <Link to={`/deal/${deal.id}/brief`} className="px-3.5 py-2 text-[13px] rounded-lg border border-ink-200 bg-white hover:bg-ink-50">一页简报</Link>
+          {deal.id === 'moonshot-a2' && (
+            <Link to={`/deal/${deal.id}/decision-pack`} className="px-3.5 py-2 text-[13px] rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-medium" title="30 分钟决策包 — 真实公开公司端到端 deliverable">
+              ⚡ 30 分钟决策包
+            </Link>
+          )}
           {deal.id.startsWith('user-') && deal.deepAnalysisRaw && (
             <Link to="/upload" className="px-3.5 py-2 text-[13px] rounded-lg border border-violet-300 text-violet-700 bg-violet-50 hover:bg-violet-100" title="重新上传 BP 让 LLM 再分析（可换 provider）">
               ↻ 重新分析

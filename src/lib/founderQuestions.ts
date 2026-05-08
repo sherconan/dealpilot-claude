@@ -75,7 +75,7 @@ export async function generateFounderQuestions(
     ],
     temperature: 0.5,
   }
-  if (provider === 'pollinations') body.private = true
+  if (provider === 'pollinations') { body.private = true; body.max_tokens = 2500 }
   else if (provider === 'kimi-k26') body.max_tokens = 4000
   else body.max_tokens = 2000
 

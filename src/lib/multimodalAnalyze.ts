@@ -267,7 +267,7 @@ export async function analyzeWithProvider(
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
   const body: any = { model: meta.model, messages, temperature: 0.4 }
-  if (provider === 'pollinations') body.private = true
+  if (provider === 'pollinations') { body.private = true; body.max_tokens = 8000 }
   else if (provider === 'kimi-k26') body.max_tokens = 8000  // K2.6 是 reasoning model，给充足 budget
   else body.max_tokens = 4000
 
@@ -346,7 +346,7 @@ export async function streamWithProvider(
   if (apiKey) headers['Authorization'] = `Bearer ${apiKey}`
 
   const body: any = { model: meta.model, messages, temperature: 0.4, stream: true }
-  if (provider === 'pollinations') body.private = true
+  if (provider === 'pollinations') { body.private = true; body.max_tokens = 8000 }
   else if (provider === 'kimi-k26') body.max_tokens = 8000
   else body.max_tokens = 4000
 

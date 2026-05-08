@@ -39,8 +39,8 @@ export const dict: Dict = {
   'brand.tagline': { zh: 'VC 筛选驾驶舱', en: 'VC Screening Cockpit' },
 
   // Disclaimer
-  'disclaimer.title': { zh: '演示版本 · 数据透明声明', en: 'Demo · Data Transparency' },
-  'disclaimer.body': { zh: '6 个项目本身为虚构演示；所有可比上市公司表格 100% 真实数据（akshare 实时财报 + 东方财富股价）。', en: '6 deals are fictional demos; ALL public comparable companies are 100% real data (akshare + EastMoney live).' },
+  'disclaimer.title': { zh: '数据来源分级声明', en: 'Data Provenance' },
+  'disclaimer.body': { zh: '本平台 1 个真实公开公司决策包（月之暗面 Moonshot AI）+ 6 个虚构演示项目。每个项目顶部均标注数据来源；可比上市公司表格 100% 真实（akshare + 东方财富）。', en: '1 real public-company decision pack (Moonshot AI) + 6 fictional demos. Each project page labels its data source; public-comparable tables are 100% real (akshare + EastMoney).' },
   'disclaimer.sources': { zh: '已接入真信源', en: 'Live data sources' },
 
   // Common

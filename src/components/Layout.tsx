@@ -247,7 +247,7 @@ export default function Layout() {
 
       <main className="flex-1 overflow-y-auto scrollbar-thin flex flex-col">
         {/* Mobile top bar */}
-        <div className="md:hidden flex items-center justify-between px-4 py-2.5 border-b border-ink-200 bg-white sticky top-0 z-20">
+        <div className="md:hidden flex items-center justify-between px-4 py-2.5 border-b border-ink-200 bg-white sticky top-0 z-20 no-print">
           <button onClick={() => setMobileOpen(true)} aria-label="Menu" className="p-1.5 rounded hover:bg-ink-100">
             <svg viewBox="0 0 16 16" className="w-5 h-5 text-ink-700" fill="currentColor"><path d="M2 4h12v1.5H2V4zm0 3.75h12v1.5H2v-1.5zM2 11.5h12V13H2v-1.5z"/></svg>
           </button>
@@ -265,7 +265,7 @@ export default function Layout() {
             )}
           </button>
         </div>
-        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-[11.5px] text-amber-900 flex items-center gap-3 flex-wrap">
+        <div className="bg-amber-50 border-b border-amber-200 px-6 py-2 text-[11.5px] text-amber-900 flex items-center gap-3 flex-wrap no-print">
           <span className="inline-flex items-center gap-1.5 font-medium">
             <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 shrink-0" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM7.25 5a.75.75 0 011.5 0v3.5a.75.75 0 01-1.5 0V5zM8 12a1 1 0 110-2 1 1 0 010 2z"/></svg>
             {t('disclaimer.title')}

@@ -82,12 +82,18 @@ export function importUserDealsJSON(jsonText: string, mode: 'replace' | 'merge' 
 // React hook：返回 mockDeals + userDeals，自动响应变更
 import { useEffect, useState } from 'react'
 import { deals as mockDeals } from '../data/deals'
+import { moonshotDeal } from '../data/realDeals'
 
 export function useAllDeals(): Deal[] {
   const [tick, setTick] = useState(0)
   useEffect(() => subscribe(() => setTick(x => x + 1)), [])
   void tick
-  return [...load(), ...mockDeals]
+  // moonshotDeal 是真实公开公司（产品第一份真 deliverable），优先排前
+  const userDeals = load()
+  const hasMoonshot = userDeals.some(d => d.id === 'moonshot-a2')
+  return hasMoonshot
+    ? [...userDeals, ...mockDeals]
+    : [moonshotDeal, ...userDeals, ...mockDeals]
 }
 
 export function useUserDeals(): Deal[] {
