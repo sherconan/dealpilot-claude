@@ -116,7 +116,7 @@ export default function Pipeline() {
           <div>
             <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Pipeline · Kanban</div>
             <h1 className="text-[24px] font-semibold tracking-tight mt-1">漏斗看板</h1>
-            <p className="text-[13px] text-ink-600 mt-1">6 阶段流转 · 共 <span className="num font-semibold text-ink-900">{total}</span> 个项目</p>
+            <p className="text-[13px] text-ink-600 mt-1">6 阶段流转 · 共 <span className="num font-semibold text-ink-900">{total}</span> 个项目（含 <Link to="/deal/moonshot-a2/decision-pack" className="text-emerald-700 hover:underline font-medium">3 真实公开公司</Link>）</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative">

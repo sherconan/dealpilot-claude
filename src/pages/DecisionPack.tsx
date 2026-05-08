@@ -310,6 +310,44 @@ export default function DecisionPack() {
       {/* 6. 10 段深度分析 */}
       <DeepAnalysisCard sections={dp.deepAnalysis} />
 
+      {/* 跨链：其他真实公司决策包 */}
+      {(() => {
+        const others = REAL_DEALS.filter(d => d.id !== deal.id)
+        if (others.length === 0) return null
+        return (
+          <section className="border border-emerald-200 bg-emerald-50/50 rounded-2xl p-5 no-print">
+            <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium mb-2">⚡ 看其他真实公开公司决策包</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {others.map(o => {
+                const sig = o.score >= 80 ? '🟢 GREEN' : o.score >= 65 ? '🟡 YELLOW' : '🔴 RED'
+                return (
+                  <Link key={o.id} to={`/deal/${o.id}/decision-pack`} className="bg-white border border-emerald-200 hover:border-emerald-500 rounded-lg p-3 transition flex items-center justify-between">
+                    <div>
+                      <div className="text-sm font-semibold text-ink-900">{o.name} · {o.cnName}</div>
+                      <div className="text-xs text-ink-500 mt-0.5">{o.round} · {o.valuation} · {o.tagline}</div>
+                    </div>
+                    <div className="flex items-center gap-2 ml-3 shrink-0">
+                      <span className="text-xs num text-ink-700"><b>{o.score}</b><span className="text-ink-400">/100</span></span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-ink-50 text-ink-700 whitespace-nowrap">{sig}</span>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
+        )
+      })()}
+
+      {/* 投决工具入口 */}
+      <section className="bg-white border border-emerald-200 rounded-2xl p-5 no-print">
+        <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium mb-2">⚡ 基于本决策包继续投决流程</div>
+        <div className="flex flex-wrap gap-3">
+          <Link to="/termsheet" className="px-4 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium">起草 Term Sheet →</Link>
+          <Link to="/captable" className="px-4 py-2 text-sm bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 font-medium">模拟 Cap Table 稀释 →</Link>
+          <Link to={`/deal/${deal.id}`} className="px-4 py-2 text-sm border border-ink-200 rounded-lg hover:bg-ink-50">回项目详情</Link>
+        </div>
+      </section>
+
       {/* 数据来源透明 */}
       <footer className="border-t border-ink-100 pt-4 text-xs text-ink-400 leading-relaxed">
         <div>数据来源：{dp.meta.source}</div>
