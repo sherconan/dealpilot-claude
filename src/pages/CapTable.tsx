@@ -165,7 +165,7 @@ export default function CapTable() {
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
-      <header className="mb-5">
+      <header className="mb-5 no-print">
         <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Cap Table · Dilution Simulator</div>
         <h1 className="text-[26px] font-semibold tracking-tight mt-1">Cap Table 模拟器</h1>
         <p className="text-[13.5px] text-ink-700 mt-1.5 max-w-3xl leading-relaxed">
