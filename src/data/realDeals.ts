@@ -6,6 +6,7 @@ import type { Deal } from '../types'
 import moonshotJson from './moonshot-decision-pack.json'
 import zhipuJson from './zhipu-decision-pack.json'
 import deepseekJson from './deepseek-decision-pack.json'
+import baichuanJson from './baichuan-decision-pack.json'
 
 export interface DecisionPack {
   meta: {
@@ -39,6 +40,7 @@ export interface DecisionPack {
 export const moonshotDecisionPack: DecisionPack = moonshotJson as DecisionPack
 export const zhipuDecisionPack: DecisionPack = zhipuJson as DecisionPack
 export const deepseekDecisionPack: DecisionPack = deepseekJson as DecisionPack
+export const baichuanDecisionPack: DecisionPack = baichuanJson as DecisionPack
 
 // ─── 月之暗面 Moonshot AI · A2 轮 ──────────────────────────────────────────
 export const moonshotDeal: Deal = {
@@ -231,12 +233,75 @@ export const deepseekDeal: Deal = {
   accentColor: '#DC2626',
 }
 
+// ─── 百川智能 Baichuan AI · A2 轮 ─────────────────────────────────────────
+export const baichuanDeal: Deal = {
+  id: 'baichuan-a2',
+  name: 'Baichuan AI',
+  cnName: '百川智能',
+  tagline: '王小川（前搜狗 CEO）领衔 · 通用大模型 + 医疗 AI 双轨',
+  sector: 'AI / LLM',
+  round: 'Series A2',
+  valuation: '$28亿（市场估算 ¥200亿）',
+  askAmount: '¥1.5亿',
+  stage: 'review',
+  foundedYear: 2023,
+  location: '北京',
+  teamSize: 300,
+  arr: '估算 ¥1-3 亿/年（ToG + 医疗 PoC 推测）',
+  growthRate: '通用 API + ToG + 医疗三轨',
+  grossMargin: '受 DeepSeek 价格战压制，毛利结构未公开',
+  tam: '中国 AI 通用 ¥1500 亿 + AI 医疗 ¥800 亿 (IDC)',
+  sam: '通用大模型 + 医疗 AI 国产替代',
+  sequoia: { mission: 8, problem: 7, solution: 7, whyNow: 7, market: 8, competition: 5, businessModel: 6, team: 9, financials: 7, vision: 7 },
+  score: 73,
+  recommendation: 'monitor',
+  redFlags: baichuanDecisionPack.redFlags,
+  wins: [
+    '王小川（清华 + 搜狗 IPO + 22 年互联网经验）+ 茹立云（前搜狗 CTO）+ 周韬（前搜狗 AI 负责人）三驾马车',
+    'A 轮 ¥30亿 → A1 ¥50亿 → A2 ¥200亿 三轮节奏稳定，阿里 / 腾讯 / 小米 / 红杉跟投',
+    'Baichuan-2 7B/13B 开源 HuggingFace 累计下载数百万，国内开源生态 Top 5',
+    '百川 AI Care 已与多家三甲医院开展 PoC，医疗 AI 国产化标杆',
+    '团队规模 300 人，研发占比 80%+，搜狗系工程纪律',
+  ],
+  concerns: [
+    '软：战略反复（"全力医疗" → "医疗 + 通用并行"）资源分散风险',
+    '软：通用赛道无明显差异化壁垒，受 DeepSeek 价格战 + 月之暗面 C 端 + 智谱 ToG 三面夹击',
+    '软：医疗 AI 监管严格（NMPA / 国家药监局），商业化路径漫长',
+    '软：王小川搜狗 C 端心智弱，AGI 时代的 C 端能力存疑',
+  ],
+  founders: [
+    { name: '王小川 Wang Xiaochuan', role: 'CEO / 创始人', background: '清华 · 搜狗 22 年（搜狗 IPO 创始人 / CEO）· 转型 AGI', highlight: '互联网圈深耕 22 年 · 产品化经验最丰富 · 搜狗系班底 + 资本资源' },
+    { name: '茹立云 Ru Liyun', role: 'CTO / 联合创始人', background: '前搜狗 CTO · 搜狗搜索技术架构师' },
+    { name: '周韬 Zhou Tao', role: 'AI VP / 联合创始人', background: '前搜狗 AI 负责人 · 老搜狗 NLP 团队核心' },
+  ],
+  traction: [
+    { label: '团队规模', value: '~300 人', delta: '研发占比 80%+' },
+    { label: '估算年营收', value: '¥1-3 亿', delta: 'ToG + 医疗 PoC 推测' },
+    { label: '开源累计下载', value: '数百万次', delta: 'Baichuan-2 7B/13B' },
+    { label: '医疗 PoC', value: '多家三甲医院' },
+    { label: 'API 接入', value: '百度 / 阿里 / 腾讯生态' },
+    { label: 'B 端 SuperCLUE 排名', value: '国内 Top 5' },
+  ],
+  timeline: [
+    { date: '2023-04', event: '公司成立', actor: '王小川 + 搜狗班底' },
+    { date: '2023-Q3', event: 'A 轮 ¥30亿', actor: '启明 / 真格 / 红杉' },
+    { date: '2023-12', event: 'A1 轮 ¥50亿', actor: '阿里 / 腾讯 / 小米 / 美团领投' },
+    { date: '2024-Q2', event: 'Baichuan-3/4 + 百川 AI Care 双产品发布' },
+    { date: '2024-中', event: 'A2 轮 ¥200亿估值', actor: '$300M 募资' },
+  ],
+  lastUpdated: '2024-12-30',
+  champion: 'Henry Zhao',
+  source: '2023-2024 公开新闻 + 百川官网 + GitHub + 王小川公开访谈 + VC 经验补全',
+  accentColor: '#DB2777',
+}
+
 // ─── 真实公开公司库 registry（决策包 lookup） ─────────────────────────────
-export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal]
+export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal, baichuanDeal]
 export const REAL_DECISION_PACKS: Record<string, DecisionPack> = {
   'moonshot-a2': moonshotDecisionPack,
   'zhipu-bplus': zhipuDecisionPack,
   'deepseek-preb': deepseekDecisionPack,
+  'baichuan-a2': baichuanDecisionPack,
 }
 
 export function getDecisionPackByDealId(id: string): DecisionPack | undefined {
