@@ -8,6 +8,7 @@ import HelpModal from './HelpModal'
 import Onboarding from './Onboarding'
 import ToastHost from './ToastHost'
 import { preloadRoute } from '../lib/preload'
+import { toast } from '../lib/toast'
 
 export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
@@ -31,16 +32,35 @@ export default function Layout() {
     .map((id) => allDeals.find((d) => d.id === id))
     .filter((d): d is NonNullable<typeof d> => Boolean(d))
     .slice(0, 4)
-  // 估算 localStorage 占用 — 用 Blob 的 size 统计 dp:userDeals key
-  const lsSizeKB = (() => {
+  // 估算 localStorage 占用 — 扫描全部 dp:* key，统计用量 + 配额百分比（5 MB 浏览器上限）
+  const QUOTA_KB = 5 * 1024
+  const { lsSizeKB, lsQuotaPct } = (() => {
     try {
-      const raw = localStorage.getItem('dp:userDeals') || '[]'
-      return Math.round(new Blob([raw]).size / 1024)
-    } catch { return 0 }
+      let bytes = 0
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i)
+        if (!k || !k.startsWith('dp:')) continue
+        const v = localStorage.getItem(k) || ''
+        bytes += new Blob([k + v]).size
+      }
+      const kb = Math.round(bytes / 1024)
+      return { lsSizeKB: kb, lsQuotaPct: Math.round((kb / QUOTA_KB) * 100) }
+    } catch { return { lsSizeKB: 0, lsQuotaPct: 0 } }
   })()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => { setMobileOpen(false) }, [loc.pathname])
+
+  // localStorage 配额预警 — 单 session 只弹一次，>= 80% 提示用户备份
+  useEffect(() => {
+    if (lsQuotaPct < 80) return
+    try {
+      const flag = sessionStorage.getItem('dp:quota-warned')
+      if (flag) return
+      sessionStorage.setItem('dp:quota-warned', '1')
+      toast.error(`localStorage ${lsQuotaPct}% 占用 (${lsSizeKB} / 5120 KB)\n建议进 Memory → 备份 JSON 后清理旧上传`, 7000)
+    } catch {}
+  }, [lsQuotaPct, lsSizeKB])
 
   // 路由级 document.title — 多 tab 时一眼区分（含基线品牌）
   useEffect(() => {
@@ -270,11 +290,18 @@ export default function Layout() {
           </div>
           <div className="flex items-center gap-3 flex-wrap">
             {userUploadCount > 0 && (
-              <Link to="/memory" className="inline-flex items-center gap-1.5 text-[11px] text-violet-700 hover:underline" title="点击进入 Memory 管理用户上传">
+              <Link
+                to="/memory"
+                className={`inline-flex items-center gap-1.5 text-[11px] hover:underline ${lsQuotaPct >= 80 ? 'text-rose-700' : 'text-violet-700'}`}
+                title={`本地存储 ${lsSizeKB} KB / 5120 KB（${lsQuotaPct}%）· 点击进入 Memory 备份/清理`}
+              >
                 <span>✨</span>
                 <span className="num font-medium">{userUploadCount}</span>
                 <span>用户上传</span>
-                <span className="text-ink-400 num">· {lsSizeKB} KB</span>
+                <span className={`num ${lsQuotaPct >= 80 ? 'text-rose-600 font-semibold' : 'text-ink-400'}`}>
+                  · {lsSizeKB} KB · {lsQuotaPct}%
+                  {lsQuotaPct >= 80 && ' ⚠️'}
+                </span>
               </Link>
             )}
             <span className="flex items-center gap-2">
