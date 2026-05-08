@@ -7,7 +7,7 @@ interface Cmd {
   id: string
   label: string
   hint?: string
-  group: '导航' | '项目' | '动作'
+  group: '导航' | '项目' | '动作' | '投决工具' | '决策包'
   action: () => void
   keywords?: string
 }
@@ -61,6 +61,11 @@ export default function CommandPalette() {
       { id: 'go-unicorns', label: '独角兽参考 Unicorns', group: '导航', action: () => navigate('/unicorns'), keywords: 'unicorns 独角兽' },
       { id: 'go-changelog', label: 'Sprint Changelog', group: '导航', action: () => navigate('/changelog'), keywords: 'changelog sprint 进度' },
       { id: 'go-docs', label: '方法论文档 Docs', group: '导航', action: () => navigate('/docs'), keywords: 'docs methodology 方法论' },
+      { id: 'go-termsheet', label: '⚡ Term Sheet 起草', group: '投决工具', action: () => navigate('/termsheet'), keywords: 'termsheet term sheet 投资条款 起草 nvca' },
+      { id: 'go-captable', label: '⚡ Cap Table 模拟器', group: '投决工具', action: () => navigate('/captable'), keywords: 'captable cap table 股权 稀释 esop 模拟' },
+      { id: 'go-moonshot-pack', label: '🟢 月之暗面 30 分钟决策包', group: '决策包', action: () => navigate('/deal/moonshot-a2/decision-pack'), keywords: 'moonshot 月之暗面 kimi 杨植麟 决策包' },
+      { id: 'go-zhipu-pack', label: '🟢 智谱 AI 30 分钟决策包', group: '决策包', action: () => navigate('/deal/zhipu-bplus/decision-pack'), keywords: 'zhipu 智谱 唐杰 glm 决策包' },
+      { id: 'go-deepseek-pack', label: '🟢 DeepSeek 30 分钟决策包', group: '决策包', action: () => navigate('/deal/deepseek-preb/decision-pack'), keywords: 'deepseek 深度求索 梁文锋 v3 r1 决策包' },
     ]
     const dealCmds: Cmd[] = deals.map((d) => ({
       id: `deal-${d.id}`,

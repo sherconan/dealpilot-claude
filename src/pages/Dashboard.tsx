@@ -44,11 +44,10 @@ export default function Dashboard() {
       <header className="flex items-end justify-between flex-wrap gap-4 mb-6">
         <div>
           <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Henry · {todayStr}</div>
-          <h1 className="text-[28px] font-semibold tracking-tight mt-1">今天有 <span className="text-brand-700">{decisionCount} 个项目</span> 等你决策</h1>
+          <h1 className="text-[28px] font-semibold tracking-tight mt-1">{REAL_DEALS.length} 家真实公司决策包 · {decisionCount > 0 ? `${decisionCount} 个项目待决` : '今日无待决'}</h1>
           <p className="text-[13px] text-ink-600 mt-1.5">{headlineHint}</p>
-          <p className="text-[12px] text-ink-500 mt-2 max-w-2xl leading-relaxed italic border-l-2 border-brand-500/30 pl-3">
-            "VC 的核心赌注始终是「人」 — BP 只是敲门砖，真正的决策在「人」。"
-            <span className="not-italic ml-1.5 text-ink-400">— Sequoia Capital</span>
+          <p className="text-[12px] text-ink-500 mt-2 max-w-2xl leading-relaxed italic border-l-2 border-emerald-500/30 pl-3">
+            "VC 的核心赌注始终是「人」 — BP 只是敲门砖。" <span className="not-italic">— DealPilot 通过 30 分钟决策包让你 brutally 看人 + 看公司。</span>
           </p>
           <div className="mt-3 flex items-center gap-2 flex-wrap">
             <Link to="/upload" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-violet-700 text-white hover:bg-violet-800 transition font-medium">
@@ -61,8 +60,14 @@ export default function Dashboard() {
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-brand-50 border border-brand-500/30 text-brand-800 hover:bg-brand-50/80 transition">
               <span className="num font-semibold">4,568</span> 专利 · <span className="num font-semibold">25</span> PDF
             </Link>
+            <Link to="/termsheet" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-emerald-700 text-white hover:bg-emerald-800 transition font-medium">
+              ⚡ Term Sheet
+            </Link>
+            <Link to="/captable" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-emerald-700 text-white hover:bg-emerald-800 transition font-medium">
+              ⚡ Cap Table
+            </Link>
             <Link to="/changelog" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition">
-              <span className="num font-semibold">77+</span> Sprint 闭环
+              <span className="num font-semibold">152+</span> Sprint 闭环
             </Link>
           </div>
         </div>
@@ -85,7 +90,11 @@ export default function Dashboard() {
             <div className="text-[15px] font-semibold tracking-tight mt-0.5">{REAL_DEALS.length} 家真实公司 · 公开数据 + VC 经验产出 30 分钟决策包</div>
             <div className="text-[12px] text-ink-600 mt-1">基于 2024 年公开新闻 + 工商信息 + 团队履历 · 10 段深度 / Sequoia 10 评分 / 8 题访谈 / Reference Check 名单</div>
           </div>
-          <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium whitespace-nowrap">上传你的真 BP →</Link>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link to="/termsheet" className="text-[11px] px-2.5 py-1 rounded-md bg-emerald-700 text-white hover:bg-emerald-800 font-medium">⚡ Term Sheet</Link>
+            <Link to="/captable" className="text-[11px] px-2.5 py-1 rounded-md bg-emerald-700 text-white hover:bg-emerald-800 font-medium">⚡ Cap Table</Link>
+            <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium whitespace-nowrap">上传真 BP →</Link>
+          </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {REAL_DEALS.map(d => {
