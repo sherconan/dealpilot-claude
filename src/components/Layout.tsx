@@ -122,6 +122,10 @@ export default function Layout() {
     { to: '/unicorns', label: t('nav.unicorns'), hint: t('nav.unicorns.hint') },
     { to: '/docs', label: t('nav.docs'), hint: t('nav.docs.hint') },
   ]
+  const dealmaking = [
+    { to: '/termsheet', label: 'Term Sheet', hint: '起草' },
+    { to: '/captable', label: 'Cap Table', hint: '稀释模拟' },
+  ]
 
   return (
     <div className="min-h-[100dvh] flex bg-ink-50">
@@ -152,6 +156,11 @@ export default function Layout() {
 
           <div className="text-[10px] font-medium text-ink-400 tracking-[0.14em] uppercase px-3 pt-4 pb-2">{t('nav.tools')}</div>
           {tools.map((it) => (
+            <NavItem key={it.to} {...it} />
+          ))}
+
+          <div className="text-[10px] font-medium text-emerald-700 tracking-[0.14em] uppercase px-3 pt-4 pb-2">投决工具 ⚡</div>
+          {dealmaking.map((it) => (
             <NavItem key={it.to} {...it} />
           ))}
 
