@@ -66,6 +66,7 @@ export default function CommandPalette() {
       { id: 'go-moonshot-pack', label: '🟢 月之暗面 30 分钟决策包', group: '决策包', action: () => navigate('/deal/moonshot-a2/decision-pack'), keywords: 'moonshot 月之暗面 kimi 杨植麟 决策包' },
       { id: 'go-zhipu-pack', label: '🟢 智谱 AI 30 分钟决策包', group: '决策包', action: () => navigate('/deal/zhipu-bplus/decision-pack'), keywords: 'zhipu 智谱 唐杰 glm 决策包' },
       { id: 'go-deepseek-pack', label: '🟢 DeepSeek 30 分钟决策包', group: '决策包', action: () => navigate('/deal/deepseek-preb/decision-pack'), keywords: 'deepseek 深度求索 梁文锋 v3 r1 决策包' },
+      { id: 'go-baichuan-pack', label: '🟡 百川智能 30 分钟决策包', group: '决策包', action: () => navigate('/deal/baichuan-a2/decision-pack'), keywords: 'baichuan 百川 王小川 搜狗 决策包' },
     ]
     const dealCmds: Cmd[] = deals.map((d) => ({
       id: `deal-${d.id}`,
