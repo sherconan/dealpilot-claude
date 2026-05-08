@@ -119,11 +119,21 @@ const sprints: SprintEntry[] = [
   { num: 141, title: 'pdfjs 真懒加载 — 458 KB 仅拖 PDF 时下载', detail: 'pdfPipeline.ts 把 import * as pdfjsLib 改成 await import (pdfjs-dist) 缓存模式 · 文本粘贴 / 示例 BP / 不上传 PDF 永不触发 458 KB pdfjs-vendor 下载 · Upload chunk 0 静态依赖 / 1 动态 import 实测验证', files: ['lib/pdfPipeline.ts'], tag: 'Polish', color: '#0ea5e9' },
   { num: 142, title: '个人笔记面板 NotePanel · 按 dealId localStorage 自动保存', detail: 'lib/dealNotes.ts 提供 useDealNotes hook（debounce 600ms） · NotePanel 显示「保存中／X s 前已保存／字数」 · 隔离 dp:notes:{dealId} key · 不进 Markdown 导出 · 隐私优先', files: ['lib/dealNotes.ts', 'components/NotePanel.tsx', 'pages/DealDetail.tsx'], tag: '功能', color: '#d97706' },
   { num: 143, title: 'localStorage 配额监控 + 80% 预警', detail: 'Layout 扫全部 dp:* key 算用量 · footer 显示 N KB · X% · ≥ 80% 文字转红色 + ⚠️ + sessionStorage flag 一次性 toast.error 提示备份 JSON · 5 MB 浏览器上限可视化', files: ['components/Layout.tsx'], tag: 'UX', color: '#dc2626' },
+  { num: 144, title: '⚡ 30 分钟决策包 · 月之暗面 Moonshot AI 真实公开公司端到端', detail: '基于 2024 年公开新闻 + 工商 + 团队履历 · Pollinations LLM 拆段调用产出 10 段深度 / Sequoia 10 评分 / 8 题访谈 / 7 人 Reference Check / 4 红线 · YELLOW · 76 分 · 附条件进会 · 顺手挖到 4 个 Pollinations max_tokens 漏配 bug', files: ['data/realDeals.ts', 'pages/DecisionPack.tsx', 'data/moonshot-decision-pack.json'], tag: '真实公司', color: '#10b981' },
+  { num: 145, title: '⚡ 智谱 AI Zhipu B+ 真实决策包 · registry 模式', detail: 'realDeals.ts 引入 REAL_DEALS + REAL_DECISION_PACKS lookup table · zhipuDeal 唐杰团队 / GLM-4-Plus / B+ ¥200 亿 / ToG 60% 入选率 · GREEN · 82 分 · DecisionPack/DealDetail/Dashboard 切换到 getRealDealById/getDecisionPackByDealId', files: ['data/realDeals.ts', 'data/zhipu-decision-pack.json'], tag: '真实公司', color: '#10b981' },
+  { num: 146, title: '⚡ DeepSeek 深度求索 真实决策包', detail: '梁文锋 / 幻方量化 / V3 训练成本 $5.6M / R1 reasoning · GREEN · 86 分 · 强烈推荐进会 · 4 软红线（梁拒融资 + 幻方关联 + 开源策略 + GPU 管制）· REAL_DEALS 现含 3 家', files: ['data/realDeals.ts', 'data/deepseek-decision-pack.json'], tag: '真实公司', color: '#10b981' },
+  { num: 149, title: 'Memory 页接真实公司库 hero', detail: '顶部 emerald 卡片直达 3 家真实公司决策包 + 列表行内 🟢 真实公开 badge + 副标题分级（真实/演示/用户上传）', files: ['pages/Memory.tsx'], tag: '真实公司', color: '#10b981' },
+  { num: 150, title: 'Compare 页默认选 3 家真公司互比', detail: '默认 selected 切到 REAL_DEALS.slice(0,3) · 一键"⚡ 比 3 家真实公司"快速重置 · 真实公司选项 emerald 配色 + 🟢 前缀', files: ['pages/Compare.tsx'], tag: '真实公司', color: '#10b981' },
+  { num: 151, title: '⚡ Term Sheet 起草页 /termsheet', detail: 'NVCA 标准条款（4 档清算 + 3 档反稀释 + ROFR/Tag/Drag + 8 项保护性 + Qualified IPO 自动转换 + ESOP top-up + Closing Date）· 实时生成 + 复制 + 下载 .md · 3 家真实公司 preset', files: ['pages/TermSheet.tsx', 'App.tsx'], tag: '投决工具', color: '#10b981' },
+  { num: 152, title: '⚡ Cap Table 模拟器 /captable', detail: '3 家真实公司股权 preset · 输入本轮募资 + 投前估值 + 本基金出资 + ESOP 目标 → NVCA 标准 ESOP top-up 公式自动算稀释 · stacked bar + 完整 Cap Table 表（投前→投后变化）+ 创始人合计稀释', files: ['pages/CapTable.tsx', 'App.tsx'], tag: '投决工具', color: '#10b981' },
+  { num: 153, title: 'Dashboard hero 重做 · 主推决策包库 + 投决工具', detail: '主标题改为 "N 家真实公司决策包 · X 个项目待决"·副引言改成 DealPilot 自身定位 · 顶部 chip + hero 内嵌 Term Sheet/Cap Table emerald 直达 · "152+ Sprint" 取代 "77+"', files: ['pages/Dashboard.tsx'], tag: '产品定位', color: '#10b981' },
+  { num: 154, title: 'CommandPalette + DealDetail + Layout 全站接 Term Sheet/Cap Table', detail: '⌘K 新增"投决工具"+"决策包"分组 · DealDetail 真实公司额外加 Term Sheet/Cap Table 按钮 · 侧边栏新增"投决工具 ⚡"分组', files: ['components/CommandPalette.tsx', 'pages/DealDetail.tsx', 'components/Layout.tsx'], tag: 'UX', color: '#7c3aed' },
 ]
 
 const milestones = [
   { tag: 'init', title: '产品初版（pre-challenge）', detail: 'Dashboard / Pipeline / DealDetail / IC Memo / Memory / Thesis / Sources 7 页 + 6 deals 完整数据 + 8 家 akshare 真实可比公司 + qcc 实测旷视专利 / 工商画像', count: 7 },
   { tag: '7h', title: '7 小时挑战赛新增', detail: '+ Upload / Risk / Portfolio / Signals / Docs / Compare / Briefings / Changelog / DealBrief（共 9 页）+ i18n + Dark mode + Cmd-K + Shift+? / G+letter 快捷键 + SEO + 拖拽 + PDF 导出 + 周报 + CSV 导出 + Investment Thesis Canvas + ICMemo 视觉增强', count: 9 },
+  { tag: '7h-r4', title: '第 4 轮 7H Challenge · 真实公司库 + 投决核心工具', detail: '+ 30 分钟决策包页 + 3 家真实公开公司库（Moonshot/Zhipu/DeepSeek）+ Term Sheet 起草页 + Cap Table 模拟器 + Memory/Compare 改接真实库 + Dashboard hero 重做 + 全站入口拉通', count: 6 },
 ]
 
 export default function Changelog() {
