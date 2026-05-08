@@ -8,6 +8,7 @@ import { StagePill } from '../components/StatusPill'
 import { MonthlyTrendChart, DonutChart, BarChart, ConversionFlow, Sparkline } from '../components/Charts'
 import { monthlyInbound, sectorMix, scoreDistribution, conversionRates, avgScoreTrend } from '../data/analytics'
 import { SAMPLE_BPS } from '../data/sampleBPs'
+import { REAL_DEALS } from '../data/realDeals'
 
 export default function Dashboard() {
   const navigate = useNavigate()
@@ -76,20 +77,36 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* 真实公开公司决策包 — 产品第一份真 deliverable，永远显示 */}
+      {/* 真实公开公司决策包库 — 产品核心 deliverable，永远显示 */}
       <section className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border-2 border-emerald-500/40 rounded-2xl p-4 mb-5">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
           <div>
-            <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium">⚡ 真实公开公司决策包</div>
-            <div className="text-[15px] font-semibold tracking-tight mt-0.5">月之暗面 Moonshot AI · A2 轮（$33亿）— 30 分钟决策包</div>
-            <div className="text-[12px] text-ink-600 mt-1">基于 2024 年公开新闻 + 工商信息 · Pollinations LLM 真分析 10 段 + Sequoia 评分 + 8 题访谈 + 7 人 Reference Check</div>
+            <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium">⚡ 真实公开公司决策包库</div>
+            <div className="text-[15px] font-semibold tracking-tight mt-0.5">{REAL_DEALS.length} 家真实公司 · 公开数据 + VC 经验产出 30 分钟决策包</div>
+            <div className="text-[12px] text-ink-600 mt-1">基于 2024 年公开新闻 + 工商信息 + 团队履历 · 10 段深度 / Sequoia 10 评分 / 8 题访谈 / Reference Check 名单</div>
           </div>
-          <Link
-            to="/deal/moonshot-a2/decision-pack"
-            className="px-4 py-2 text-[13px] rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-medium whitespace-nowrap"
-          >
-            查看完整决策包 →
-          </Link>
+          <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium whitespace-nowrap">上传你的真 BP →</Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {REAL_DEALS.map(d => {
+            const sig = d.score >= 80 ? '🟢 GREEN' : d.score >= 65 ? '🟡 YELLOW' : '🔴 RED'
+            return (
+              <Link
+                key={d.id}
+                to={`/deal/${d.id}/decision-pack`}
+                className="group bg-white border border-emerald-200 hover:border-emerald-500 hover:shadow-pop rounded-lg p-3 transition flex items-center justify-between"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-semibold text-ink-900 truncate group-hover:text-emerald-700">{d.name} · {d.cnName}</div>
+                  <div className="text-[11px] text-ink-500 mt-0.5">{d.round} · {d.valuation} · {d.tagline.split('·')[0]?.trim()}</div>
+                </div>
+                <div className="flex items-center gap-2 ml-3 shrink-0">
+                  <span className="text-[11px] num text-ink-700"><b>{d.score}</b><span className="text-ink-400">/100</span></span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-ink-50 text-ink-700">{sig}</span>
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </section>
 

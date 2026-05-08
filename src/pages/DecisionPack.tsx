@@ -1,6 +1,6 @@
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-import { moonshotDeal, moonshotDecisionPack, type DecisionPack as DP } from '../data/realDeals'
+import { getDecisionPackByDealId, getRealDealById, REAL_DEALS, type DecisionPack as DP } from '../data/realDeals'
 import type { Deal } from '../types'
 
 const DIM_LABEL: Record<string, string> = {
@@ -211,28 +211,36 @@ export default function DecisionPack() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    document.title = `30分钟决策包 · ${moonshotDeal.cnName} · DealPilot`
-  }, [])
+  const deal = id ? getRealDealById(id) : undefined
+  const dp = id ? getDecisionPackByDealId(id) : undefined
 
-  // 目前只有 moonshot-a2 一份真决策包；其他 id 返回 DealDetail
-  if (id !== 'moonshot-a2') {
+  useEffect(() => {
+    if (deal) document.title = `30分钟决策包 · ${deal.cnName} · DealPilot`
+  }, [deal])
+
+  // 不在真实公司库 → 引导到现有真实公司 + 上传 BP
+  if (!deal || !dp) {
     return (
       <div className="max-w-3xl mx-auto px-4 md:px-8 py-12 space-y-4">
         <h1 className="text-xl font-semibold text-ink-900">该项目暂无完整 30 分钟决策包</h1>
         <p className="text-sm text-ink-600">
-          决策包目前只对接入真实公开信息的项目生成。月之暗面 Moonshot AI 是产品的第一份真实公开 deliverable ——
-          <Link to="/deal/moonshot-a2/decision-pack" className="text-brand-600 hover:underline"> 点这里查看 </Link>。
+          决策包目前只对接入真实公开信息的项目生成。当前已接入 <b>{REAL_DEALS.length}</b> 家真实公开公司：
         </p>
-        <p className="text-sm text-ink-500">
+        <ul className="space-y-2 ml-4">
+          {REAL_DEALS.map(d => (
+            <li key={d.id}>
+              <Link to={`/deal/${d.id}/decision-pack`} className="text-brand-600 hover:underline font-medium">
+                {d.name} · {d.cnName}（{d.round} · {d.valuation}）
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-ink-500 pt-2">
           其他项目可在 <Link to="/upload" className="text-brand-600 hover:underline">上传 BP</Link> 走完整 LLM 分析流程后，自动产出决策包草稿。
         </p>
       </div>
     )
   }
-
-  const dp = moonshotDecisionPack
-  const deal = moonshotDeal
 
   return (
     <div className="max-w-5xl mx-auto px-4 md:px-8 py-8 space-y-6">

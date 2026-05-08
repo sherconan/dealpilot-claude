@@ -82,18 +82,17 @@ export function importUserDealsJSON(jsonText: string, mode: 'replace' | 'merge' 
 // React hook：返回 mockDeals + userDeals，自动响应变更
 import { useEffect, useState } from 'react'
 import { deals as mockDeals } from '../data/deals'
-import { moonshotDeal } from '../data/realDeals'
+import { REAL_DEALS } from '../data/realDeals'
 
 export function useAllDeals(): Deal[] {
   const [tick, setTick] = useState(0)
   useEffect(() => subscribe(() => setTick(x => x + 1)), [])
   void tick
-  // moonshotDeal 是真实公开公司（产品第一份真 deliverable），优先排前
+  // REAL_DEALS（月之暗面 / 智谱 ...）是真实公开公司，永远优先排前；避免被用户上传的同 id 重复
   const userDeals = load()
-  const hasMoonshot = userDeals.some(d => d.id === 'moonshot-a2')
-  return hasMoonshot
-    ? [...userDeals, ...mockDeals]
-    : [moonshotDeal, ...userDeals, ...mockDeals]
+  const userIds = new Set(userDeals.map(d => d.id))
+  const realDealsToShow = REAL_DEALS.filter(d => !userIds.has(d.id))
+  return [...realDealsToShow, ...userDeals, ...mockDeals]
 }
 
 export function useUserDeals(): Deal[] {
