@@ -1,13 +1,18 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAllDeals } from '../lib/userDealStore'
+import { REAL_DEALS } from '../data/realDeals'
 import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
 import { toast } from '../lib/toast'
 import type { Deal, Sequoia10 } from '../types'
 
 export default function Compare() {
   const deals = useAllDeals()
-  const [selected, setSelected] = useState<string[]>(() => deals.slice(0, 3).map((d) => d.id))
+  // 默认选 3 家真实公开公司互比（产品最 brutal 的展示）
+  const [selected, setSelected] = useState<string[]>(() => {
+    const realIds = REAL_DEALS.map(d => d.id)
+    return realIds.length >= 3 ? realIds.slice(0, 3) : deals.slice(0, 3).map((d) => d.id)
+  })
   const [copied, setCopied] = useState(false)
 
   function toggle(id: string) {
@@ -119,18 +124,31 @@ export default function Compare() {
       </header>
 
       <section className="bg-white border border-ink-200 rounded-xl p-4 mb-5">
-        <div className="text-[11px] uppercase tracking-wider text-ink-500 mb-2">选择项目（最多 3 个）</div>
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+          <div className="text-[11px] uppercase tracking-wider text-ink-500">选择项目（最多 3 个）</div>
+          <button
+            onClick={() => setSelected(REAL_DEALS.slice(0, 3).map(d => d.id))}
+            className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 font-medium"
+            title="一键选 3 家真实公开公司互比"
+          >
+            ⚡ 比 3 家真实公司（默认）
+          </button>
+        </div>
         <div className="flex items-center gap-2 flex-wrap">
           {deals.map((d) => {
             const on = selected.includes(d.id)
+            const isReal = REAL_DEALS.some(r => r.id === d.id)
             return (
               <button
                 key={d.id}
                 onClick={() => toggle(d.id)}
                 className={`px-3 py-1.5 text-[12px] rounded-lg border transition ${
-                  on ? 'bg-brand-700 text-white border-brand-700' : 'bg-white text-ink-700 border-ink-200 hover:bg-ink-50'
+                  on
+                    ? (isReal ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-brand-700 text-white border-brand-700')
+                    : (isReal ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100' : 'bg-white text-ink-700 border-ink-200 hover:bg-ink-50')
                 }`}
               >
+                {isReal && <span className="mr-0.5">🟢</span>}
                 {d.name} <span className="num text-[11px] opacity-80 ml-1">{d.score}</span>
               </button>
             )

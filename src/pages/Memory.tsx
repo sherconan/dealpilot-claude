@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { StagePill, RecommendationPill } from '../components/StatusPill'
 import { dealsToCSV, downloadCSV } from '../lib/csv'
 import { useAllDeals, clearUserDeals, getUserDeals, downloadUserDealsJSON, importUserDealsJSON } from '../lib/userDealStore'
+import { REAL_DEALS } from '../data/realDeals'
 import { useRef } from 'react'
 import { toast } from '../lib/toast'
 
@@ -84,12 +85,38 @@ export default function Memory() {
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
+      {/* 真实公开公司库 hero — 区别于虚构演示 */}
+      <section className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border-2 border-emerald-500/40 rounded-2xl p-4 mb-5">
+        <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium">⚡ 真实公开公司决策包库</div>
+            <div className="text-[14px] font-semibold tracking-tight mt-0.5">{REAL_DEALS.length} 家 · 基于公开数据 + VC 经验产出 30 分钟决策包</div>
+          </div>
+          <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium">上传你的真 BP →</Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {REAL_DEALS.map(d => {
+            const sig = d.score >= 80 ? '🟢' : d.score >= 65 ? '🟡' : '🔴'
+            return (
+              <Link key={d.id} to={`/deal/${d.id}/decision-pack`} className="bg-white border border-emerald-200 hover:border-emerald-500 hover:shadow-pop rounded-lg p-2.5 transition flex items-center gap-2">
+                <span className="text-[14px]">{sig}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-semibold text-ink-900 truncate">{d.name} · {d.cnName}</div>
+                  <div className="text-[10px] text-ink-500 truncate">{d.round} · {d.valuation}</div>
+                </div>
+                <span className="text-[11px] num text-ink-700 shrink-0"><b>{d.score}</b><span className="text-ink-400">/100</span></span>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
+
       <header className="mb-5">
         <div className="flex items-end justify-between flex-wrap gap-3">
           <div>
             <div className="text-[11px] tracking-[0.16em] text-ink-500 uppercase">Institutional Memory</div>
             <h1 className="text-[24px] font-semibold tracking-tight mt-1">机构记忆库</h1>
-            <p className="text-[13px] text-ink-600 mt-1.5">所有评估过的项目结构化存档 · 创始人再次出现自动召回 · 共 <span className="num font-semibold text-ink-900">{deals.length}</span> 条记录</p>
+            <p className="text-[13px] text-ink-600 mt-1.5">所有评估过的项目结构化存档 · 创始人再次出现自动召回 · 共 <span className="num font-semibold text-ink-900">{deals.length}</span> 条记录（含 <b className="text-emerald-700">{REAL_DEALS.length} 真实公开</b> + 虚构演示 + 用户上传）</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative">
@@ -240,6 +267,9 @@ export default function Memory() {
                   <span className="text-ink-500 font-normal">{d.cnName}</span>
                   {d.id.startsWith('user-') && (
                     <span className="text-[9px] text-violet-700 bg-violet-50 px-1 py-0.5 rounded border border-violet-200" title={d.llmOneLiner}>✨ LLM</span>
+                  )}
+                  {REAL_DEALS.some(r => r.id === d.id) && (
+                    <span className="text-[9px] text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200" title="真实公开公司，含完整 30 分钟决策包">🟢 真实公开</span>
                   )}
                 </div>
                 <div className="text-[11px] text-ink-500 truncate">{d.tagline}</div>
