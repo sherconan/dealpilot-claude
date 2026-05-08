@@ -1,0 +1,245 @@
+{
+  "meta": {
+    "company": "DeepSeek · 深度求索",
+    "round": "Pre-Series B",
+    "valuation": "$50亿（市场估算）",
+    "runAt": "2025-01-20T10:00:00.000Z",
+    "finalizedAt": "2025-01-20T10:30:00.000Z",
+    "source": "2024-2025 公开新闻 + DeepSeek 官网 / arXiv 论文 + 幻方量化背景 + VC 经验补全"
+  },
+  "verdict": {
+    "signal": "GREEN",
+    "label": "强烈推荐进 30 分钟会议",
+    "reason": "综合 86 分 · 0 硬红线 · 2 个维度 9-10 分（解决方案 + 团队） · DeepSeek-R1 被业内称为「中国 OpenAI」时刻"
+  },
+  "totalScore": 86,
+  "recommendation": "priority",
+  "redFlags": [
+    {
+      "severity": "soft",
+      "label": "主动放弃融资 / 估值不透明",
+      "detail": "梁文锋声称不融资坚持自有资金，但市场对 $50 亿估值有共识；估值透明度低增加 deal 难度"
+    },
+    {
+      "severity": "soft",
+      "label": "幻方关联交易",
+      "detail": "DeepSeek 用幻方量化的 GPU 集群和资金，关联交易边界与 IP 归属需法律梳理"
+    },
+    {
+      "severity": "soft",
+      "label": "开源策略与商业化平衡",
+      "detail": "V3/R1 完全开源 + 极低 API 价格，长期变现路径不明确"
+    },
+    {
+      "severity": "soft",
+      "label": "美国 GPU 出口管制升级风险",
+      "detail": "H800 已被升级管制，未来 H200/B200 进不来；H800 集群升级路径受限"
+    }
+  ],
+  "sequoia10": [
+    {
+      "key": "mission",
+      "score": 8,
+      "rationale": "使命纯粹「探索 AGI」+「让所有人用得起好模型」，无商业噪音，团队信仰驱动。"
+    },
+    {
+      "key": "problem",
+      "score": 9,
+      "rationale": "解决「中国大模型成本太高 + 海外模型太贵」双重痛点，对 B 端 / 个人开发者刚需。"
+    },
+    {
+      "key": "solution",
+      "score": 10,
+      "rationale": "DeepSeek-V3 / R1 reasoning 在 MMLU / MATH / Codeforces 对标 GPT-4o；¥1/百万 token 是行业地板价。"
+    },
+    {
+      "key": "whyNow",
+      "score": 9,
+      "rationale": "2024 末 R1 发布震惊业内（\"中国 OpenAI 时刻\"），算力效率 + 开源策略改写行业格局。"
+    },
+    {
+      "key": "market",
+      "score": 8,
+      "rationale": "中国生成式 AI 2025 ¥1500 亿 + 全球开源大模型生态，DeepSeek 已是中国 #1 开源模型。"
+    },
+    {
+      "key": "competition",
+      "score": 9,
+      "rationale": "价格屠夫 + 算法效率（V3 训练成本仅 $5.6M vs OpenAI $100M+）建立结构性成本优势。"
+    },
+    {
+      "key": "businessModel",
+      "score": 6,
+      "rationale": "极低 API 价格 + 完全开源，短期变现路径模糊；长期靠规模 + 增值（reasoning / agent）服务。"
+    },
+    {
+      "key": "team",
+      "score": 10,
+      "rationale": "梁文锋（量化背景 + AI 信仰）+ 幻方量化资金算力支持；团队仅 150 人但发表 V3/R1 论文影响力世界级。"
+    },
+    {
+      "key": "financials",
+      "score": 7,
+      "rationale": "幻方量化母公司输血，财务自由度高于纯创业公司；但 API 极低价 + 开源等于亏损烧规模。"
+    },
+    {
+      "key": "vision",
+      "score": 9,
+      "rationale": "愿景明确「AGI + 算法效率突破」，论文 V3/R1 已成行业里程碑。"
+    }
+  ],
+  "founderQuestions": [
+    {
+      "category": "financial",
+      "question": "幻方量化对 DeepSeek 的资金 + 算力支持额度多少？2025 年 DeepSeek 的现金流是否独立于幻方？如果幻方因为量化业务收缩需要回收资源，DeepSeek 的应急方案？",
+      "why": "关联交易 + 母公司依赖度是估值核心问题",
+      "expect": "具体年度预算 + 算力 lease 协议 + 应急 runway",
+      "watch": "回答模糊或称「不会发生」= 母公司变化暴露风险"
+    },
+    {
+      "category": "financial",
+      "question": "DeepSeek-V3 训练成本公开为 $5.6M，但实际包含 H800 集群 amortization、人力、数据采购吗？真实 全成本（fully loaded）单次训练成本多少？",
+      "why": "$5.6M 数字是行业震撼点 + 估值故事核心，需核验真实性",
+      "expect": "完整成本拆分 + 与 OpenAI / Anthropic 对比口径",
+      "watch": "只给单次训练增量成本 = 故事被夸大"
+    },
+    {
+      "category": "business",
+      "question": "当前 API 价格 ¥1/百万 token 对应的单 token 毛利是多少？是亏本占领市场还是已经盈亏平衡？2025 年是否计划提价？",
+      "why": "价格战策略是否可持续直接决定商业可行性",
+      "expect": "具体毛利率 + 提价路线图",
+      "watch": "回答\"靠规模摊薄\"= 没有真实毛利空间"
+    },
+    {
+      "category": "business",
+      "question": "V3/R1 完全开源，OpenAI / Anthropic / Google 是否会基于您的开源模型再训练？您的护城河在哪里？",
+      "why": "开源策略下的护城河定义",
+      "expect": "算法人才密度 + 训练数据 + 工程经验 + 持续迭代速度",
+      "watch": "回答\"开源就是护城河\"= 没想清楚长期定位"
+    },
+    {
+      "category": "team",
+      "question": "团队仅 150 人，但论文影响力对标 OpenAI 的 1500 人。您如何在不显著扩张的前提下保持 R2/R3 持续突破？关键人员激励机制？",
+      "why": "小而精团队 vs 持续创新挑战",
+      "expect": "人才招聘标准 + 技术分工 + 股权激励",
+      "watch": "依赖梁文锋个人 = 关键人风险"
+    },
+    {
+      "category": "competition",
+      "question": "智谱 / 月之暗面 / 阿里通义都在跟进开源 + 降价。您的 R1 reasoning 优势能保持多久？R2 / V4 的差异化路径？",
+      "why": "行业跟进速度对结构性优势的侵蚀",
+      "expect": "具体下一代模型架构 + 训练时点",
+      "watch": "回答\"我们一直在创新\"= 没明确 roadmap"
+    },
+    {
+      "category": "risk",
+      "question": "美国对 H800 已经升级管制，H200/B200 进不来。您当前的 H800 集群规模 + 国产 910C / B100 替代进度？2025 R2 训练用什么 GPU？",
+      "why": "算力供应是命脉",
+      "expect": "具体卡数 + 国产化测试结果 + R2 训练算力来源",
+      "watch": "\"我们正在评估\"= 没准备好"
+    },
+    {
+      "category": "fund-use",
+      "question": "梁文锋公开称暂不接受外部融资。如果接受外部投资人，资金用途的优先级排序是什么？最缺的是钱、算力、人才还是政府关系？",
+      "why": "验证投资人价值定位",
+      "expect": "清晰的\"为什么需要我们\"理由",
+      "watch": "回答\"什么都不缺\"= deal 难成"
+    }
+  ],
+  "deepAnalysis": [
+    {
+      "key": "COMPANY_OVERVIEW",
+      "label": "① 公司画像与定位",
+      "content": "DeepSeek（深度求索）2023 年 7 月由梁文锋创立于杭州，是幻方量化（High-Flyer）旗下专注 AGI 大模型研究的子公司。公司团队仅 150 人左右，但发表的 DeepSeek-V3 / DeepSeek-R1 论文在 2024 末-2025 初引发全球 AI 行业震动，被业内称为「中国 OpenAI 时刻」。公司定位为「价格屠夫 + 算法效率派」：通过 MoE 架构创新 + 训练效率优化，把 V3 训练成本降到 $5.6M（vs OpenAI GPT-4 估算 $100M+），API 定价 ¥1/百万 token 是行业地板价，并完全开源所有模型权重。母公司幻方量化提供 H800 GPU 集群 + 资金 + 量化背景人才。"
+    },
+    {
+      "key": "PROBLEM_OPPORTUNITY",
+      "label": "② 问题与机会判断",
+      "content": "中国大模型行业 2023-2024 形成\"大力出奇迹\"路径依赖：模型越做越大、训练成本越来越高、API 价格越来越贵。DeepSeek 反其道：通过 MoE 稀疏激活 + 训练效率算法优化，证明可以在受限算力下做出对标 GPT-4 的能力。这是双重机会：①破除\"大模型只能巨头玩\"的迷思，让中型团队 / 个人开发者有平价 AGI 能力；②对 OpenAI / Anthropic 的成本结构构成结构性挑战，2025 年 1 月美股 AI 概念股一度大跌即为反应。时机窗口：开源生态正在裂变（Llama 3.1 → DeepSeek-V3 → 后续），未来 2 年是开源-闭源-推理三方博弈的关键期。"
+    },
+    {
+      "key": "PRODUCT_SOLUTION",
+      "label": "③ 产品与解决方案",
+      "content": "DeepSeek-V3 是 671B MoE 模型（每 token 仅激活 37B 参数），训练数据 14.8T token，在 MMLU / GPQA / DROP / MATH 等基准超越 Llama 3.1 405B 并逼近 GPT-4o。DeepSeek-R1 是首个开源 reasoning 模型（类比 OpenAI o1），通过纯强化学习激发模型推理能力，在 AIME / Codeforces / MATH 等推理任务对标 o1。DeepSeek-V3-Coder 在 SWE-bench / HumanEval 国内开源 Top 1。API 阶梯定价：DeepSeek-V3 ¥1/百万 token（输入）+ R1 reasoning 单独定价。可防御性：①算法效率（MoE + 训练优化）需要 1-2 年才能被复制；②150 人小团队 + 量化基因带来的工程极致主义；③完全开源策略形成全球开发者生态依赖。"
+    },
+    {
+      "key": "BUSINESS_MODEL",
+      "label": "④ 商业模式",
+      "content": "商业模式与其他大模型公司截然不同：①完全开源所有模型权重（V3 / R1 / Coder），免费供商业使用 ②官方 API 仅作为便捷接入，价格压到边际成本（¥1/百万 token）③不做 ToG / 央国企 / 私有化定制（与智谱形成鲜明对比）④暂不接受外部融资（梁文锋公开声明）。变现路径：长期看 R1+ reasoning 增值 SKU 提价 + 全球开发者生态分润 + 推理优化算法 license（推测）。短期：依靠幻方量化母公司资金算力输血，不追求短期盈利。这种模式在风险投资视角\"短期非理性长期非传统\"——但已经事实改写了行业格局。"
+    },
+    {
+      "key": "MARKET_ANALYSIS",
+      "label": "⑤ 市场规模与竞争",
+      "content": "中国生成式 AI 2025 ¥1,500 亿（IDC），全球开源大模型市场 2025 预计 $200 亿+。DeepSeek 在国内开源大模型 #1（GitHub Star 100K+，HuggingFace 月下载千万级），全球开源大模型 Top 3（与 Llama / Qwen 并列）。竞争对标：①国内：智谱（学术派 ToG）/ 月之暗面（C 端长文本）/ 百川 / 零一万物 / 阿里通义；②国外：OpenAI（闭源 reasoning）/ Anthropic（闭源 alignment）/ Meta Llama（开源标杆）/ Google Gemini。DeepSeek 独占\"开源 + 算法效率 + 价格地板\"三重定位，结构性优势在 18-24 个月内难被同维度复制。"
+    },
+    {
+      "key": "TEAM_EVALUATION",
+      "label": "⑥ 团队评估",
+      "content": "团队评分 10/10——这是国内大模型创业公司中最特殊的团队。梁文锋（创始人 / CEO）：浙大背景，2015 年创立幻方量化（中国头部 AI 量化对冲基金，管理规模 ¥800 亿+），AI 信仰驱动 + 工程极致主义。团队仅 150 人左右，但工程师密度 + 量化背景 + 长期主义文化构成独特竞争力。核心团队：来自清华 / 北大 / 浙大 / 复旦的算法 PhD + 幻方量化的工程基因。文化特征：①不追逐风口（公司主动避免媒体 PR）②不追求融资（梁文锋公开拒绝外部融资）③极致工程文化（V3 训练效率算法是工程突破而非堆参数）。学术派 vs 创业派定位：DeepSeek 介于二者之间，既有清华 KEG 的学术深度（论文影响力 World Top 1）又有量化基金的工程纪律。"
+    },
+    {
+      "key": "TRACTION_FINANCIALS",
+      "label": "⑦ 牵引与财务",
+      "content": "DeepSeek 公开数据非常有限（不主动 PR）：①GitHub Star 100K+ 全球开源大模型 Top 3 ②HuggingFace 月下载千万级 ③API 调用量 2025 Q1 在 V3 / R1 发布后激增 100x（行业估算）④全球开发者生态：Cursor / Continue / 各种代码编辑器 / Hugging Face Inference 都集成 DeepSeek。财务：①幻方量化母公司输血，财务跑道独立于市场融资 ②V3 训练成本 $5.6M（公开论文披露）③估值未公开，市场估算 $30-50 亿（基于行业影响力 + 论文价值 + 算力规模）。融资历史：截至 2025 Q1 未公开任何外部融资，梁文锋公开称暂不接受外部投资。"
+    },
+    {
+      "key": "RISKS_REDFLAGS",
+      "label": "⑧ 风险与红线",
+      "content": "0 硬红线 + 4 软红线。①估值不透明 + 主动放弃融资：deal 路径异常困难，需要梁文锋个人意愿改变（软）；②幻方量化关联交易：DeepSeek 的 GPU 集群、资金、人力高度依赖幻方，IP 归属与关联交易边界需法律梳理（软）；③开源策略与商业化平衡：完全开源 + 极低 API 价格短期不变现，长期靠 reasoning 增值 SKU 是否成立未验证（软）；④美国 GPU 出口管制升级：H800 已被纳入限制，未来 H200/B200 进不来，国产 910C/B100 替代进度未知（软）。无硬红线意味着团队、技术、合规等基础风险均稳。"
+    },
+    {
+      "key": "INVESTMENT_THESIS",
+      "label": "⑨ 投资论点",
+      "content": "DeepSeek 是中国大模型赛道最特殊的标的：技术上对标 OpenAI / Anthropic，商业上完全反其道（开源 + 极低价 + 不融资），团队规模仅 150 人但论文影响力世界级。三个核心赌注：①算法效率突破（MoE + 训练优化）形成 18-24 个月结构性领先，对手追平时 DeepSeek 已经迭代到 R3/R4；②开源生态裂变红利：Llama / DeepSeek 双驱动开源大模型生态，下游 Cursor / Continue / 各类 AI 应用都将依赖 DeepSeek API；③量化基因 + 工程极致：幻方量化的工程纪律 + 长期主义文化稀缺。投资难点：估值不透明 + 创始人公开拒融，deal 推进需要\"非常规交易设计\"——可能形式：①二级老股转让 ②S 基金老股 ③战略股 + 算法 license。"
+    },
+    {
+      "key": "NEXT_STEPS",
+      "label": "⑩ 尽调建议与关键问题",
+      "content": "推荐进 30 分钟会议但需明确告知\"我们理解您不主动融资，仅希望建立战略关系\"。重点 5 个尽调工作流：①财务尽调聚焦幻方关联交易边界 + DeepSeek 独立性；②技术尽调评测 V3 / R1 在 MMLU / GPQA / Codeforces / MATH 实测分数 + R2 训练进度；③供应链尽调核验 H800 集群规模 + 国产 GPU 替代测试结果；④商业尽调访谈 Cursor / Continue / Hugging Face 生态合作伙伴 + Top 100 API 客户用量与依赖度；⑤治理尽调梳理梁文锋 + 幻方核心高管股权 + DeepSeek 关键员工 ESOP 池。Pre-IC 时点目标：①明确是否能拿到老股；②如能拿到，估值锁定区间 $30-50 亿；③争取战略合作权 + 算法授权选择权。"
+    }
+  ],
+  "referenceCheck": [
+    {
+      "type": "前同事",
+      "who": "幻方量化早期工程师 / 浙大同窗",
+      "context": "验证梁文锋长期主义性格 + 量化转 AGI 的决心",
+      "priority": "P0"
+    },
+    {
+      "type": "API 客户",
+      "who": "Cursor / Continue / Hugging Face Inference 合作团队",
+      "context": "DeepSeek API 真实使用体验 + 替换成本 + 客户锁定度",
+      "priority": "P0"
+    },
+    {
+      "type": "生态",
+      "who": "国内 AI 应用层公司（Coze / 智谱 Agent / 商汤 Agent）",
+      "context": "DeepSeek 在生态层渗透率 + 开发者迁移成本",
+      "priority": "P0"
+    },
+    {
+      "type": "竞品",
+      "who": "OpenAI 中国 / Meta Llama 团队",
+      "context": "行业内对 DeepSeek 真实技术领先度的客观评价",
+      "priority": "P1"
+    },
+    {
+      "type": "已离职",
+      "who": "前任 DeepSeek / 幻方算法工程师",
+      "context": "内部技术债务 + 团队稳定性 + 关联交易真实情况",
+      "priority": "P1"
+    },
+    {
+      "type": "学术",
+      "who": "NeurIPS / ICML 同行教授（中美）",
+      "context": "V3 / R1 论文方法论真实创新度 vs 工程优化",
+      "priority": "P1"
+    },
+    {
+      "type": "法律",
+      "who": "幻方法务 / 公司治理顾问",
+      "context": "DeepSeek 与幻方 IP 归属 + 关联交易合规性",
+      "priority": "P0"
+    }
+  ]
+}

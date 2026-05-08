@@ -5,6 +5,7 @@
 import type { Deal } from '../types'
 import moonshotJson from './moonshot-decision-pack.json'
 import zhipuJson from './zhipu-decision-pack.json'
+import deepseekJson from './deepseek-decision-pack.json'
 
 export interface DecisionPack {
   meta: {
@@ -37,6 +38,7 @@ export interface DecisionPack {
 
 export const moonshotDecisionPack: DecisionPack = moonshotJson as DecisionPack
 export const zhipuDecisionPack: DecisionPack = zhipuJson as DecisionPack
+export const deepseekDecisionPack: DecisionPack = deepseekJson as DecisionPack
 
 // ─── 月之暗面 Moonshot AI · A2 轮 ──────────────────────────────────────────
 export const moonshotDeal: Deal = {
@@ -167,11 +169,74 @@ export const zhipuDeal: Deal = {
   accentColor: '#7C3AED',
 }
 
+// ─── DeepSeek · Pre-Series B（市场估算） ─────────────────────────────────
+export const deepseekDeal: Deal = {
+  id: 'deepseek-preb',
+  name: 'DeepSeek',
+  cnName: '深度求索',
+  tagline: '中国 OpenAI 时刻 · 价格屠夫 + 算法效率派 · V3/R1 全开源',
+  sector: 'AI / LLM',
+  round: 'Pre-Series B',
+  valuation: '$50亿（市场估算）',
+  askAmount: '老股转让 $30M（建议）',
+  stage: 'review',
+  foundedYear: 2023,
+  location: '杭州',
+  teamSize: 150,
+  arr: 'API 极低价 + 全开源策略 · 短期不追求营收',
+  growthRate: 'GitHub Star 100K+ · HuggingFace 月下载千万级',
+  grossMargin: 'API ¥1/百万 token 接近边际成本',
+  tam: '全球开源大模型生态 2025 $200 亿+ · 中国生成式 AI ¥1500 亿',
+  sam: '开源大模型 + 生态分润 + reasoning 增值 SKU',
+  sequoia: { mission: 8, problem: 9, solution: 10, whyNow: 9, market: 8, competition: 9, businessModel: 6, team: 10, financials: 7, vision: 9 },
+  score: 86,
+  recommendation: 'priority',
+  redFlags: deepseekDecisionPack.redFlags,
+  wins: [
+    '梁文锋（浙大 + 幻方量化创始人 / 管理 ¥800 亿+量化对冲基金）+ 量化背景 AI 团队，独特工程基因',
+    'DeepSeek-V3 训练成本 $5.6M（vs OpenAI GPT-4 估算 $100M+）建立结构性成本优势',
+    'DeepSeek-R1 是首个开源 reasoning 模型，对标 OpenAI o1，2025 Q1 美股 AI 概念股一度大跌反应',
+    'GitHub Star 100K+ · HuggingFace 月下载千万级 · 全球开源大模型 Top 3（与 Llama / Qwen 并列）',
+    'API ¥1/百万 token 是行业地板价，已被 Cursor / Continue / 各类 AI 应用集成',
+    '幻方量化母公司输血，财务跑道独立于市场融资，长期主义文化',
+  ],
+  concerns: [
+    '软：梁文锋公开拒绝外部融资，deal 推进需要"非常规交易设计"（老股 / 战略股）',
+    '软：DeepSeek 与幻方量化关联交易边界 + IP 归属未公开梳理',
+    '软：完全开源 + 极低 API 价格短期不变现，长期商业化路径未验证',
+    '软：H800 已被纳入升级管制，未来 H200/B200 进不来；国产替代进度未知',
+  ],
+  founders: [
+    { name: '梁文锋 Liang Wenfeng', role: 'CEO / 创始人', background: '浙大 · 2015 年创立幻方量化（管理 ¥800 亿+量化对冲基金）· AI 信仰驱动 + 工程极致主义', highlight: '量化基因转 AGI · DeepSeek-V3/R1 论文影响力世界级 · 主动放弃外部融资' },
+  ],
+  traction: [
+    { label: 'GitHub Star', value: '100K+' },
+    { label: 'HuggingFace 月下载', value: '千万级' },
+    { label: '团队规模', value: '~150 人' },
+    { label: 'V3 训练成本', value: '$5.6M', delta: 'vs GPT-4 $100M+ 估算' },
+    { label: 'API 定价', value: '¥1/百万 token', delta: '行业地板价' },
+    { label: '生态合作', value: 'Cursor / Continue / Hugging Face Inference' },
+    { label: '幻方量化 AUM', value: '¥800亿+', delta: '母公司资金算力支持' },
+  ],
+  timeline: [
+    { date: '2015', event: '梁文锋创立幻方量化', actor: '量化对冲基金' },
+    { date: '2023-07', event: 'DeepSeek 公司成立', actor: '梁文锋（幻方子公司）' },
+    { date: '2024-Q1', event: 'DeepSeek-V2 发布 + API 定价 ¥1/百万 token' },
+    { date: '2024-12', event: 'DeepSeek-V3 论文发布（$5.6M 训练成本）' },
+    { date: '2025-01', event: 'DeepSeek-R1 reasoning 模型发布', actor: '业内称"中国 OpenAI 时刻"' },
+  ],
+  lastUpdated: '2025-01-20',
+  champion: 'Henry Zhao',
+  source: '2024-2025 公开新闻 + arXiv 论文 + GitHub / HuggingFace 公开数据 + 幻方量化背景 + VC 经验补全',
+  accentColor: '#DC2626',
+}
+
 // ─── 真实公开公司库 registry（决策包 lookup） ─────────────────────────────
-export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal]
+export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal]
 export const REAL_DECISION_PACKS: Record<string, DecisionPack> = {
   'moonshot-a2': moonshotDecisionPack,
   'zhipu-bplus': zhipuDecisionPack,
+  'deepseek-preb': deepseekDecisionPack,
 }
 
 export function getDecisionPackByDealId(id: string): DecisionPack | undefined {
