@@ -1,0 +1,125 @@
+// 用 JS 对象 + JSON.stringify 安全生成 zhipu-decision-pack.json
+// 避免手写 JSON 时中英双引号嵌套问题
+
+import fs from 'node:fs/promises'
+import path from 'node:path'
+
+const pack = {
+  meta: {
+    company: '智谱 AI · Zhipu AI',
+    round: 'Series B+',
+    valuation: '¥200亿 · 投后',
+    runAt: '2024-12-15T10:00:00.000Z',
+    finalizedAt: '2024-12-15T10:30:00.000Z',
+    source: '公开新闻 + 智谱开放平台官网 + 爱企查工商 + 团队公开学术履历 + VC 经验补全',
+  },
+  verdict: {
+    signal: 'GREEN',
+    label: '推荐进 30 分钟会议',
+    reason: '综合 82 分 · 0 硬红线 · 1 个维度 ≤5 分（财务现金流偏紧 ToG 应收账款长）',
+  },
+  totalScore: 82,
+  recommendation: 'priority',
+  redFlags: [
+    { severity: 'soft', label: 'ToG 应收账款周期长', detail: '政企项目收款 9-12 个月，¥200 亿估值下现金流压力随增长扩大' },
+    { severity: 'soft', label: 'API 价格战', detail: 'DeepSeek 把 ¥1/百万 token 打成行业底价，B 端毛利长期承压' },
+    { severity: 'soft', label: 'C 端流量入口偏弱', detail: '智谱清言 MAU 800 万 vs 月之暗面 Kimi 3000 万，C 端入口差距明显' },
+    { severity: 'soft', label: '学术派转商业风险', detail: '唐杰团队学术氛围浓，商业化执行 vs 月之暗面 / DeepSeek 的市场速度' },
+  ],
+  sequoia10: [
+    { key: 'mission', score: 8, rationale: '使命聚焦「自主可控通用大模型基础设施」，国产替代叙事完整，ToG/央国企刚需对应清晰。' },
+    { key: 'problem', score: 9, rationale: '中国 ToG / 央国企对国产大模型刚需，避免国外出口管制风险，问题定义精准且时代刚需。' },
+    { key: 'solution', score: 9, rationale: 'GLM-4-Plus 1300 亿参数对标 GPT-4，CogVideoX 对标 Sora，AutoGLM 国内首个开源手机 Agent。' },
+    { key: 'whyNow', score: 8, rationale: '2024 国产化替代 + ToG 智算中心建设两大窗口同步，4 季度时机成熟。' },
+    { key: 'market', score: 9, rationale: '中国生成式 AI 2025 ¥1500 亿 + ToG 国产替代单独 ¥500 亿 + AGI 应用层万亿 TAM。' },
+    { key: 'competition', score: 6, rationale: '国内大模型四小龙 + 大厂 + DeepSeek 价格屠夫，竞争极烈；智谱靠学术资源 + ToG 关系差异化。' },
+    { key: 'businessModel', score: 7, rationale: 'B 端 API 70% + 私有化部署 20% + ToG 项目 10%，多元但 ToG 收款周期拖累现金流。' },
+    { key: 'team', score: 10, rationale: '唐杰（清华长聘 / KEG / AAAI Fellow / h-index 90+）+ 张鹏 + 陈征，学术派旗帜 + 600 人技术密度。' },
+    { key: 'financials', score: 5, rationale: 'B+ 估值 ¥200 亿对应日均 1.4 亿 token 调用，PSR 偏高；ToG 应收账款长，现金流紧。' },
+    { key: 'vision', score: 8, rationale: '愿景明确 AGI 普惠 + 自主可控基础设施，长期叙事完整且符合国家战略。' },
+  ],
+  founderQuestions: [
+    {
+      category: 'financial',
+      question: 'B+ 估值 ¥200 亿对应日均 1.4 亿 token，按 GLM-4-Air ¥1/百万 token 估算月收入约 ¥4,200 万。但您的估值已经按 ¥200 亿计算，PSR 接近 400 倍。您预期 12 个月内将日调用量提升到多少 token，毛利率提升到多少？',
+      why: '验证估值倍数 vs 真实营收的合理性',
+      expect: '听到具体调用量增长目标 + 高价档（GLM-4-Plus）占比提升路径',
+      watch: '回答停留在「行业增速」而无具体里程碑 = 估值靠故事',
+    },
+    {
+      category: 'financial',
+      question: 'ToG 大项目收款周期 9-12 个月。本轮 ¥30 亿募资中，多少作为应收账款贴现储备？现金流跑道（runway）按目前燃烧率能支撑多少季度？',
+      why: '应收账款长是 ToG 业务最大现金流风险',
+      expect: '具体 runway 月数 + 应收账款周转天数 + 现金储备分层',
+      watch: '回避现金流问题或回答模糊 = 估值跑道有问题',
+    },
+    {
+      category: 'business',
+      question: 'ToG 项目入选率 60%+，但 ToG 项目毛利剔除算力成本后真实毛利多少？北京 / 上海 / 深圳智算中心的合作模式是 EPC、运营托管还是软件 license？',
+      why: '核验 ToG 业务的真实盈利能力',
+      expect: '毛利率分解到具体项目类型',
+      watch: '回答「具体不便透露」= 可能毛利结构不健康',
+    },
+    {
+      category: 'business',
+      question: 'C 端智谱清言 MAU 800 万 vs Kimi 3000 万，C 端流量入口差距明显。您是计划继续投入 C 端追赶，还是放弃 C 端聚焦 B 端 + ToG？放弃的话，B 端获客 CAC 路径是什么？',
+      why: 'C 端入口决定 B 端开发者生态势能',
+      expect: '明确战略选择 + 资源分配比例',
+      watch: '想 C 端 B 端都要 = 资源分散',
+    },
+    {
+      category: 'team',
+      question: '您身兼清华长聘教授 + CEO + 国家级科研项目 PI 多重角色。下一阶段如何分权？COO / CFO / 商业化 VP 是否到位？2025 年清华教职是否会调整？',
+      why: '关键人风险 + 学术派转商业化的执行能力',
+      expect: '高管补位时间表 + 学术 vs 商业精力分配',
+      watch: '回答「我亲力亲为」= 商业化决策瓶颈在 CEO',
+    },
+    {
+      category: 'competition',
+      question: 'DeepSeek-V3 把 API 价格打到 ¥1/百万 token。GLM-4-Air 已对标这个价格，但 GLM-4-Plus 还是 ¥50/百万 token。您预期高价档 12 个月内 ARPU 会被压低多少？高价档是不是壁垒在融化？',
+      why: '价格战对商业模式根基的冲击',
+      expect: '具体定价策略 + 高价档差异化护城河',
+      watch: '认为「我们不打价格战」= 没准备好',
+    },
+    {
+      category: 'risk',
+      question: '训练数据来源构成（公开网络爬取 / 出版社授权 / ToG 客户脱敏数据）三者比例？是否完成网信办算法备案 + 数据出境合规审查？央国企客户的数据是否被用于训练？',
+      why: 'AIGC 合规 + 央国企数据脱敏是 ToG 业务硬门槛',
+      expect: '具体备案文号 + 数据采购合同 + 客户数据隔离方案',
+      watch: '回答「全部合规」而无文件 = 监管风险',
+    },
+    {
+      category: 'fund-use',
+      question: '本轮 ¥30 亿，60% 算力 / 25% 研发 / 15% ToG 标杆。算力 ¥18 亿对应华为 910B 还是 NVIDIA H100？2025 年训练 GLM-5 总算力需求是否已经下单？供应商断供风险预案？',
+      why: '算力是核心成本中心，国产化进度决定长期可控性',
+      expect: '具体卡数 + 国产 / 进口比例 + 备选供应商',
+      watch: '未公开具体合同 = 算力规划不清',
+    },
+  ],
+  deepAnalysis: [
+    { key: 'COMPANY_OVERVIEW', label: '① 公司画像与定位', content: '智谱 AI 是清华大学 KEG 知识工程实验室技术成果产业化的旗舰公司，2019 年由唐杰教授带领核心算法团队成立。公司定位为「中国大模型四小龙」中的技术派代表，以 GLM 系列大模型为核心，覆盖 1300 亿参数旗舰、6B/9B 开源版本、文生图 CogView、文生视频 CogVideoX、Agent 自动化 AutoGLM 完整产品矩阵。截至 2024 Q4，团队 600-800 人，研发占比 75%+，前 Google / Microsoft / 百度核心研究员密度高。差异化路径明确：清华学术资源 + 开源生态 + ToG 政企标杆。' },
+    { key: 'PROBLEM_OPPORTUNITY', label: '② 问题与机会判断', content: '中国 ToG 与央国企市场对国产大模型刚需，叠加美国出口管制风险，国产替代成为强政策导向。2024 年国产大模型赛道从「模型能力比拼」切换为「应用场景独占 + 国产化替代」，政府 / 央国企采购预算大幅倾斜国产模型。智谱凭借清华 KEG 学术血统 + AAAI/ACM/IEEE Fellow 创始人，在 ToG 标杆项目入选率达 60%+，把握了三大窗口：①国家级智算中心建设（北京 / 上海 / 深圳）②央国企国产替代（招商局 / 国家电网 / 平安）③开源生态护城河（ChatGLM-3 累计下载 1500 万）。' },
+    { key: 'PRODUCT_SOLUTION', label: '③ 产品与解决方案', content: 'GLM-4-Plus 训练 token 量超 10 万亿，在中文 SuperCLUE / C-Eval / MMLU 等基准对标 GPT-4。AutoGLM 是业内首个开源手机 Agent（2024 Q4 发布），可在手机端完成订外卖、抢票、预定酒店等真实任务。CogVideoX 对标 Sora 开源文生视频。API 阶梯定价：GLM-4-Air ¥1/百万 token（应对价格战）+ GLM-4-Plus ¥50/百万 token（差异化高价档）。可防御性来自学术血统：清华 KEG 论文体系完整，ChatGLM-3 系列开源累计下载 1500 万，GitHub Star 50K+，是国内开源大模型生态最强的公司之一。企业定制走 MaaS + 私有化部署 + 行业垂类（医疗 / 金融 / 法律）三层。' },
+    { key: 'BUSINESS_MODEL', label: '④ 商业模式', content: '智谱营收三层结构：B 端 API（70% 占比）按 token 计费 + 企业私有化部署（20%）一次性 license + 年维护 + ToG 大项目（10%）智算中心 + 央国企国产替代。C 端智谱清言（chatglm.cn）目前 freemium 不收费，主要作为 B 端开发者获客入口。商业模式核心矛盾：ToG 项目毛利高但应收账款 9-12 个月，B 端 API 现金流好但被 DeepSeek 价格战压制。长期叙事：基于 GLM-4 流量入口的 Agent 生态分润 + 企业大模型私有化。单位经济学待 BP 进一步披露真实毛利率。' },
+    { key: 'MARKET_ANALYSIS', label: '⑤ 市场规模与竞争', content: '中国生成式 AI 市场 2025 预计 ¥1,500 亿（IDC 2024），大模型应用层 2024-2027 复合增长率 87%。ToG / 央国企国产替代单独规模 2025 预计 ¥500 亿，智谱在该细分入选率 60%+ 是核心壁垒。竞争格局复杂：国内四小龙（月之暗面 / 百川 / 零一万物）+ 大厂（百度 / 阿里 / 字节 / 华为）+ DeepSeek 价格屠夫。智谱差异化在于清华学术资源 + ToG 政企关系 + 开源生态深度三维度，但 C 端流量入口落后月之暗面 Kimi 接近 4 倍。市场份额角度：智谱在 ToG 是头部，B 端 API 是 Top 5，C 端入口是 Top 10。' },
+    { key: 'TEAM_EVALUATION', label: '⑥ 团队评估', content: '团队评分 10/10——这是国内大模型创业公司中学术派背景最深厚的团队。唐杰：清华长聘教授 / KEG 实验室主任 / AAAI/ACM/IEEE Fellow / h-index 90+ / Google Scholar 引用 3万+ / 国家科技进步二等奖。张鹏：清华博士 / GLM 算法 Lead / 工程化体系设计者。陈征：清华博士 / 商业化与战略合作。核心科学家李涓子（清华 KEG 共同创始人）+ 东昱晓（清华助理教授）。团队规模 600-800 人，研发占比 75%+。学术派优势：发顶会论文 / 写国家政策建议 / 拿国家级项目 / 培养博士生形成人才漏斗。学术派劣势：商业化决策速度慢于纯创业公司、KPI 考核机制可能不够激进。' },
+    { key: 'TRACTION_FINANCIALS', label: '⑦ 牵引与财务', content: 'B 端 API 日均 1.4 亿 token（智谱开放平台公开数据，2024 Q4），按 GLM-4-Air ¥1/百万 token 估算保守月收入约 ¥4,200 万；如果高价档（GLM-4-Plus ¥50/百万）占 30% 则月收入可达 ¥1.5 亿。B 端公开客户：招商局 / 金山办公 / 合合信息 / 北京东方科脉 / 携程 / 国家电网 / 平安。ToG 标杆：北京 / 上海 / 深圳市级智算中心。C 端智谱清言 MAU 约 800 万（2024 Q3 估算），落后 Kimi 3000 万。开源生态：ChatGLM-3 HuggingFace 累计下载 1,500 万 + GitHub Star 50K+。融资历史：2020 天使（启迪之星）→ 2022 A 轮 ¥30 亿（中关村金种子 / 启明创投）→ 2023 B 轮 ¥80 亿（阿里 / 蚂蚁 / 腾讯）→ 2024 Q3 B+ ¥200 亿（中关村自创 / 社保基金 / 君联 / 高瓴）。专利约 200 项。' },
+    { key: 'RISKS_REDFLAGS', label: '⑧ 风险与红线', content: '0 硬红线 + 4 软红线。①ToG 应收账款周期 9-12 个月，¥200 亿估值下现金流随增长扩大风险（软）；②DeepSeek 价格战对 B 端 API 毛利的长期压制，GLM-4-Plus 高价档可能被迫降价（软）；③C 端流量入口落后 Kimi 4 倍，B 端开发者生态势能受限（软）；④学术派创始人转商业化的执行速度，相对月之暗面 / DeepSeek 偏慢（软）。无硬红线意味着算力供应、合规备案、团队稳定性等基础风险均可控。但需在尽调中重点核验：①ToG 项目剔除算力成本后的真实毛利率；②本轮募资是否含应收账款贴现储备；③央国企客户数据脱敏方案是否通过监管审查。' },
+    { key: 'INVESTMENT_THESIS', label: '⑨ 投资论点', content: '智谱凭借清华 KEG 学术血统 + ToG 政企关系 + 开源生态深度，在中国大模型四小龙中占据「技术派 + 国产替代」独特位置。三个核心赌注：①国产化替代是 5 年级别的政策红利，智谱在 ToG / 央国企领域的入选率 60%+ 已建立先发优势；②清华 KEG 学术资源持续输出顶尖人才，团队稳定性 vs 纯创业公司更强；③开源生态 ChatGLM-3 累计 1,500 万下载形成开发者粘性，B 端 API 转化率显著高于零起步竞品。建议进 30 分钟会议聚焦 3 件事：（a）现金流 runway 与应收账款周转的具体数字；（b）GLM-5 训练算力是否已下单 + 国产化比例；（c）C 端战略是否调整为放弃直接竞争、聚焦 B+ToG。' },
+    { key: 'NEXT_STEPS', label: '⑩ 尽调建议与关键问题', content: '推荐 30 分钟会议后启动尽调，重点 5 个工作流：①财务尽调聚焦 ToG 项目应收账款周转天数 + 现金流储备分层；②商业尽调实地调研 3 个 ToG 标杆项目（建议北京智算中心 + 招商局 + 国家电网）核验真实毛利与续约意愿；③技术尽调评测 GLM-4-Plus 在 SuperCLUE / C-Eval / MMLU / Long-Bench 实测分数 vs 月之暗面 Kimi / DeepSeek-V3；④合规尽调核验网信办算法备案 + 央国企数据脱敏方案 + 出版社授权协议；⑤团队尽调 reference 唐杰 KEG 同事、张鹏前同事、3 名 ToG 客户技术负责人。Pre-IC 时点目标：估值锁定 ¥180-200 亿、本基金份额 ≥ ¥1.5 亿、争取董事会观察员席位。' },
+  ],
+  referenceCheck: [
+    { type: '前同事', who: '清华 KEG 实验室同事', context: '验证唐杰学术诚信 + 团队管理风格 + 商业化转型决心', priority: 'P0' },
+    { type: '客户', who: '招商局技术 PoC 负责人', context: 'B 端 API 真实使用效果 + 续约意愿 + 替换成本', priority: 'P0' },
+    { type: '客户', who: '北京 / 上海智算中心运营方', context: 'ToG 项目真实毛利 + 服务交付质量 + 政府关系深度', priority: 'P0' },
+    { type: '竞品', who: '月之暗面 / DeepSeek 模型团队', context: '行业内对智谱技术能力 + 商业化速度的客观评价', priority: 'P1' },
+    { type: '已离职', who: '前任算法工程师 / ToG 销售', context: '内部技术债务 + ToG 收款真实周期 + 团队稳定性', priority: 'P1' },
+    { type: '投资方', who: '阿里资本 / 蚂蚁战投老股东', context: 'B 轮老股东对追投 B+ 的态度信号 + 内部估值参考', priority: 'P2' },
+    { type: '学术', who: '国内 NLP 顶会 PC / 同行教授', context: 'GLM-4-Plus 真实技术领先度 vs 跑分 + 论文影响力', priority: 'P1' },
+  ],
+}
+
+const out = path.resolve('/Users/sherconan/dealpilot/src/data/zhipu-decision-pack.json')
+await fs.writeFile(out, JSON.stringify(pack, null, 2), 'utf-8')
+const r = JSON.parse(await fs.readFile(out, 'utf-8'))
+console.log('VALID JSON · totalScore', r.totalScore, '· deepAnalysis', r.deepAnalysis.length, 'sec · 8 题', r.founderQuestions.length, '· ref', r.referenceCheck.length)

@@ -337,14 +337,15 @@ export const deals: Deal[] = [
   },
 ]
 
-// 同时查 mock deals + 用户上传 + 真实公开 deal（moonshot）
+// 同时查 mock deals + 用户上传 + 真实公开公司库
 import { getUserDeals } from '../lib/userDealStore'
-import { moonshotDeal } from './realDeals'
+import { REAL_DEALS } from './realDeals'
 
 export const getAllDeals = (): Deal[] => {
   const userDeals = getUserDeals()
-  const hasMoonshot = userDeals.some(d => d.id === 'moonshot-a2')
-  return hasMoonshot ? [...userDeals, ...deals] : [moonshotDeal, ...userDeals, ...deals]
+  const userIds = new Set(userDeals.map(d => d.id))
+  const realDealsToShow = REAL_DEALS.filter(d => !userIds.has(d.id))
+  return [...realDealsToShow, ...userDeals, ...deals]
 }
 
 export const getDealById = (id: string): Deal | undefined =>
