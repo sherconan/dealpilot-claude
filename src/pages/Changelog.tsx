@@ -118,6 +118,7 @@ const sprints: SprintEntry[] = [
   { num: 140, title: '最近查看 deal 跟踪 — sidebar 实时入口', detail: 'lib/recentDeals.ts localStorage 跨 session 保留 7 天 · DealDetail 进入即 trackDealView · Layout sidebar 加「最近查看」分区显示前 4 条 · ✨ user-* 紫色徽标 · pub-sub useRecentDealIds 实时响应', files: ['lib/recentDeals.ts', 'components/Layout.tsx', 'pages/DealDetail.tsx'], tag: 'UX', color: '#7c3aed' },
   { num: 141, title: 'pdfjs 真懒加载 — 458 KB 仅拖 PDF 时下载', detail: 'pdfPipeline.ts 把 import * as pdfjsLib 改成 await import (pdfjs-dist) 缓存模式 · 文本粘贴 / 示例 BP / 不上传 PDF 永不触发 458 KB pdfjs-vendor 下载 · Upload chunk 0 静态依赖 / 1 动态 import 实测验证', files: ['lib/pdfPipeline.ts'], tag: 'Polish', color: '#0ea5e9' },
   { num: 142, title: '个人笔记面板 NotePanel · 按 dealId localStorage 自动保存', detail: 'lib/dealNotes.ts 提供 useDealNotes hook（debounce 600ms） · NotePanel 显示「保存中／X s 前已保存／字数」 · 隔离 dp:notes:{dealId} key · 不进 Markdown 导出 · 隐私优先', files: ['lib/dealNotes.ts', 'components/NotePanel.tsx', 'pages/DealDetail.tsx'], tag: '功能', color: '#d97706' },
+  { num: 143, title: 'localStorage 配额监控 + 80% 预警', detail: 'Layout 扫全部 dp:* key 算用量 · footer 显示 N KB · X% · ≥ 80% 文字转红色 + ⚠️ + sessionStorage flag 一次性 toast.error 提示备份 JSON · 5 MB 浏览器上限可视化', files: ['components/Layout.tsx'], tag: 'UX', color: '#dc2626' },
 ]
 
 const milestones = [
