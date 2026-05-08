@@ -125,7 +125,7 @@ export async function scoreWithLLM(
     ],
     temperature: 0.3,
   }
-  if (provider === 'pollinations') body.private = true
+  if (provider === 'pollinations') { body.private = true; body.max_tokens = 3000 }
   else if (provider === 'kimi-k26') body.max_tokens = 4000
   else body.max_tokens = 2500
 

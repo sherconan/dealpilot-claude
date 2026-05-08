@@ -76,15 +76,32 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {/* 真实公开公司决策包 — 产品第一份真 deliverable，永远显示 */}
+      <section className="bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border-2 border-emerald-500/40 rounded-2xl p-4 mb-5">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div className="text-[11px] uppercase tracking-wider text-emerald-700 font-medium">⚡ 真实公开公司决策包</div>
+            <div className="text-[15px] font-semibold tracking-tight mt-0.5">月之暗面 Moonshot AI · A2 轮（$33亿）— 30 分钟决策包</div>
+            <div className="text-[12px] text-ink-600 mt-1">基于 2024 年公开新闻 + 工商信息 · Pollinations LLM 真分析 10 段 + Sequoia 评分 + 8 题访谈 + 7 人 Reference Check</div>
+          </div>
+          <Link
+            to="/deal/moonshot-a2/decision-pack"
+            className="px-4 py-2 text-[13px] rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 font-medium whitespace-nowrap"
+          >
+            查看完整决策包 →
+          </Link>
+        </div>
+      </section>
+
       {/* 首次访问 / 零上传 — 直接给 4 行业示例入口，2 秒上手 */}
       {stats.userUploaded === 0 && (
         <section className="bg-gradient-to-r from-violet-50 via-white to-violet-50 border-2 border-violet-500/30 rounded-2xl p-4 mb-5">
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <div>
-              <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">第一次来？</div>
-              <div className="text-[14px] font-semibold tracking-tight">点一个示例 BP — 30 秒后看 LLM 生成的 10 段深度报告</div>
+              <div className="text-[11px] uppercase tracking-wider text-violet-700 font-medium">演示样例（虚构）</div>
+              <div className="text-[14px] font-semibold tracking-tight">想看其他行业？点示例 BP — 30 秒看 LLM 10 段</div>
             </div>
-            <Link to="/upload" className="text-[11px] text-violet-700 hover:underline font-medium">看完整画廊 →</Link>
+            <Link to="/upload" className="text-[11px] text-violet-700 hover:underline font-medium">上传你的真 BP →</Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {SAMPLE_BPS.map((s) => (

@@ -131,6 +131,7 @@ export async function deepAnalyzeBP(
       ],
       private: true,
       temperature: 0.4,
+      max_tokens: 8000,
     }),
   })
 
