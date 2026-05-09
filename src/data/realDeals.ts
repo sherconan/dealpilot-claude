@@ -8,6 +8,7 @@ import zhipuJson from './zhipu-decision-pack.json'
 import deepseekJson from './deepseek-decision-pack.json'
 import baichuanJson from './baichuan-decision-pack.json'
 import minimaxJson from './minimax-decision-pack.json'
+import zeroOneJson from './01ai-decision-pack.json'
 
 export interface DecisionPack {
   meta: {
@@ -43,6 +44,7 @@ export const zhipuDecisionPack: DecisionPack = zhipuJson as DecisionPack
 export const deepseekDecisionPack: DecisionPack = deepseekJson as DecisionPack
 export const baichuanDecisionPack: DecisionPack = baichuanJson as DecisionPack
 export const minimaxDecisionPack: DecisionPack = minimaxJson as DecisionPack
+export const zeroOneDecisionPack: DecisionPack = zeroOneJson as DecisionPack
 
 // ─── 月之暗面 Moonshot AI · A2 轮 ──────────────────────────────────────────
 export const moonshotDeal: Deal = {
@@ -360,14 +362,74 @@ export const minimaxDeal: Deal = {
   accentColor: '#F97316',
 }
 
+// ─── 零一万物 01.AI · A+ 轮 ─────────────────────────────────────────────
+export const zeroOneDeal: Deal = {
+  id: '01ai-aplus',
+  name: '01.AI',
+  cnName: '零一万物',
+  tagline: '李开复创业 · Yi-34B/Yi-Large 中英双语 · 海外 ToB 切入',
+  sector: 'AI / LLM',
+  round: 'Series A+',
+  valuation: '$13亿（市场估算）',
+  askAmount: '$10M（建议小试）',
+  stage: 'review',
+  foundedYear: 2023,
+  location: '北京',
+  teamSize: 200,
+  arr: '估算 $5-15M（ToB API 客户）',
+  growthRate: '战略转向海外 ToB',
+  grossMargin: 'API 受 DeepSeek 价格战压制',
+  tam: '中国生成式 AI ¥1500亿 + 全球开源大模型 $200亿',
+  sam: '中英双语 + 海外 ToB API + 中国出海企业服务',
+  sequoia: { mission: 8, problem: 7, solution: 7, whyNow: 6, market: 8, competition: 5, businessModel: 6, team: 9, financials: 6, vision: 7 },
+  score: 71,
+  recommendation: 'monitor',
+  redFlags: zeroOneDecisionPack.redFlags,
+  wins: [
+    '李开复（前微软中国研究院创始人 + 前 Google 中国总裁 + 创新工场创始人）个人 IP 全球顶级',
+    '团队 200 人，前 Google / 微软 / 阿里 / 字节高 P 密度，创新工场生态资源',
+    'Yi-34B 在 HuggingFace 累计下载百万级，国内开源大模型 Top 6',
+    '战略聚焦海外 ToB API（避开国内四小龙 + 大厂红海）',
+    '阿里 / 创新工场 / 海外基金（淡马锡传闻）跟投',
+  ],
+  concerns: [
+    '软：李开复 IP 关键人风险（70%+ 估值依赖个人 IP）',
+    '软：估值 $13亿 已落后四小龙第一梯队（Moonshot $33亿 / DeepSeek $50亿 / 智谱 ¥200亿）',
+    '软：海外 ToB 标杆案例缺失，转型成本高',
+    '软：战略多次调整（toC → ToB → 海外）资源分散',
+  ],
+  founders: [
+    { name: '李开复 Kai-Fu Lee', role: 'CEO / 创始人', background: '哥大 + CMU PhD · 前微软中国研究院创始人 · 前 Google 中国总裁 · 创新工场创始人 / 董事长', highlight: '30+ 年中美科技产业经验 · 全球 AI 圈影响力顶级 · 个人微博 / X / LinkedIn 千万级关注' },
+  ],
+  traction: [
+    { label: '团队规模', value: '~200 人', delta: '前 Google/微软/阿里/字节高 P' },
+    { label: 'Yi-34B 开源下载', value: '百万级', delta: 'HuggingFace 累计' },
+    { label: '估算年营收', value: '$5-15M', delta: 'ToB API 客户推测' },
+    { label: '万知 C 端 MAU', value: '< 100 万' },
+    { label: '海外定位', value: 'ToB API + 中国出海企业服务' },
+  ],
+  timeline: [
+    { date: '2023-07', event: '公司成立', actor: '李开复' },
+    { date: '2023-末', event: 'A 轮 $10亿估值', actor: '阿里 / 创新工场领投' },
+    { date: '2024-Q1', event: 'Yi-34B 开源 + Yi-Large 闭源 API 上线' },
+    { date: '2024-Q3', event: '战略转向海外 ToB' },
+    { date: '2024-末', event: 'A+ 轮 ~$13亿估值（淡马锡 / 海外基金传闻）' },
+  ],
+  lastUpdated: '2024-12-20',
+  champion: 'Henry Zhao',
+  source: '2023-2024 公开新闻 + 01.AI 官网 + Yi 论文 + 李开复公开访谈 + VC 经验补全',
+  accentColor: '#06B6D4',
+}
+
 // ─── 真实公开公司库 registry（决策包 lookup） ─────────────────────────────
-export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal, baichuanDeal, minimaxDeal]
+export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal, baichuanDeal, minimaxDeal, zeroOneDeal]
 export const REAL_DECISION_PACKS: Record<string, DecisionPack> = {
   'moonshot-a2': moonshotDecisionPack,
   'zhipu-bplus': zhipuDecisionPack,
   'deepseek-preb': deepseekDecisionPack,
   'baichuan-a2': baichuanDecisionPack,
   'minimax-bplus': minimaxDecisionPack,
+  '01ai-aplus': zeroOneDecisionPack,
 }
 
 export function getDecisionPackByDealId(id: string): DecisionPack | undefined {
