@@ -91,6 +91,7 @@ export default function Dashboard() {
             <div className="text-[12px] text-ink-600 mt-1">基于 2024 年公开新闻 + 工商信息 + 团队履历 · 10 段深度 / Sequoia 10 评分 / 8 题访谈 / Reference Check 名单</div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Link to="/real-deals" className="text-[11px] px-2.5 py-1 rounded-md bg-emerald-700 text-white hover:bg-emerald-800 font-medium">⚡ 全部 {REAL_DEALS.length} 家</Link>
             <Link to="/termsheet" className="text-[11px] px-2.5 py-1 rounded-md bg-emerald-700 text-white hover:bg-emerald-800 font-medium">⚡ Term Sheet</Link>
             <Link to="/captable" className="text-[11px] px-2.5 py-1 rounded-md bg-emerald-700 text-white hover:bg-emerald-800 font-medium">⚡ Cap Table</Link>
             <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium whitespace-nowrap">上传真 BP →</Link>

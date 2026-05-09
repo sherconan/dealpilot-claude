@@ -23,6 +23,7 @@ const Unicorns = lazy(() => import('./pages/Unicorns'))
 const DecisionPack = lazy(() => import('./pages/DecisionPack'))
 const TermSheet = lazy(() => import('./pages/TermSheet'))
 const CapTable = lazy(() => import('./pages/CapTable'))
+const RealDeals = lazy(() => import('./pages/RealDeals'))
 
 function PageLoader() {
   return (
@@ -71,6 +72,7 @@ export default function App() {
         <Route path="/deal/:id/decision-pack" element={<Suspense fallback={<PageLoader />}><DecisionPack /></Suspense>} />
         <Route path="/termsheet" element={<Suspense fallback={<PageLoader />}><TermSheet /></Suspense>} />
         <Route path="/captable" element={<Suspense fallback={<PageLoader />}><CapTable /></Suspense>} />
+        <Route path="/real-deals" element={<Suspense fallback={<PageLoader />}><RealDeals /></Suspense>} />
         <Route path="/unicorns" element={<Suspense fallback={<PageLoader />}><Unicorns /></Suspense>} />
         <Route path="*" element={<NotFound />} />
       </Route>

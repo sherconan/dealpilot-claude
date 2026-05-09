@@ -123,6 +123,7 @@ export default function Layout() {
     { to: '/docs', label: t('nav.docs'), hint: t('nav.docs.hint') },
   ]
   const dealmaking = [
+    { to: '/real-deals', label: '真实公司库', hint: '6 家概览' },
     { to: '/termsheet', label: 'Term Sheet', hint: '起草' },
     { to: '/captable', label: 'Cap Table', hint: '稀释模拟' },
   ]
