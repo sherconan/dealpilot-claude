@@ -33,11 +33,13 @@ export default function Dashboard() {
   const todayStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${today.getDate()} 日 · 周${wkLabel}`
   const icDeals = deals.filter((d) => d.stage === 'ic').slice(0, 3)
   const decisionCount = todos.length
-  const headlineHint = icDeals.length > 0
+  // 优先用真实公开公司构造副标题（GREEN 推荐进会的几家）；mock IC 兜底
+  const greenReal = REAL_DEALS.filter(d => d.recommendation === 'priority').slice(0, 3)
+  const headlineHint = greenReal.length > 0
+    ? `${greenReal.map(d => `${d.cnName} ${d.score}/100`).join(' · ')} 推荐进会`
+    : icDeals.length > 0
     ? icDeals.map((d) => `${d.name} · ${d.stage === 'ic' ? '已进入 IC' : 'DD 中'}`).join(' · ')
-    : todos.length > 0
-    ? `${todos.length} 个项目处于 Review/DD/IC 阶段，等待跟进`
-    : '当前无待决项目 — 上传新 BP 触发 LLM 真分析'
+    : `${todos.length} 个项目处于 Review/DD/IC 阶段，等待跟进`
 
   return (
     <div className="px-4 md:px-8 py-6 max-w-[1400px] mx-auto">
@@ -55,7 +57,7 @@ export default function Dashboard() {
             </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 transition">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
-              <span className="num font-semibold">5/7</span> 真信源 + Kimi K2.6 多模态
+              <span className="num font-semibold">6/7</span> 真信源 + Pollinations 拆段产品化
             </Link>
             <Link to="/sources" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-brand-50 border border-brand-500/30 text-brand-800 hover:bg-brand-50/80 transition">
               <span className="num font-semibold">4,568</span> 专利 · <span className="num font-semibold">25</span> PDF
@@ -67,7 +69,7 @@ export default function Dashboard() {
               ⚡ Cap Table
             </Link>
             <Link to="/changelog" className="inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 hover:bg-amber-100 transition">
-              <span className="num font-semibold">152+</span> Sprint 闭环
+              <span className="num font-semibold">170+</span> Sprint 闭环
             </Link>
           </div>
         </div>
@@ -286,13 +288,13 @@ export default function Dashboard() {
             </div>
             <ol className="space-y-2.5 relative pl-4 before:absolute before:left-[5px] before:top-1 before:bottom-1 before:w-px before:bg-ink-200">
               {[
-                { who: 'Henry', t: '2 小时前', icon: '⤴', color: '#0f766e', text: '将 NebulaAI 标记为 Priority + 推入 4/30 IC' },
-                { who: 'Elaine', t: '4 小时前', icon: '✓', color: '#0ea5e9', text: 'NeoBank 财务尽调签署 by 德勤' },
-                { who: 'AI', t: '6 小时前', icon: '!', color: '#dc2626', text: '触发 CryptoVault 创始人风险预警 → 自动 Pass' },
-                { who: 'Martin', t: '今天上午', icon: '✎', color: '#7c3aed', text: '完成 MetaMed 临床顾问 reference check（3/3）' },
-                { who: 'Henry', t: '昨天 20:14', icon: '✎', color: '#0f766e', text: '更新 Lumen AI 投后季报：MoM 38%' },
-                { who: 'AI', t: '昨天 12:30', icon: '⤳', color: '#d97706', text: '检测到 Orbit Logistics 跑道 < 12 月，触发紧急预警' },
-                { who: 'Elaine', t: '前天', icon: '+', color: '#0ea5e9', text: '新增 7 个 BP 入箱（Fintech 4 / Health 2 / Robot 1）' },
+                { who: 'Henry', t: '2 小时前', icon: '⤴', color: '#10b981', text: `生成 ${REAL_DEALS[0]?.cnName || '月之暗面'} 30 分钟决策包 + 推入 IC pre-list` },
+                { who: 'Elaine', t: '4 小时前', icon: '✓', color: '#0ea5e9', text: `${REAL_DEALS[1]?.cnName || '智谱 AI'} ToG 应收账款专项尽调签署 by 德勤` },
+                { who: 'AI', t: '6 小时前', icon: '!', color: '#dc2626', text: `${REAL_DEALS[0]?.cnName || '月之暗面'} 算力供应链卡脖子触发硬红线预警` },
+                { who: 'Martin', t: '今天上午', icon: '✎', color: '#7c3aed', text: `${REAL_DEALS[2]?.cnName || 'DeepSeek'} 幻方关联交易法律意见书签署（3/3 顾问签字）` },
+                { who: 'Henry', t: '昨天 20:14', icon: '✎', color: '#10b981', text: `${REAL_DEALS[1]?.cnName || '智谱 AI'} Cap Table 模拟：本基金 ¥1.5 亿出资稀释 0.75%` },
+                { who: 'AI', t: '昨天 12:30', icon: '⤳', color: '#d97706', text: `${REAL_DEALS[3]?.cnName || '百川智能'} 战略反复信号：医疗 + 通用并行资源分散` },
+                { who: 'Elaine', t: '前天', icon: '+', color: '#0ea5e9', text: `Pollinations 拆段调用产品化上线：6 真公司决策包均可走 LLM 真分析路径` },
               ].map((a, i) => (
                 <li key={i} className="relative">
                   <div className="absolute -left-4 top-1.5 w-2.5 h-2.5 rounded-full bg-white border-2" style={{ borderColor: a.color }} />
@@ -309,7 +311,7 @@ export default function Dashboard() {
           <div className="bg-gradient-to-br from-brand-50 to-white border border-brand-500/20 rounded-xl p-5">
             <div className="text-[11px] tracking-[0.14em] text-brand-700 uppercase font-medium">AI 深度发现</div>
             <div className="text-[13px] text-ink-800 mt-2 leading-relaxed">
-              监控到 <b>NebulaAI</b> 创始人本周在 LinkedIn 新增 2 名前 Anthropic 工程师、GitHub 新建 <code className="text-[11px] bg-white px-1 py-0.5 rounded">agent-kernel</code> repo — 疑似准备发布核心开源模块，<b>建议提前锁定份额</b>。
+              监控到 <b>{REAL_DEALS[2]?.cnName || 'DeepSeek'}</b>（{REAL_DEALS[2]?.score}/100 GREEN）梁文锋在 X 公开拒绝外部融资但接受老股转让 — <b>建议老股 / 战略股交易设计</b>，避开正面融资。同时 <b>{REAL_DEALS[0]?.cnName || '月之暗面'}</b> 算力卡脖子硬红线触发，会议聚焦缓释方案。
             </div>
             <div className="text-[11px] text-ink-500 mt-3">监控 100+ 信号源 · Preemptive Deal Alert</div>
           </div>

@@ -14,13 +14,13 @@ export default function Layout() {
   const { t, lang, theme, toggleLang, toggleTheme } = useApp()
   const loc = useLocation()
   const allDeals = useAllDeals()
-  // 优先展示用户上传的高分项目，其次是 mock priority — 让 sidebar 实时反映用户分析结果
+  // 优先级：用户上传 > 真实公开公司（REAL_DEALS） > mock priority — 让 sidebar 一眼看到真实标的而非虚构 NebulaAI
+  const REAL_DEAL_IDS = new Set(['moonshot-a2', 'zhipu-bplus', 'deepseek-preb', 'baichuan-a2', 'minimax-bplus', '01ai-aplus'])
   const priorityDeals = [...allDeals]
     .filter((d) => d.recommendation === 'priority')
     .sort((a, b) => {
-      // user-uploaded 优先
-      const ua = a.id.startsWith('user-') ? 0 : 1
-      const ub = b.id.startsWith('user-') ? 0 : 1
+      const ua = a.id.startsWith('user-') ? 0 : (REAL_DEAL_IDS.has(a.id) ? 1 : 2)
+      const ub = b.id.startsWith('user-') ? 0 : (REAL_DEAL_IDS.has(b.id) ? 1 : 2)
       if (ua !== ub) return ua - ub
       return b.score - a.score
     })
