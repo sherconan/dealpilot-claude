@@ -128,12 +128,20 @@ const sprints: SprintEntry[] = [
   { num: 152, title: '⚡ Cap Table 模拟器 /captable', detail: '3 家真实公司股权 preset · 输入本轮募资 + 投前估值 + 本基金出资 + ESOP 目标 → NVCA 标准 ESOP top-up 公式自动算稀释 · stacked bar + 完整 Cap Table 表（投前→投后变化）+ 创始人合计稀释', files: ['pages/CapTable.tsx', 'App.tsx'], tag: '投决工具', color: '#10b981' },
   { num: 153, title: 'Dashboard hero 重做 · 主推决策包库 + 投决工具', detail: '主标题改为 "N 家真实公司决策包 · X 个项目待决"·副引言改成 DealPilot 自身定位 · 顶部 chip + hero 内嵌 Term Sheet/Cap Table emerald 直达 · "152+ Sprint" 取代 "77+"', files: ['pages/Dashboard.tsx'], tag: '产品定位', color: '#10b981' },
   { num: 154, title: 'CommandPalette + DealDetail + Layout 全站接 Term Sheet/Cap Table', detail: '⌘K 新增"投决工具"+"决策包"分组 · DealDetail 真实公司额外加 Term Sheet/Cap Table 按钮 · 侧边栏新增"投决工具 ⚡"分组', files: ['components/CommandPalette.tsx', 'pages/DealDetail.tsx', 'components/Layout.tsx'], tag: 'UX', color: '#7c3aed' },
+  { num: 161, title: '⚡ Pollinations 拆段调用产品化（修 sprint144 跳过的核心 bug）', detail: 'llmAnalyze.ts 加 deepAnalyzeBPChunked 函数 · 10 段独立 LLM 调用 · 串行 + 1.2s 间隔 + 429 自动退避（4 次重试）· Upload provider=pollinations 自动走拆段 · 用户用免费通道现在能拿完整 10 段而非被截断到 7 段', files: ['lib/llmAnalyze.ts', 'pages/Upload.tsx'], tag: '真 LLM', color: '#10b981' },
+  { num: 162, title: '⚡ MiniMax 稀宇科技 第 5 家真实公司', detail: '闫俊杰（前商汤副总裁）· Talkie 全球月活破亿 · abab-video 文生视频 · 80 分 GREEN · 4 软红线（海外用户 + 视频烧钱 + 估值偏高 + 国内 C 端被牵制）', files: ['data/realDeals.ts', 'data/minimax-decision-pack.json'], tag: '真实公司', color: '#10b981' },
+  { num: 163, title: '⚡ 零一万物 01.AI 第 6 家真实公司', detail: '李开复（前微软 / Google 中国总裁 + 创新工场）· Yi-34B/Yi-Large · 战略转向海外 ToB · 71 分 YELLOW · 4 软红线（李开复 IP + 估值落后 + 海外标杆缺失 + 战略反复）', files: ['data/realDeals.ts', 'data/01ai-decision-pack.json'], tag: '真实公司', color: '#10b981' },
+  { num: 164, title: '⚡ /real-deals 6 家公司概览矩阵页', detail: '5 KPI 卡（总数 / GREEN / YELLOW / 平均分 / 总团队）+ 6 卡片网格（含 Sequoia 10 mini-bar）+ 完整 Sequoia 10 横向对比矩阵（行 = 6 家，列 = 10 维度，颜色编码）+ 筛选 + 排序 + 投决工具 CTA', files: ['pages/RealDeals.tsx', 'App.tsx'], tag: '真实公司', color: '#10b981' },
+  { num: 165, title: 'Cap Table preset 扩到 6 家', detail: 'Baichuan / MiniMax / 01.AI 完整创始团队 + 历史融资 preset · 6 家公司全部支持稀释模拟 · 含特殊条款（米哈游战略股 / 创新工场孵化股）', files: ['pages/CapTable.tsx'], tag: '投决工具', color: '#10b981' },
+  { num: 166, title: 'Memory hero 响应式优化', detail: '6 家公司 grid 改为 1/2/3 列响应式 · 小屏 1 列 / 中屏 2 列 / 大屏 3 列 · 所有屏幕尺寸合理展示', files: ['pages/Memory.tsx'], tag: 'UX', color: '#0ea5e9' },
+  { num: 167, title: 'Layout sidebar + Dashboard chip 接 /real-deals', detail: '侧边栏"投决工具 ⚡"加 真实公司库 入口 · ⌘K 加 ⚡ 真实公司库 入口 · Dashboard 顶部 chip 加 ⚡ 全部 N 家', files: ['components/Layout.tsx', 'components/CommandPalette.tsx', 'pages/Dashboard.tsx'], tag: 'UX', color: '#7c3aed' },
 ]
 
 const milestones = [
   { tag: 'init', title: '产品初版（pre-challenge）', detail: 'Dashboard / Pipeline / DealDetail / IC Memo / Memory / Thesis / Sources 7 页 + 6 deals 完整数据 + 8 家 akshare 真实可比公司 + qcc 实测旷视专利 / 工商画像', count: 7 },
   { tag: '7h', title: '7 小时挑战赛新增', detail: '+ Upload / Risk / Portfolio / Signals / Docs / Compare / Briefings / Changelog / DealBrief（共 9 页）+ i18n + Dark mode + Cmd-K + Shift+? / G+letter 快捷键 + SEO + 拖拽 + PDF 导出 + 周报 + CSV 导出 + Investment Thesis Canvas + ICMemo 视觉增强', count: 9 },
-  { tag: '7h-r4', title: '第 4 轮 7H Challenge · 真实公司库 + 投决核心工具', detail: '+ 30 分钟决策包页 + 3 家真实公开公司库（Moonshot/Zhipu/DeepSeek）+ Term Sheet 起草页 + Cap Table 模拟器 + Memory/Compare 改接真实库 + Dashboard hero 重做 + 全站入口拉通', count: 6 },
+  { tag: '7h-r4', title: '第 4 轮 7H Challenge · 真实公司库 + 投决核心工具（首段）', detail: '+ 30 分钟决策包页 + 3 家真实公开公司库（Moonshot/Zhipu/DeepSeek）+ Term Sheet 起草页 + Cap Table 模拟器 + Memory/Compare 改接真实库 + Dashboard hero 重做 + 全站入口拉通', count: 6 },
+  { tag: '7h-r4-续', title: '第 4 轮 7H Challenge · 续航段（sprint161-167）', detail: '+ Pollinations 拆段调用产品化（修核心 bug）+ MiniMax + 01.AI 第 5/6 家真实公司 + /real-deals 6 家公司概览矩阵页（含 Sequoia 10 横向对比矩阵）+ Cap Table 6 家 preset + Memory 响应式 + 侧边栏新增"真实公司库"入口', count: 5 },
 ]
 
 export default function Changelog() {
