@@ -10,7 +10,7 @@ import {
   type ExtractedFields,
   type RedFlag,
 } from '../lib/pdfPipeline'
-import { SECTION_ORDER, getSectionLabel, type SectionKey } from '../lib/llmAnalyze'
+import { SECTION_ORDER, getSectionLabel, deepAnalyzeBPChunked, type SectionKey } from '../lib/llmAnalyze'
 import { analyzeWithProvider, streamWithProvider, getApiKey, setApiKey, clearApiKey, getProvider, setProvider, PROVIDER_META, testProvider, type Provider } from '../lib/multimodalAnalyze'
 import { scoreWithLLM, type LLMScoring } from '../lib/scoringLLM'
 import { generateFounderQuestions } from '../lib/founderQuestions'
@@ -109,26 +109,42 @@ export default function Upload() {
 
       // 真流式 — LLM 一边生成一边渲染
       setStage('streaming')  // 直接进 streaming，不再 llm-calling
-      const analysis = await streamWithProvider(
-        provider,
-        apiKey || null,
-        images,
-        text,
-        f,
-        flags,
-        (_delta, full) => {
-          // 每个 chunk 来时，按当前已积累的 full 切 sections，并实时更新到 UI
-          const sectionsParsed = parseSectionsLive(full)
-          setSections((arr) => arr.map((sec) => {
-            const got = sectionsParsed[sec.key]
-            if (got !== undefined) {
-              return { ...sec, full: got, shown: got, status: 'streaming' }
-            }
-            return sec
-          }))
-        },
-        (msg) => setProgressMsg(msg),
-      )
+      let analysis: any
+      if (provider === 'pollinations') {
+        // Pollinations 单次响应有 ~1500 字符硬限，10 段一起走会被截断
+        // 用拆段调用：10 段独立调用，串行 + 1.2s 间隔 + 429 退避
+        setProgressMsg('Pollinations 拆段调用 — 10 段独立产出（~2-3 分钟）')
+        analysis = await deepAnalyzeBPChunked(
+          text, f, flags,
+          (msg) => setProgressMsg(msg),
+          (key, content) => {
+            setSections((arr) => arr.map((sec) =>
+              sec.key === key ? { ...sec, full: content, shown: content, status: 'done' } : sec,
+            ))
+          },
+        )
+      } else {
+        analysis = await streamWithProvider(
+          provider,
+          apiKey || null,
+          images,
+          text,
+          f,
+          flags,
+          (_delta, full) => {
+            // 每个 chunk 来时，按当前已积累的 full 切 sections，并实时更新到 UI
+            const sectionsParsed = parseSectionsLive(full)
+            setSections((arr) => arr.map((sec) => {
+              const got = sectionsParsed[sec.key]
+              if (got !== undefined) {
+                return { ...sec, full: got, shown: got, status: 'streaming' }
+              }
+              return sec
+            }))
+          },
+          (msg) => setProgressMsg(msg),
+        )
+      }
       // 完成后所有 section 标 done
       setSections((arr) => arr.map((sec) => ({ ...sec, status: sec.full ? 'done' : 'pending' })))
       setLlmDuration(analysis.duration)

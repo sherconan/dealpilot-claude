@@ -147,4 +147,112 @@ export async function deepAnalyzeBP(
   return { sections, raw, duration: Date.now() - start }
 }
 
+// ─── 拆段调用版（绕开 Pollinations ~1500 字符硬限） ──────────────────────
+// 10 段单独调用，每段 250-400 字独立产出，串行 + 1.2s 间隔 + 429 退避
+// onSection: 每段完成时回调（前端可流式更新 UI）
+const SECTION_LABELS_ORDER: { key: SectionKey; label: string }[] = SECTION_KEYS.map(k => ({ key: k, label: SECTION_LABEL[k] }))
+
+async function callPollinationsRetry(systemPrompt: string, userPrompt: string, temp = 0.4, retries = 4): Promise<string> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(POLLINATIONS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'openai',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+          private: true,
+          temperature: temp,
+        }),
+      })
+      if (res.status === 429) {
+        await new Promise(r => setTimeout(r, 4000 + attempt * 3000))
+        continue
+      }
+      if (!res.ok) {
+        if (attempt === retries) throw new Error(`Pollinations HTTP ${res.status}`)
+        await new Promise(r => setTimeout(r, 2000))
+        continue
+      }
+      const d = await res.json()
+      const raw = d?.choices?.[0]?.message?.content || ''
+      if (!raw && attempt < retries) {
+        await new Promise(r => setTimeout(r, 1500))
+        continue
+      }
+      return raw
+    } catch (e) {
+      if (attempt === retries) throw e
+      await new Promise(r => setTimeout(r, 2000))
+    }
+  }
+  return ''
+}
+
+export async function deepAnalyzeBPChunked(
+  text: string,
+  fields: ExtractedFields,
+  redFlags: RedFlag[],
+  onProgress?: (msg: string) => void,
+  onSection?: (key: SectionKey, content: string, idx: number, total: number) => void,
+): Promise<DeepAnalysis> {
+  const start = Date.now()
+  const truncatedBP = text.length > 5000 ? text.slice(0, 5000) + '\n…[截断]' : text
+  const sysAnalyst = '你是国内顶级 VC 投资分析师，专精早期项目深度评估。控制字数，输出段落本身，不加标题/前缀。'
+  const fieldsSummary = [
+    fields.company && `公司：${fields.company}`,
+    fields.sector && `赛道：${fields.sector}`,
+    fields.round && `轮次：${fields.round}`,
+    fields.valuation && `估值：${fields.valuation}`,
+    fields.arr && `ARR：${fields.arr}`,
+    fields.founders.length > 0 && `创始人：${fields.founders.join(' / ')}`,
+  ].filter(Boolean).join('\n')
+  const flagsSummary = redFlags.length > 0
+    ? redFlags.map(f => `[${f.severity === 'hard' ? '硬' : '软'}] ${f.label}`).join(', ')
+    : '无'
+
+  const sections: Record<string, string> = {}
+  const total = SECTION_LABELS_ORDER.length
+
+  for (let i = 0; i < total; i++) {
+    const { key, label } = SECTION_LABELS_ORDER[i]
+    onProgress?.(`Pollinations 拆段调用 ${i + 1}/${total}：${label}`)
+
+    const sectionPrompt = `基于下方 BP 内容，输出深度分析的「${label}」一段。
+要求：250-400 字之间，专业洞察，不空泛、不重复 BP 表面信息，含一条 actionable 判断。
+直接输出段落本身，不要标题、不要前缀、不要"以下是"等过渡。
+
+【BP 内容】
+${truncatedBP}
+
+【字段】
+${fieldsSummary}
+
+【已触发红线】
+${flagsSummary}
+
+现在输出该段：`
+
+    try {
+      const content = (await callPollinationsRetry(sysAnalyst, sectionPrompt, 0.4)).trim()
+      sections[key] = content
+      onSection?.(key, content, i + 1, total)
+    } catch (e) {
+      sections[key] = `[本段 LLM 调用失败：${(e as any)?.message || e}]`
+      onSection?.(key, sections[key], i + 1, total)
+    }
+    // 串行 + 1.2s 间隔避免 429
+    if (i < total - 1) await new Promise(r => setTimeout(r, 1200))
+  }
+
+  return {
+    sections,
+    raw: SECTION_LABELS_ORDER.map((s, i) => `===SECTION ${i + 1}===\n${sections[s.key] || ''}`).join('\n\n'),
+    duration: Date.now() - start,
+  }
+}
+
 export const SECTION_ORDER = SECTION_KEYS
