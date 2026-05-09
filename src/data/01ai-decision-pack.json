@@ -1,0 +1,245 @@
+{
+  "meta": {
+    "company": "零一万物 · 01.AI",
+    "round": "Series A+",
+    "valuation": "$13亿（市场估算）",
+    "runAt": "2024-12-20T10:00:00.000Z",
+    "finalizedAt": "2024-12-20T10:30:00.000Z",
+    "source": "2023-2024 公开新闻 + 01.AI 官网 / Yi 论文 + 李开复公开访谈 + VC 经验补全"
+  },
+  "verdict": {
+    "signal": "YELLOW",
+    "label": "附条件进 30 分钟会议",
+    "reason": "综合 71 分 · 0 硬红线 · 团队评分高（李开复 + 海外资源）但中后期变现路径未跑通，与四小龙差距扩大"
+  },
+  "totalScore": 71,
+  "recommendation": "monitor",
+  "redFlags": [
+    {
+      "severity": "soft",
+      "label": "李开复 IP 风险",
+      "detail": "70%+ 公司估值依赖李开复个人 IP，关键人风险极高"
+    },
+    {
+      "severity": "soft",
+      "label": "估值落后四小龙",
+      "detail": "$13亿 vs Moonshot $33亿 / 智谱 $28亿 / DeepSeek $50亿，市场已降权"
+    },
+    {
+      "severity": "soft",
+      "label": "海外市场策略不清晰",
+      "detail": "主打海外但缺乏标杆案例，国内被四小龙夹击"
+    },
+    {
+      "severity": "soft",
+      "label": "从「大模型公司」转「ToB 服务」",
+      "detail": "2024 年战略明显从 toC + 大模型转向 ToB API + 海外，转型成本高"
+    }
+  ],
+  "sequoia10": [
+    {
+      "key": "mission",
+      "score": 8,
+      "rationale": "使命「Make AI work for everyone」聚焦 AGI 普惠，叙事清晰但与四小龙同质化。"
+    },
+    {
+      "key": "problem",
+      "score": 7,
+      "rationale": "中文 + 多语言大模型刚需，但同质化严重；海外市场切入点合理但执行难度大。"
+    },
+    {
+      "key": "solution",
+      "score": 7,
+      "rationale": "Yi-34B / Yi-Large 在中英双语 benchmark 表现合格，万知 C 端产品独立性弱。"
+    },
+    {
+      "key": "whyNow",
+      "score": 6,
+      "rationale": "2023 入场偏晚，2024 已进入红海；窗口收窄。"
+    },
+    {
+      "key": "market",
+      "score": 8,
+      "rationale": "中国生成式 AI 2025 ¥1500 亿 + 海外开源大模型市场 $200 亿，TAM 充足。"
+    },
+    {
+      "key": "competition",
+      "score": 5,
+      "rationale": "国内被四小龙夹击 + 大厂；海外面对 Llama / Mistral 双重压力，差异化弱。"
+    },
+    {
+      "key": "businessModel",
+      "score": 6,
+      "rationale": "B 端 API + 海外私有化 + 万知 C 端三轨，但每条都未跑通规模化。"
+    },
+    {
+      "key": "team",
+      "score": 9,
+      "rationale": "李开复（前 Google / 微软中国总裁 + 创新工场创始人）+ 200 人前 Google / 微软 / 阿里 / 字节高 P 团队，资源 + 关系最强。"
+    },
+    {
+      "key": "financials",
+      "score": 6,
+      "rationale": "A 轮 $10亿（2023 末）→ A+ ~$13亿（2024），融资节奏放缓，估值落后同行。"
+    },
+    {
+      "key": "vision",
+      "score": 7,
+      "rationale": "愿景明确 AGI + 海外，但未清晰回答\"差异化在哪\"。"
+    }
+  ],
+  "founderQuestions": [
+    {
+      "category": "business",
+      "question": "2024 年公司战略明显从「toC + 大模型」转向「ToB API + 海外」，这个调整的核心原因是什么？海外目前签了哪些标杆 ToB 客户？",
+      "why": "战略转型对营收结构的影响",
+      "expect": "具体客户名单 + 营收占比 + 转型时间表",
+      "watch": "\"在洽谈中\"= 还没真签合同"
+    },
+    {
+      "category": "financial",
+      "question": "A+ ~$13亿 vs 同期 Moonshot $33亿 / DeepSeek $50亿，估值落后明显。投资人对估值溢价的逻辑是什么？海外市场预期收入多少？",
+      "why": "估值溢价 vs 同行差距需要解释",
+      "expect": "具体海外收入预期 + 12 个月里程碑",
+      "watch": "只强调\"我们更早布局\"= 没有真实增长"
+    },
+    {
+      "category": "team",
+      "question": "李开复作为创始人 + 创新工场董事长，在 01.AI 的实际投入时间多少？关键人风险如何对冲？COO / CTO 接班机制？",
+      "why": "李开复 IP 风险是核心问题",
+      "expect": "具体精力分配 + 高管接班计划",
+      "watch": "\"我全身心投入\"= 实际兼任多职"
+    },
+    {
+      "category": "business",
+      "question": "Yi-34B / Yi-Large 在 SuperCLUE / MMLU 实测分数 vs 四小龙 + Llama 3.1？万知 C 端 MAU 多少？为什么不直接放弃 toC？",
+      "why": "产品力 + 战略聚焦",
+      "expect": "具体跑分 + MAU + 战略选择理由",
+      "watch": "\"全方位发展\" = 资源分散"
+    },
+    {
+      "category": "competition",
+      "question": "海外市场面对 Llama 3.1（Meta）+ Mistral（开源标杆）+ DeepSeek（性价比），01.AI 的差异化壁垒是什么？",
+      "why": "海外 = 与全球 Top 模型直接竞争",
+      "expect": "具体技术 + 市场壁垒",
+      "watch": "\"中文优势\"= 海外不重要"
+    },
+    {
+      "category": "risk",
+      "question": "Yi-34B 训练数据来源（公开网络爬取 / 出版社授权 / 用户上传）合规性？海外发布是否完成 AI 法规备案（欧盟 AI Act / 美国 NIST）？",
+      "why": "海外 AIGC 合规越来越严",
+      "expect": "具体合规路径 + 法律意见书",
+      "watch": "\"全部合规\" = 没准备好"
+    },
+    {
+      "category": "fund-use",
+      "question": "A+ 募资计划用于哪里？算力 / 海外销售 / 国内研发各占比？2025 年现金跑道（runway）多少？",
+      "why": "估值溢价后资金效率",
+      "expect": "具体预算 + runway",
+      "watch": "回避 runway = 现金紧张"
+    },
+    {
+      "category": "governance",
+      "question": "李开复持股比例？创新工场作为股东在 01.AI 的影响力？董事会构成 + 投票权分配？",
+      "why": "治理结构决定 deal 可行性",
+      "expect": "具体股权 + 董事席位",
+      "watch": "李开复持股 < 20% = 创始人控制力弱"
+    }
+  ],
+  "deepAnalysis": [
+    {
+      "key": "COMPANY_OVERVIEW",
+      "label": "① 公司画像与定位",
+      "content": "零一万物（01.AI）2023 年 7 月由李开复创立于北京，团队约 200 人，李开复亲自担任 CEO。公司定位为「中英双语 + 海外市场」大模型基础设施。产品矩阵：Yi-34B / Yi-Large / Yi-Lightning（基座模型）+ 万知（C 端 AI 助手）+ Pikara（海外角色扮演产品）。差异化路径：①李开复个人 IP + 创新工场资源（中美创业生态最广）②聚焦海外市场（避开国内四小龙夹击）③开源 + ToB 双轨。挑战：2024 年估值落后四小龙（$13亿 vs Moonshot $33亿 / DeepSeek $50亿），战略多次调整（toC → ToB → 海外）。"
+    },
+    {
+      "key": "PROBLEM_OPPORTUNITY",
+      "label": "② 问题与机会判断",
+      "content": "2023 年中国大模型创业窗口已经收窄（Moonshot / 智谱 / 百川 + 大厂已经布局），01.AI 入场偏晚。机会判断：①海外市场未被中国大模型公司充分开发（Llama / Mistral 占据但中文模型仍有空间）②ToB API 是相对蓝海（vs C 端被 Kimi / 海螺 / DeepSeek 卷死）③李开复个人 IP + 创新工场全球网络是独特资源。机会成立但执行难度高：海外面对 Llama / Mistral / OpenAI 三重压力，国内被四小龙夹击。窗口期判断：12-18 个月内必须证明海外 ToB 商业化路径。"
+    },
+    {
+      "key": "PRODUCT_SOLUTION",
+      "label": "③ 产品与解决方案",
+      "content": "Yi-34B / Yi-Large / Yi-Lightning 是 01.AI 的基座模型系列，在 SuperCLUE / MMLU 国内中英双语 benchmark 排名 Top 5（落后 GPT-4o / Claude-3.5 / DeepSeek-V3）。万知（wanzhi.com）是 01.AI 的 C 端 AI 助手，对标 Kimi 智能助手 + ChatGPT，但 MAU 与 Kimi 差距明显（估算 < 100 万）。Pikara 是 01.AI 的海外 AI 角色扮演产品，对标 Talkie，但用户规模未公开。可防御性：①李开复 IP + 创新工场全球关系网络 ②中英双语 + 多语言能力（vs Llama 中文弱，vs Kimi 海外弱）③开源 Yi-34B 在 HuggingFace 累计下载百万级。"
+    },
+    {
+      "key": "BUSINESS_MODEL",
+      "label": "④ 商业模式",
+      "content": "01.AI 营收三层结构：①海外 ToB API（按 token 计费 + 私有化部署，2024 战略转向重点）②国内 B 端 API（与 DeepSeek 价格战压制毛利）③万知 + Pikara C 端（freemium 订阅，规模化未跑通）。商业化核心矛盾：①海外 ToB 标杆案例缺失，转型成本高 ②国内 C 端被 Kimi / 海螺 / DeepSeek 三面夹击 ③战略多次调整（toC → ToB → 海外）资源分散。长期叙事：基于李开复 IP + 创新工场全球网络的 ToB API + 多语言海外市场。单位经济学：海外 ToB 续约率 + ARPC 需在尽调中核验。"
+    },
+    {
+      "key": "MARKET_ANALYSIS",
+      "label": "⑤ 市场规模与竞争",
+      "content": "中国生成式 AI 2025 ¥1,500 亿 + 全球开源大模型市场 $200 亿+。01.AI 在国内大模型创业公司中估值落后第一梯队（Moonshot / 智谱 / DeepSeek 都已超越），处于第二梯队（与百川 / 阶跃星辰并列）。海外市场：Yi 系列在 HuggingFace 累计下载百万级，落后 Llama 3.1 / Mistral 数量级。竞争格局：①国内 C 端：Kimi / 海螺 / DeepSeek 三面夹击 ②国内 ToB：智谱 / 百川 / 大厂 ③海外开源：Llama / Mistral / Falcon ④海外闭源：OpenAI / Anthropic / Google。01.AI 差异化在「李开复 IP + 中英双语 + 海外切入」，但每个维度都不够强。"
+    },
+    {
+      "key": "TEAM_EVALUATION",
+      "label": "⑥ 团队评估",
+      "content": "团队评分 9/10——李开复个人是 01.AI 最强资产。李开复：前微软中国研究院创始人 + 前 Google 中国总裁 + 创新工场创始人 / 董事长，30+ 年中美科技产业经验，全球 AI 圈影响力顶级（个人微博 / X / LinkedIn 千万级关注）。团队规模 ~200 人，前 Google / 微软 / 阿里 / 字节高 P 密度高。优势：①李开复个人 IP + 全球关系网络 ②创新工场生态协同（投资了数百家 AI 创业公司）③中美双重资源。劣势：①过度依赖李开复 IP（关键人风险）②创新工场利益冲突（既是孵化器又是 01.AI 股东）③李开复同时管理多家公司，精力分散。"
+    },
+    {
+      "key": "TRACTION_FINANCIALS",
+      "label": "⑦ 牵引与财务",
+      "content": "公开数据：①Yi-34B 开源在 HuggingFace 累计下载百万级（落后 Llama 数量级）②Yi-Large 闭源 API 接入若干企业客户 ③万知 C 端 MAU 估算 < 100 万 ④Pikara 海外用户规模未公开。融资历史：天使（创新工场 / 阿里）→ A 轮 $10亿（2023 末，阿里 / 创新工场领投）→ A+ ~$13亿（2024，传闻淡马锡 / 海外基金）。员工 ~200 人。年化收入未公开披露，估算 $5-15M（基于 ToB API 客户数量推测）。"
+    },
+    {
+      "key": "RISKS_REDFLAGS",
+      "label": "⑧ 风险与红线",
+      "content": "0 硬红线 + 4 软红线。①李开复 IP 风险：70%+ 公司估值依赖李开复个人 IP，关键人风险极高（软）；②估值落后四小龙：$13亿 vs Moonshot $33亿 / DeepSeek $50亿，市场已对 01.AI 降权（软）；③海外市场策略不清晰：主打海外但缺乏标杆案例，国内被四小龙夹击（软）；④从「大模型公司」转「ToB 服务」：2024 年战略明显从 toC + 大模型转向 ToB API + 海外，转型成本高（软）。无硬红线意味着团队、合规、技术等基础风险均可控；但需在尽调中重点核验：①海外 ToB 标杆案例真实性 ②李开复实际投入时间 ③战略转型的执行进度。"
+    },
+    {
+      "key": "INVESTMENT_THESIS",
+      "label": "⑨ 投资论点",
+      "content": "01.AI 是中国大模型创业公司中李开复个人 IP 最强 + 海外切入最坚决的标的。三个核心赌注：①李开复 IP + 创新工场全球网络可在海外 ToB 市场打开局面（vs 四小龙国内卷）；②中英双语模型可服务\"中国出海企业\"细分市场（如 SHEIN / 拼多多 / 字节出海等）；③战略转型 ToB 后估值有重新定价机会（如海外 ToB 跑通可对标 Anthropic 的小型版本）。投资难点：①估值已落后四小龙，未来融资难度大 ②李开复 IP 关键人风险 ③战略多次调整说明定位还在摇摆。建议附条件进 30 分钟会议，重点聚焦：①海外 ToB 标杆案例 ②李开复精力分配 ③战略转型执行进度。"
+    },
+    {
+      "key": "NEXT_STEPS",
+      "label": "⑩ 尽调建议与关键问题",
+      "content": "推荐附条件进 30 分钟会议（海外 ToB + 李开复风险是会议焦点）。重点 5 个尽调工作流：①财务尽调聚焦海外 ToB API 营收占比 + 国内 ToB / C 端营收 + runway；②商业尽调访谈 3 个海外 ToB 标杆客户 + 国内 ToB API 客户核验真实使用度；③技术尽调评测 Yi-Large 在 SuperCLUE / MMLU / Long-Bench 实测分数 vs 四小龙 + Llama 3.1；④合规尽调核验 Yi 系列海外发布的 EU AI Act / 美国 NIST 合规进度；⑤团队尽调 reference 李开复创新工场同事、3 名前 01.AI 员工、海外 ToB 客户技术负责人。Pre-IC 时点目标：估值 $10-13亿、本基金份额可控（建议 < $10M 试水）、争取董事会观察员席位。"
+    }
+  ],
+  "referenceCheck": [
+    {
+      "type": "前同事",
+      "who": "创新工场早期同事 / 李开复秘书办公室",
+      "context": "验证李开复实际精力分配 + 在 01.AI 的真实投入",
+      "priority": "P0"
+    },
+    {
+      "type": "客户",
+      "who": "海外 ToB API 标杆客户（待披露）",
+      "context": "Yi-Large 真实使用 + 续约意愿 + 替换成本",
+      "priority": "P0"
+    },
+    {
+      "type": "客户",
+      "who": "国内 B 端 API 客户（创新工场被投企业）",
+      "context": "API 真实质量 + 价格竞争力",
+      "priority": "P1"
+    },
+    {
+      "type": "竞品",
+      "who": "智谱 / 百川 / 月之暗面团队",
+      "context": "行业内对 01.AI 真实技术 + 商业化能力评价",
+      "priority": "P1"
+    },
+    {
+      "type": "已离职",
+      "who": "前任 01.AI 算法 / 商业化负责人",
+      "context": "内部技术债务 + 战略反复内幕 + 团队稳定性",
+      "priority": "P0"
+    },
+    {
+      "type": "投资方",
+      "who": "阿里 / 创新工场老股东",
+      "context": "老股东对 01.AI 战略调整态度 + 追加投资意愿",
+      "priority": "P2"
+    },
+    {
+      "type": "海外",
+      "who": "硅谷 / 新加坡 ToB 客户 + 当地合作伙伴",
+      "context": "01.AI 海外品牌 + 渠道真实情况",
+      "priority": "P0"
+    }
+  ]
+}

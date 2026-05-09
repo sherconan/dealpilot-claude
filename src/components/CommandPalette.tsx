@@ -68,6 +68,7 @@ export default function CommandPalette() {
       { id: 'go-deepseek-pack', label: '🟢 DeepSeek 30 分钟决策包', group: '决策包', action: () => navigate('/deal/deepseek-preb/decision-pack'), keywords: 'deepseek 深度求索 梁文锋 v3 r1 决策包' },
       { id: 'go-baichuan-pack', label: '🟡 百川智能 30 分钟决策包', group: '决策包', action: () => navigate('/deal/baichuan-a2/decision-pack'), keywords: 'baichuan 百川 王小川 搜狗 决策包' },
       { id: 'go-minimax-pack', label: '🟢 MiniMax 30 分钟决策包', group: '决策包', action: () => navigate('/deal/minimax-bplus/decision-pack'), keywords: 'minimax 稀宇 闫俊杰 talkie 海螺 abab 决策包' },
+      { id: 'go-01ai-pack', label: '🟡 零一万物 01.AI 30 分钟决策包', group: '决策包', action: () => navigate('/deal/01ai-aplus/decision-pack'), keywords: '01.ai zero-one 零一万物 李开复 yi yi-34b 创新工场 决策包' },
     ]
     const dealCmds: Cmd[] = deals.map((d) => ({
       id: `deal-${d.id}`,
