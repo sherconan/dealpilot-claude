@@ -94,7 +94,7 @@ export default function Memory() {
           </div>
           <Link to="/upload" className="text-[11px] text-emerald-700 hover:underline font-medium">上传你的真 BP →</Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {REAL_DEALS.map(d => {
             const sig = d.score >= 80 ? '🟢' : d.score >= 65 ? '🟡' : '🔴'
             return (
