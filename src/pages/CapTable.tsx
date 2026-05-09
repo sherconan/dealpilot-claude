@@ -55,6 +55,39 @@ const PRESETS: Record<string, { holders: Holder[]; round: NewRound }> = {
     ],
     round: { name: 'Pre-B（老股 / 战略）', amountUSDm: 30, preMoneyUSDm: 5000, fundCheckUSDm: 30, esopTopUpPct: 8 },
   },
+  'baichuan-a2': {
+    holders: [
+      { id: 'f-wang', name: '王小川（CEO）', type: 'founder', preShares: 28000000, invested: '原始 + 搜狗股权置换' },
+      { id: 'f-ru', name: '茹立云（CTO）', type: 'founder', preShares: 8000000 },
+      { id: 'f-zhou', name: '周韬（AI VP）', type: 'founder', preShares: 7000000 },
+      { id: 'esop-existing', name: 'ESOP（现有 12%）', type: 'esop', preShares: 12000000 },
+      { id: 'inv-seed', name: '启明 / 真格 / 红杉（天使 + A）', type: 'investor', preShares: 18000000 },
+      { id: 'inv-a1', name: '阿里 / 腾讯 / 小米 / 美团（A1 ¥50亿）', type: 'investor', preShares: 27000000, invested: '¥80亿估值' },
+    ],
+    round: { name: 'A2 优先股', amountUSDm: 42, preMoneyUSDm: 240, fundCheckUSDm: 21, esopTopUpPct: 14 },
+  },
+  'minimax-bplus': {
+    holders: [
+      { id: 'f-yan', name: '闫俊杰（CEO）', type: 'founder', preShares: 30000000, invested: '原始' },
+      { id: 'f-yang', name: '杨斌（联合创始人）', type: 'founder', preShares: 8000000 },
+      { id: 'f-zhou', name: '周瑜（联合创始人）', type: 'founder', preShares: 6000000 },
+      { id: 'esop-existing', name: 'ESOP（现有 11%）', type: 'esop', preShares: 11000000 },
+      { id: 'inv-idg', name: 'IDG / 高榕（天使 + A）', type: 'investor', preShares: 12000000 },
+      { id: 'inv-mihoyo', name: '米哈游（战略投资）', type: 'investor', preShares: 8000000, invested: '战略股' },
+      { id: 'inv-b', name: '阿里 / 腾讯（B 轮 $25亿）', type: 'investor', preShares: 25000000 },
+    ],
+    round: { name: 'B+ 优先股', amountUSDm: 50, preMoneyUSDm: 2500, fundCheckUSDm: 20, esopTopUpPct: 13 },
+  },
+  '01ai-aplus': {
+    holders: [
+      { id: 'f-lee', name: '李开复（CEO）', type: 'founder', preShares: 25000000, invested: '原始 + 创新工场孵化' },
+      { id: 'f-team', name: '其他创始团队', type: 'founder', preShares: 10000000 },
+      { id: 'esop-existing', name: 'ESOP（现有 10%）', type: 'esop', preShares: 10000000 },
+      { id: 'inv-sinovation', name: '创新工场（孵化 + 天使）', type: 'investor', preShares: 18000000 },
+      { id: 'inv-ali', name: '阿里（A 轮 $10亿）', type: 'investor', preShares: 20000000, invested: '$10亿估值' },
+    ],
+    round: { name: 'A+ 优先股', amountUSDm: 25, preMoneyUSDm: 1100, fundCheckUSDm: 10, esopTopUpPct: 12 },
+  },
 }
 
 function fmtPct(n: number) { return `${(n * 100).toFixed(2)}%` }
