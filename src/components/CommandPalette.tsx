@@ -102,8 +102,12 @@ export default function CommandPalette() {
   }, [cmds, q])
 
   const grouped = useMemo(() => {
-    const g: Record<string, Cmd[]> = { 导航: [], 项目: [], 动作: [] }
-    filtered.forEach((c) => g[c.group].push(c))
+    // 投决工具 + 决策包 排在最前（用户最常用），导航 / 项目 / 动作 兜底
+    const g: Record<string, Cmd[]> = { 投决工具: [], 决策包: [], 导航: [], 项目: [], 动作: [] }
+    filtered.forEach((c) => {
+      if (!g[c.group]) g[c.group] = []
+      g[c.group].push(c)
+    })
     return g
   }, [filtered])
 
