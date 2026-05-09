@@ -7,6 +7,7 @@ import moonshotJson from './moonshot-decision-pack.json'
 import zhipuJson from './zhipu-decision-pack.json'
 import deepseekJson from './deepseek-decision-pack.json'
 import baichuanJson from './baichuan-decision-pack.json'
+import minimaxJson from './minimax-decision-pack.json'
 
 export interface DecisionPack {
   meta: {
@@ -41,6 +42,7 @@ export const moonshotDecisionPack: DecisionPack = moonshotJson as DecisionPack
 export const zhipuDecisionPack: DecisionPack = zhipuJson as DecisionPack
 export const deepseekDecisionPack: DecisionPack = deepseekJson as DecisionPack
 export const baichuanDecisionPack: DecisionPack = baichuanJson as DecisionPack
+export const minimaxDecisionPack: DecisionPack = minimaxJson as DecisionPack
 
 // ─── 月之暗面 Moonshot AI · A2 轮 ──────────────────────────────────────────
 export const moonshotDeal: Deal = {
@@ -295,13 +297,77 @@ export const baichuanDeal: Deal = {
   accentColor: '#DB2777',
 }
 
+// ─── MiniMax 稀宇科技 · B+ 轮 ───────────────────────────────────────────
+export const minimaxDeal: Deal = {
+  id: 'minimax-bplus',
+  name: 'MiniMax',
+  cnName: '稀宇科技',
+  tagline: '闫俊杰（前商汤副总裁）领衔 · Talkie 全球月活破亿 · abab-video 文生视频',
+  sector: 'AI / LLM',
+  round: 'Series B+',
+  valuation: '$30亿（市场估算）',
+  askAmount: '$20M',
+  stage: 'review',
+  foundedYear: 2021,
+  location: '上海',
+  teamSize: 300,
+  arr: '估算 $50-100M（Talkie 出海订阅 + 海螺 + abab API）',
+  growthRate: 'Talkie 全球月活破亿 + 海螺 MAU 千万',
+  grossMargin: 'C 端订阅 70%+ / 视频生成压制利润',
+  tam: '全球 C 端 AI 2025 $500亿 (AI 助手 + 角色 + 视频生成)',
+  sam: 'AI 角色生态 + 文生视频两大独占场景',
+  sequoia: { mission: 8, problem: 8, solution: 9, whyNow: 9, market: 9, competition: 7, businessModel: 7, team: 9, financials: 7, vision: 8 },
+  score: 80,
+  recommendation: 'priority',
+  redFlags: minimaxDecisionPack.redFlags,
+  wins: [
+    '闫俊杰（清华 + 商汤副总裁 + 商汤 C 端业务负责人）+ 杨斌（商汤研究院 / 多模态算法）+ 周瑜（商汤工程化 / 大规模分布式）',
+    'Talkie 全球月活破亿（2024 Q4，主要美/印/东南亚），是国内大模型创业公司中唯一 C 端全球破亿产品',
+    'abab-video 文生视频 2024 末发布震动业内，国内文生视频 Top 3（Sora 国内不可用窗口）',
+    '海螺 AI（hailuo.ai）国内 MAU 千万，对标 Kimi 智能助手',
+    '米哈游战投带来 C 端内容生态协同 + 阿里 / 腾讯 / 高榕 / IDG 多巨头加持',
+    'abab 系列大模型基座 + 海螺 + Talkie + abab-video 四产品矩阵清晰',
+  ],
+  concerns: [
+    '软：Talkie 用户主要在美/印/东南亚，地缘政治风险（TikTok 模式）',
+    '软：abab-video 训练 + 推理成本极高，长期盈利路径未跑通',
+    '软：B+ ~$30亿 估值溢价需 C 端商业化兑现',
+    '软：海螺 AI 国内 MAU 千万但付费转化率未公开，受 Kimi 牵制',
+  ],
+  founders: [
+    { name: '闫俊杰 Yan Junjie', role: 'CEO / 创始人', background: '清华大学 · 前商汤副总裁 · 商汤 C 端业务负责人 · 22+ 年算法 + 产品经验', highlight: '商汤系核心高管转 AGI 创业 · C 端产品化经验最丰富' },
+    { name: '杨斌 Yang Bin', role: '联合创始人 / 算法', background: '商汤研究院核心成员 · 多模态算法专家' },
+    { name: '周瑜 Zhou Yu', role: '联合创始人 / 工程', background: '商汤工程化负责人 · 大规模分布式训练专家' },
+  ],
+  traction: [
+    { label: 'Talkie 全球 MAU', value: '破亿', delta: '2024 Q4' },
+    { label: '海螺 AI 国内 MAU', value: '千万级' },
+    { label: 'abab-video 排名', value: '国内 Top 3', delta: '文生视频' },
+    { label: 'Apple App Store', value: 'Talkie 全球娱乐 Top 10' },
+    { label: '估算年营收', value: '$50-100M' },
+    { label: '团队规模', value: '~300 人', delta: '研发占比 80%+' },
+  ],
+  timeline: [
+    { date: '2021', event: '公司成立', actor: '闫俊杰 + 商汤班底' },
+    { date: '2022', event: 'A 轮 (米哈游战投)', actor: 'IDG / 高榕 / 米哈游' },
+    { date: '2024-Q3', event: 'B 轮 $25亿估值', actor: '阿里 / 腾讯 / 米哈游追投' },
+    { date: '2024-Q4', event: 'abab-video 文生视频发布 + Talkie 月活破亿' },
+    { date: '2025-Q1', event: 'B+ 轮 $30亿估值（市场估算）' },
+  ],
+  lastUpdated: '2025-01-30',
+  champion: 'Henry Zhao',
+  source: '2024-2025 公开新闻 + MiniMax 官网 + arXiv 论文 + 闫俊杰公开访谈 + VC 经验补全',
+  accentColor: '#F97316',
+}
+
 // ─── 真实公开公司库 registry（决策包 lookup） ─────────────────────────────
-export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal, baichuanDeal]
+export const REAL_DEALS: Deal[] = [moonshotDeal, zhipuDeal, deepseekDeal, baichuanDeal, minimaxDeal]
 export const REAL_DECISION_PACKS: Record<string, DecisionPack> = {
   'moonshot-a2': moonshotDecisionPack,
   'zhipu-bplus': zhipuDecisionPack,
   'deepseek-preb': deepseekDecisionPack,
   'baichuan-a2': baichuanDecisionPack,
+  'minimax-bplus': minimaxDecisionPack,
 }
 
 export function getDecisionPackByDealId(id: string): DecisionPack | undefined {
