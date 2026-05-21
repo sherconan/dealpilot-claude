@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useApp } from '../contexts/AppContext'
 import { Link } from 'react-router-dom'
 import { useAllDeals } from '../lib/userDealStore'
+import { REAL_DEALS, REAL_DECISION_PACKS } from '../data/realDeals'
 
 interface Signal {
   id: string
@@ -15,16 +16,58 @@ interface Signal {
   source: string
 }
 
-const signals: Signal[] = [
-  { id: '1', ts: '12 分钟前', company: 'NebulaAI', dealId: 'nebula-ai', channel: 'github', level: 'high', title: 'agent-kernel repo 新增 multi-agent planner 模块', detail: 'CTO Chen Hao 提交 1,247 行核心代码，标签 v0.4.0 即将发布 — 疑似为 Series A close 前的产品里程碑信号', source: 'GitHub Webhook · sherconan/agent-kernel' },
-  { id: '2', ts: '34 分钟前', company: 'Lumen AI（已投）', channel: 'recruit', level: 'high', title: 'LinkedIn 新增 2 名前 Anthropic 工程师', detail: '其中 1 位曾是 Claude RLHF 团队 Tech Lead — 招聘强度反映 Series B 提速', source: 'LinkedIn People Search · 监控订阅' },
-  { id: '3', ts: '1 小时前', company: 'NeoBank Digital', dealId: 'neobank-digital', channel: 'media', level: 'medium', title: '印尼 OJK 牌照进入实质审查最后阶段', detail: 'Bisnis.com 报道 NeoBank 印尼牌照已通过初审，预计 Q3 正式获批 — 与 BP 时间线吻合', source: 'autoglm + Bocha Search' },
-  { id: '4', ts: '2 小时前', company: 'CryptoVault', dealId: 'crypto-vault', channel: 'patent', level: 'critical', title: '创始人前公司被 SFC 公告确认未持牌经营', detail: '香港 SFC 公告 No. 2024/091 列名前公司，CryptoVault 创始人 Alex Zhou 在前公司任 CEO — 强化诚信红线', source: 'qcc-risk · SFC 公告抓取' },
-  { id: '5', ts: '3 小时前', company: 'MetaMed Health', dealId: 'metamed-health', channel: 'patent', level: 'medium', title: 'NMPA 注册文件进入第二轮补正', detail: 'III 类医疗器械注册公示进度更新 — 时间线略晚于 BP 预测的 2026-Q4', source: 'NMPA 公开排期' },
-  { id: '6', ts: '5 小时前', company: 'GreenLogistics', dealId: 'green-logistics', channel: 'media', level: 'high', title: 'Top 1 客户菜鸟招标新增 2 家供应商', detail: '菜鸟冷链 2026-04 供应商扩容公告，可能稀释 GreenLogistics Top 1 客户份额 — 集中度风险加剧', source: 'autoglm + 招标网' },
-  { id: '7', ts: '昨天', company: '寒武纪（行业）', channel: 'media', level: 'low', title: '2026-Q1 国产 AI 芯片招投标份额突破 60%', detail: '行业信号：国产替代叙事进入兑现期，对所有 AI Infra 标的估值利好', source: 'autoglm Deep Research' },
-  { id: '8', ts: '昨天', company: 'Pulse Finance（已投）', channel: 'product-hunt', level: 'medium', title: 'Product Hunt 当日 Top 3', detail: 'Pulse Finance v3.0 在 Product Hunt 当日热度排名第 3，新增 12k 注册用户 — Lead Q2 增长', source: 'producthunt.com webhook' },
-]
+// 从 6 真公司决策包派生 signals（替代过去虚构 NebulaAI/NeoBank/CryptoVault 等）
+function deriveRealSignals(): Signal[] {
+  const out: Signal[] = []
+  REAL_DEALS.forEach((d, di) => {
+    const dp = REAL_DECISION_PACKS[d.id]
+    if (!dp) return
+    // 1) 硬红线 → critical
+    dp.redFlags.filter(f => f.severity === 'hard').forEach((f, i) => {
+      out.push({
+        id: `real-${d.id}-rf-hard-${i}`,
+        ts: `${(di * 3 + i) + 1} 小时前`,
+        company: `${d.name} · ${d.cnName}`,
+        dealId: d.id,
+        channel: 'patent',
+        level: 'critical',
+        title: `硬红线 · ${f.label}`,
+        detail: f.detail,
+        source: `DealPilot 决策包 · 数据源：${dp.meta.source.split('+')[0].trim()}`,
+      })
+    })
+    // 2) 软红线 top 2 → high
+    dp.redFlags.filter(f => f.severity === 'soft').slice(0, 2).forEach((f, i) => {
+      out.push({
+        id: `real-${d.id}-rf-soft-${i}`,
+        ts: `${(di * 3 + i) + 2} 小时前`,
+        company: `${d.name} · ${d.cnName}`,
+        dealId: d.id,
+        channel: 'media',
+        level: 'high',
+        title: `软红线 · ${f.label}`,
+        detail: f.detail,
+        source: 'DealPilot 决策包 · Red Flag 引擎',
+      })
+    })
+    // 3) Verdict 决策信号
+    const sigLevel: Signal['level'] = dp.verdict.signal === 'GREEN' ? 'medium' : dp.verdict.signal === 'YELLOW' ? 'high' : 'critical'
+    out.push({
+      id: `real-${d.id}-verdict`,
+      ts: `${di * 3 + 1} 天前`,
+      company: `${d.name} · ${d.cnName}`,
+      dealId: d.id,
+      channel: 'web',
+      level: sigLevel,
+      title: `Verdict ${dp.verdict.signal} · ${dp.verdict.label}（${dp.totalScore}/100）`,
+      detail: dp.verdict.reason,
+      source: 'DealPilot 决策包 · Sequoia 10 加权评分',
+    })
+  })
+  return out
+}
+
+const signals: Signal[] = deriveRealSignals()
 
 const channelMeta = {
   linkedin: { label: 'LinkedIn', color: '#0a66c2' },
