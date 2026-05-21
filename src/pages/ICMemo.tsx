@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { getDealById } from '../data/deals'
 import { getDealExtra } from '../data/extra'
+import { getDecisionPackByDealId } from '../data/realDeals'
 import { sequoiaLabels, recommendationMeta } from '../lib/scoring'
 import ScoreRing from '../components/ScoreRing'
 import ThesisCanvas from '../components/ThesisCanvas'
@@ -15,6 +16,8 @@ export default function ICMemo() {
   if (!deal) return <div className="p-10 text-center text-ink-500">项目未找到</div>
   const recMeta = recommendationMeta[deal.recommendation]
   const topComp = extra?.publicComps[0]
+  // 6 家真实公开公司决策包（与 user-uploaded deepAnalysisRaw 并列的另一个真分析来源）
+  const decisionPack = getDecisionPackByDealId(id || '')
 
   const sections = [
     { id: 'memo-1', title: '执行摘要' },
@@ -104,6 +107,85 @@ export default function ICMemo() {
       </header>
 
       <article className="bg-white border border-ink-200 rounded-xl p-10 shadow-card prose-sm">
+        {/* 真实公开公司决策包 — 6 家真公司的 10 段 + Sequoia + 8 题 + Reference Check 拉通进 IC Memo */}
+        {decisionPack && !deal.deepAnalysisRaw && (
+          <section className="mb-8 pb-6 border-b border-emerald-200 bg-emerald-50/30 -m-10 mb-8 p-10 rounded-t-xl">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+              <div>
+                <div className="text-[11px] tracking-wider uppercase text-emerald-700 font-medium">
+                  真实公开公司决策包 · 信号 {decisionPack.verdict.signal} · {decisionPack.totalScore}/100
+                </div>
+                <h2 className="text-[18px] font-semibold tracking-tight mt-1">{deal.name} · {deal.cnName} 投委会备忘录（30 分钟决策包）</h2>
+                <p className="text-[12.5px] text-ink-700 mt-2 leading-relaxed">
+                  <b>{decisionPack.verdict.label}</b> — {decisionPack.verdict.reason}
+                </p>
+                <p className="text-[11px] text-emerald-700/80 mt-1.5">数据来源：{decisionPack.meta.source}</p>
+              </div>
+            </div>
+            {decisionPack.deepAnalysis.map((s, i) => (
+              <div key={s.key} className="mb-5 pb-4 border-b border-emerald-100 last:border-0">
+                <h3 className="text-[14.5px] font-semibold tracking-tight mb-2 flex items-center gap-2">
+                  <span className="num w-6 h-6 rounded bg-emerald-700 text-white text-[11px] flex items-center justify-center">{(i + 1).toString().padStart(2, '0')}</span>
+                  <span>{s.label.replace(/^[①②③④⑤⑥⑦⑧⑨⑩]\s*/, '')}</span>
+                </h3>
+                <div className="text-[12.5px] text-ink-800 leading-[1.85] whitespace-pre-wrap pl-8">{s.content}</div>
+              </div>
+            ))}
+            <div className="mt-6 pt-5 border-t border-emerald-200">
+              <h3 className="text-[14.5px] font-semibold tracking-tight mb-3">附录 A · Sequoia 10 维度真评分</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                {decisionPack.sequoia10.map((d) => {
+                  const color = d.score >= 8 ? '#059669' : d.score >= 6 ? '#0ea5e9' : d.score >= 4 ? '#d97706' : '#dc2626'
+                  const labelEntry = sequoiaLabels[d.key as keyof typeof sequoiaLabels]
+                  const label = (labelEntry && typeof labelEntry === 'object' && 'label' in labelEntry) ? (labelEntry as { label: string }).label : d.key
+                  return (
+                    <div key={d.key} className="bg-white border border-ink-200 rounded p-2 text-center">
+                      <div className="text-[10.5px] text-ink-600 mb-1">{label}</div>
+                      <div className="num font-semibold text-[18px]" style={{ color }}>{d.score}<span className="text-ink-400 text-[10px]">/10</span></div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="mt-5 pt-5 border-t border-emerald-200">
+              <h3 className="text-[14.5px] font-semibold tracking-tight mb-3">附录 B · 8 题创始人深度访谈（基于 BP 真实数字）</h3>
+              <ol className="space-y-3 list-decimal pl-5">
+                {decisionPack.founderQuestions.map((q, i) => (
+                  <li key={i} className="text-[12px] text-ink-800 leading-relaxed">
+                    <div className="font-medium text-ink-900 mb-0.5">{q.question}</div>
+                    <div className="text-[11px] text-ink-500"><b>为什么问：</b>{q.why} · <b>期望答案：</b>{q.expect}{q.watch ? ` · ⚠️ ${q.watch}` : ''}</div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            {decisionPack.referenceCheck?.length > 0 && (
+              <div className="mt-5 pt-5 border-t border-emerald-200">
+                <h3 className="text-[14.5px] font-semibold tracking-tight mb-3">附录 C · Reference Check 名单（{decisionPack.referenceCheck.length} 人）</h3>
+                <table className="w-full text-[11.5px] border-collapse">
+                  <thead><tr className="bg-emerald-50 text-ink-700"><th className="text-left p-2 border border-emerald-100">优先级</th><th className="text-left p-2 border border-emerald-100">类型</th><th className="text-left p-2 border border-emerald-100">对象</th><th className="text-left p-2 border border-emerald-100">核验内容</th></tr></thead>
+                  <tbody>
+                    {decisionPack.referenceCheck.map((r, i) => (
+                      <tr key={i}><td className="p-2 border border-emerald-100 font-semibold">{r.priority}</td><td className="p-2 border border-emerald-100">{r.type}</td><td className="p-2 border border-emerald-100">{r.who}</td><td className="p-2 border border-emerald-100">{r.context}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            {decisionPack.redFlags?.length > 0 && (
+              <div className="mt-5 pt-5 border-t border-emerald-200">
+                <h3 className="text-[14.5px] font-semibold tracking-tight mb-3">附录 D · Red Flag 清单（{decisionPack.redFlags.length}）</h3>
+                <ul className="space-y-1.5">
+                  {decisionPack.redFlags.map((f, i) => (
+                    <li key={i} className={`text-[12px] pl-2 border-l-2 ${f.severity === 'hard' ? 'border-rose-500 text-rose-800' : 'border-amber-500 text-amber-800'}`}>
+                      <b>[{f.severity === 'hard' ? '硬' : '软'}]</b> {f.label} — <span className="text-ink-700">{f.detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
         {/* LLM 真撰版本 — 用户上传 BP 经 LLM 生成的完整 10 段报告 */}
         {deal.deepAnalysisRaw && (
           <section className="mb-8 pb-6 border-b border-violet-200 bg-violet-50/30 -m-10 mb-8 p-10 rounded-t-xl">

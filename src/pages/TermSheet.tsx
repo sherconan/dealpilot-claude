@@ -181,10 +181,19 @@ export default function TermSheet() {
     setConfig(c => ({
       ...c,
       roundName: `${d.round} 优先股`,
-      totalRoundSize: d.id === 'moonshot-a2' ? '$300M' : d.id === 'zhipu-bplus' ? '¥30亿' : d.id === 'deepseek-preb' ? '$300M（建议老股）' : d.askAmount,
+      totalRoundSize: ({
+        'moonshot-a2': '$300M', 'zhipu-bplus': '¥30亿', 'deepseek-preb': '$300M（建议老股）',
+        'baichuan-a2': '¥30亿', 'minimax-bplus': '$200M', '01ai-aplus': '$100M',
+      } as Record<string, string>)[d.id] || d.askAmount,
       ourCheck: d.askAmount,
-      preMoney: d.id === 'moonshot-a2' ? '$3,000M' : d.id === 'zhipu-bplus' ? '¥170亿' : d.id === 'deepseek-preb' ? '$4,700M' : d.valuation,
-      postMoney: d.id === 'moonshot-a2' ? '$3,300M' : d.id === 'zhipu-bplus' ? '¥200亿' : d.id === 'deepseek-preb' ? '$5,000M' : d.valuation,
+      preMoney: ({
+        'moonshot-a2': '$3,000M', 'zhipu-bplus': '¥170亿', 'deepseek-preb': '$4,700M',
+        'baichuan-a2': '¥170亿', 'minimax-bplus': '$2,800M', '01ai-aplus': '$1,200M',
+      } as Record<string, string>)[d.id] || d.valuation,
+      postMoney: ({
+        'moonshot-a2': '$3,300M', 'zhipu-bplus': '¥200亿', 'deepseek-preb': '$5,000M',
+        'baichuan-a2': '¥200亿', 'minimax-bplus': '$3,000M', '01ai-aplus': '$1,300M',
+      } as Record<string, string>)[d.id] || d.valuation,
     }))
   }, [config.dealId, allDeals])
 
