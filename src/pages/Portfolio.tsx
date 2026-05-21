@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useApp } from '../contexts/AppContext'
 
 interface PortfolioCo {
@@ -133,6 +134,23 @@ export default function Portfolio() {
           已投项目跟踪 · 季度估值更新 · ARR / 跑道 / 异常预警 · 投后管理一体化看板
         </p>
       </header>
+
+      {/* 数据来源诚实声明 — 区别于真实公开公司决策包库 */}
+      <section className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5">
+        <div className="flex items-start gap-3">
+          <span className="text-[20px]">⚠️</span>
+          <div className="flex-1">
+            <div className="text-[12px] font-semibold text-amber-900 mb-1">本页数据为虚构演示</div>
+            <p className="text-[12.5px] text-amber-800 leading-relaxed">
+              下方 4 个投后项目（流明智能 / 脉冲金融 / 螺旋生物 / 轨道智能）为 <b>虚构演示用例</b>，
+              用于展示投后管理看板的产品形态。基金尚未实际投资任何
+              <Link to="/real-deals" className="text-emerald-700 underline font-medium mx-1">真实公开公司库</Link>
+              中的项目（月之暗面 / 智谱 / DeepSeek / 百川 / MiniMax / 01.AI）。
+              一旦真实投资发生，将自动从决策包派生 portfolio 数据 — 当前 0 真实投后。
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-5">
         <Kpi label="累计投资" value={totalInvested} hint="基金 II 期" accent="#0f766e" />
