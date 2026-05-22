@@ -63,12 +63,12 @@ export const PROVIDER_META: Record<Provider, {
     desc: '需要 Moonshot key · 中文 BP 理解最佳 · 真看 PDF 图像',
   },
   'deepseek': {
-    label: 'DeepSeek (BYOK · 文本)',
+    label: 'DeepSeek V4 PRO (BYOK · 文本 · 推荐)',
     endpoint: 'https://api.deepseek.com/v1/chat/completions',
-    model: 'deepseek-chat',
+    model: 'deepseek-v4-pro',
     multimodal: false,
     free: false,
-    desc: '需要 DeepSeek key · 中文文本分析 · 价格极低',
+    desc: '需要 DeepSeek key · 中文文本分析 · sage-jury 同款 stack',
   },
 }
 
@@ -83,7 +83,8 @@ export function getProvider(): Provider {
   if (typeof window === 'undefined') return 'pollinations'
   const saved = localStorage.getItem(PROVIDER_STORAGE) as Provider
   if (saved && PROVIDER_META[saved]) return saved
-  return getApiKey() ? 'moonshot-vision' : 'pollinations'
+  // Default → DeepSeek V4 PRO (sage-jury stack) if key present
+  return getApiKey() ? 'deepseek' : 'pollinations'
 }
 export function setProvider(p: Provider) { localStorage.setItem(PROVIDER_STORAGE, p) }
 
