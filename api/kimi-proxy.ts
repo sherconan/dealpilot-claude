@@ -3,7 +3,7 @@
 
 export const config = { runtime: 'edge' }
 
-const KIMI_ENDPOINT = 'https://api.kimi.com/coding/v1/chat/completions'
+const KIMI_ENDPOINT = 'https://api.bochaai.com/v1/chat/completions'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

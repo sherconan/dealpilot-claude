@@ -64,7 +64,7 @@ export const PROVIDER_META: Record<Provider, {
   },
   'deepseek': {
     label: 'DeepSeek V4 PRO (BYOK · 文本 · 推荐)',
-    endpoint: 'https://api.deepseek.com/v1/chat/completions',
+    endpoint: 'https://api.bochaai.com/v1/chat/completions',
     model: 'deepseek-v4-pro',
     multimodal: false,
     free: false,
